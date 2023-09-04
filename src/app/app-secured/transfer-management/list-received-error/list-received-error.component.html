@@ -1,0 +1,136 @@
+<app-card>
+  <a class="parentPage">{{parentPage}}</a>
+  <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+
+
+<div class="row">
+  <div class="col-md-12 col-md-12-small">
+    <div class="ibox float-e-margins">
+      <div class="ibox-title">
+        <div class="ibox-tools">
+          <a class="collapse-link">
+            <button class="btn btn-success" (click)="refresh()">
+              <i class="fa fa-refresh"></i>&nbsp;refresh
+            </button>
+          </a>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="form-group">
+              <strong>Ngày tạo bảng kê</strong>
+              <div class="input-group" daterangepicker (selected)="selectedDate($event, mainInput)" (cancelDaterangepicker)="calendarEventsHandler($event)"
+                (showDaterangepicker)="calendarEventsHandler($event)">
+                <span class="form-control uneditable-input" name="daterange" style="height: 25px;">
+                  <p style="margin-top: -3px">{{ mainInput.start | dateFormatNoTime }} - {{ mainInput.end | dateFormatNoTime }}</p>
+                </span>
+                <span class="input-group-btn">
+                  <a type="button" class="btn btn-default">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="col-sm-3">
+              <div class="form-group">
+                  <label>NV nhận</label>
+                  <p-dropdown styleClass="select-input form-control" [options]="riderLRETs" [(ngModel)]="selectedRiderLRET" [style]="{'width':'100%'}"
+                      filter="filter" (onChange)="changeFilterLRETRider()">
+                  </p-dropdown>
+              </div>
+          </div>           -->
+          <div class="col-sm-5"></div>
+          <div class="col-sm-3" style="float:right">
+            <label>&nbsp;</label>
+            <div>
+              <input type="text" [(ngModel)]="txtSearch" placeholder="Nhập chuỗi cần tìm ..." (keyup.enter)="search($event.target.value)"
+                class="input-sm form-control" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="table-responsive">
+              <p-table #dt [value]="listData" [responsive]="true" [paginator]="true" [rows]="20" [rowsPerPageOptions]="[10,20,50,100]"
+                [lazy]="true" (onLazyLoad)="loadLazy($event)" sortField="createdWhen"
+                sortOrder="-1" scrollable="true">
+                <ng-template pTemplate="header" let-columns>
+                  <tr>
+                    <!-- <th style="width: 120px">Thao tác
+                    </th> -->
+                    <th pSortableColumn="code" Class="p-col-shipmentNumber">Mã BK
+                      <p-sortIcon field="code"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="receivedShipmentErrors" Class="p-col-address">Vận đơn lỗi
+                      <p-sortIcon field="receivedShipmentErrors"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="createdWhen" Class="p-col-normal">TG tạo
+                      <p-sortIcon field="createdWhen"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="fromHub.name" Class="p-col-normal">Xác nhận
+                    </th>
+                    <th pSortableColumn="emp.fullName" Class="p-col-normal">NV nhận
+                    </th>
+                    <th pSortableColumn="totalReceived" Class="p-col-normal">Tổng VĐ đã nhận
+                      <p-sortIcon field="totalReceived"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="totalReceivedOther" Class="p-col-normal">Tổng VĐ sai quy trình
+                      <p-sortIcon field="totalReceivedOther"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="totalReceivedError" Class="p-col-normal">Tổng VĐ Lỗi
+                      <p-sortIcon field="totalReceivedError"></p-sortIcon>
+                    </th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-data let-columns="columns">
+                  <tr [pSelectableRow]="data">
+                    <!-- <td style="width: 120px">
+                      <div style="display: flex;">
+                        <button type="button" class="btn btn-success" (click)="openModel(template, data)">
+                          <i class="fa fa-eye"></i> Xem</button>
+                        <button type="button" class="btn btn-success" (click)="printLAT(data)" style="margin-right: 5px">
+                          <i class="fa fa-print"></i> In</button>
+                      </div>
+                    </td> -->
+                    <td class="p-col-shipmentNumber">
+                      {{data.code}}
+                    </td>
+                    <td class="p-col-address">
+                      {{data.receivedShipmentErrors}}
+                    </td>
+                    <td class="p-col-normal">
+                      {{data.createdWhen | dateFormat}}
+                    </td>
+                    <td class="p-col-normal">
+                      {{data.fromHub?.name}}
+                    </td>
+                    <td class="p-col-normal">
+                      {{data.emp?.fullName}}
+                    </td>
+                    <td class="p-col-normal">
+                      {{data.totalReceived}}
+                    </td>
+                    <td class="p-col-normal">
+                      {{data.totalReceivedOther}}
+                    </td>
+                    <td class="p-col-normal">
+                      {{data.totalReceivedError}}
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                  <span *ngIf="listData" class="ui-column-title" style="font-weight: bold;">Tổng : {{ (totalRecords) ? totalRecords : 0}} bảng kê</span>
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

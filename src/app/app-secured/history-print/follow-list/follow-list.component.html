@@ -1,0 +1,108 @@
+<app-card>
+    <a class="parentPage">{{parentPage}}</a>
+    <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <!-- <h5>{{currentPage}}</h5> -->
+                <div style="margin:0 auto;margin-bottom:5px; text-align: right">
+                    <button class="btn btn-success" (click)="refresh()">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label>Lịch sử In</label>
+                        <div class="form-group">
+                            <div class="input-group" daterangepicker (selected)="selectedDate($event, mainInput)" 
+                                (cancelDaterangepicker)="calendarEventsHandler($event)"
+                                (showDaterangepicker)="calendarEventsHandler($event)">
+                                <span class="form-control uneditable-input" name="daterange" style="height: 25px;">
+                                    <p style="margin-top: -3px">{{ mainInput.start | dateFormatNoTime }} - {{ mainInput.end | dateFormatNoTime }}</p>
+                                </span>
+                                <span class="input-group-btn">
+                                    <a type="button" class="btn btn-default">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Loại In</label>
+                        <div class="form-group">
+                            <p-dropdown styleClass="select-input form-control" [options]="printTypes" [(ngModel)]="selectedPrintType" [style]="{'width':'100%'}"
+                                filter="filter" (onChange)="changePrintTypes()" autofocus tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-3" style="float:right">
+                        <label>&nbsp;</label>
+                        <div>
+                            <input #filterGb type="text" placeholder="Nhập chuỗi cần tìm ..." [(ngModel)]="txtFilterGb" class="input-sm form-control" id="filter" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <p-dataTable #dt [value]="listData" exportFilename="request" [paginator]="true" rows="10" [responsive]="true" [rowsPerPageOptions]="[10,20,50,100]"
+                            [globalFilter]="filterGb" [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="loadLazy($event)" [(first)]="first" [(selection)]="selectedData">
+                            <p-column styleClass="col-button5">
+                                <ng-template pTemplate="header" styleClass="padding-top-bottom"></ng-template>
+                                <ng-template let-data="rowData" pTemplate="body">
+                                    <button class="btn btn-success" (click)="onRePrint(data)">
+                                            <i class="fa fa-print"></i> In lại</button>
+                                </ng-template>
+                            </p-column>    
+                            <p-column styleClass="p-col-shipmentNumber" field="code" header="Mã BK" [sortable]="true"></p-column>
+                            <p-column styleClass="p-col-date" field="createdWhen" header="Thời gian" [sortable]="true">
+                                <ng-template pTemplate="body" let-rowData="rowData" footer="true">
+                                    {{rowData.createdWhen | dateFormat}}
+                                </ng-template>
+                            </p-column>
+                            <p-column styleClass="p-col-sender" header="Người In" [sortable]="true">
+                                <ng-template pTemplate="body" let-rowData="rowData" footer="true">
+                                    {{currentUser?.fullName}}
+                                </ng-template>
+                            </p-column>
+                            <p-column styleClass="p-col-normal" field="listGoodsType.name" header="Loại" [sortable]="true"></p-column>
+                            <p-column styleClass="p-col-normal" header="In tại" [sortable]="true">
+                                <ng-template pTemplate="body" let-rowData="rowData" footer="true">
+                                    {{fromHub}}
+                                </ng-template>
+                            </p-column>
+                            <p-column styleClass="p-col-money" field="numPrint" header="Số lần in lại" [sortable]="true"></p-column>
+                        </p-dataTable>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="print-section">
+    <div *ngIf="idPrint === 'print-detail-transfer'">
+        <form-detail-transfer></form-detail-transfer>
+    </div>
+    <div *ngIf="idPrint === 'print-detail-delivery'">
+        <form-detail-delivery></form-detail-delivery>
+    </div>
+    <div *ngIf="idPrint === 'print-receipt-transfer'">
+        <form-receipt-transfer></form-receipt-transfer>
+    </div>
+    <div *ngIf="idPrint === 'print-detail-return'">
+        <form-detail-return></form-detail-return>
+    </div>
+</div>
+<iframe class="hidden-iframe" name="print-detail-transfer"></iframe>
+<iframe class="hidden-iframe" name="print-detail-delivery"></iframe>
+<iframe class="hidden-iframe" name="print-receipt-transfer"></iframe>
+<iframe class="hidden-iframe" name="print-detail-return"></iframe>

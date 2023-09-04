@@ -1,0 +1,279 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <!-- <h5>{{currentPage}}</h5> -->
+                <div class="ibox-tools">
+                    <div class="row">
+                        <div class="col-sm-6 text-left">
+                            <span style="width: 100%; margin-bottom: 2px;">
+                                Mã bảng kê
+                            </span>
+                            <input style="height: 20px;" type="text" [ngModel]="listGoodsCreated?.code" disabled>
+                            <button style="height: 20px; padding: 0px 3px 0px 3px;" type="button"
+                                class="btn btn-success pull-right" (click)="refreshSessionListGoods()">
+                                <i class="fa fa-refresh"></i>&nbsp;refresh</button>
+                        </div>
+                        <div class="col-sm-6">
+                            <p-header>
+                                <div>
+                                    <div style="display: inline-flex;margin-left: 5px">
+                                        <label>Trọng lượng/Xác nhận: </label>
+                                        <p-inputSwitch (onChange)="changeIsWeight()" [(ngModel)]="isAcceptWeightChange">
+                                        </p-inputSwitch>
+                                    </div>
+                                    <div style="display: inline-flex;margin-left: 5px">
+                                        <label>Tham chiếu/Vận đơn: </label>
+                                        <p-inputSwitch (onChange)="changeIsShopCode()" [(ngModel)]="isScanShopCode">
+                                        </p-inputSwitch>
+                                    </div>
+                                    <div style="display: inline-flex;margin-left: 5px">
+                                        <label>In: </label>
+                                        <p-inputSwitch (onChange)="changeScanAccept()" [(ngModel)]="isScanAccept">
+                                        </p-inputSwitch>
+                                    </div>
+                                </div>
+                            </p-header>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 form-group">
+                        <label>Khách hàng
+                        </label>
+                        <p-autoComplete #atcSenderCode [(ngModel)]="customer" [suggestions]="filteredCustomers"
+                            (completeMethod)="filterCustomers($event)"
+                            styleClass="select-input form-control none-padding" (onSelect)="onSelectedCustomer()"
+                            [dropdown]="true" (keydown.Tab)="keyTabSender($event)">
+                        </p-autoComplete>
+                    </div>
+                    <div class="col-sm-3 form-group">
+                        <label>Số tham chiếu</label>
+                        <p-autoComplete #atcShopCode styleClass="select-input form-control none-padding"
+                            [(ngModel)]="shopCode" [suggestions]="shopCodes" (completeMethod)="searchShopCode($event)"
+                            [dropdown]="false" (onKeyUp)="keyUpEnter($event)" (onSelect)="onSelectedShopCode($event)">
+                        </p-autoComplete>
+                    </div>
+                    <div class="col-sm-3 form-group">
+                        <label>Mã vận đơn</label>
+                        <input #txtShipment [(ngModel)]="shipmentNumber" (keyup)="changeShipmentNumber($event)"
+                            placeholder="Scan mã vận đơn ..." class="input-sm form-control"
+                            [style]="{'width':'100%'}" />
+                    </div>
+                    <div class="col-sm-2 form-group">
+                        <label>Sản lượng
+                        </label>
+                        <input [ngModel]="shipment.totalItem" class="input-sm form-control"
+                            [style]="{'width':'100%'}" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2 form-group">
+                        <label>Dịch vụ <b>(*)</b>
+                        </label>
+                        <p-dropdown styleClass="select-input form-control" [options]="services"
+                            [(ngModel)]="shipment.serviceId" [style]="{'width':'100%'}" filter="filter"
+                            (onChange)="loadDIM()"></p-dropdown>
+                    </div>
+                    <div class="col-sm-1 form-group">
+                        <label>SK
+                            <button style="height: 20px; padding: 0px 3px 0px 3px;" type="button"
+                                class="btn btn-success pull-right" (click)="openModelBox(templateBox)">Nhập
+                            </button>
+                        </label>
+                        <input #txtTotalBox [(ngModel)]="shipment.totalBox" md-select-on-focus
+                            class="input-sm form-control" [style]="{'width':'100%'}" (keydown.Tab)="keyTabTotalBox()"
+                            (change)="changeTotalBox()" (keydown.Escape)="openModelBox(templateBox)" />
+                    </div>
+                    <div class="col-sm-1 form-group">
+                        <label>Số DOC
+                        </label>
+                        <input #txtTotalBox [(ngModel)]="shipment.doc" md-select-on-focus class="input-sm form-control"
+                            [style]="{'width':'100%'}" />
+                    </div>
+                    <div class="col-sm-2 form-group">
+                        <label>Trọng lượng <b>(*)</b>
+                        </label>
+                        <input #txtWeight [(ngModel)]="shipment.weight" (keyup)="changeWeight($event)"
+                            class="input-sm form-control" [style]="{'width':'100%'}" />
+                    </div>
+                    <div class="col-sm-2 form-group">
+                        <label style="width:100%">TL Quy đổi
+                        </label>
+                        <input #txtTotalBox [(ngModel)]="shipment.calWeight" md-select-on-focus
+                            class="input-sm form-control" [style]="{'width':'100%'}" readonly />
+                    </div>
+                    <div class="col-sm-2 form-group">
+                        <label>Thu hộ(COD)
+                        </label>
+                        <input [ngModel]="shipment.cod" class="input-sm form-control" [style]="{'width':'100%'}" />
+                    </div>
+                    <div class="col-sm-2 form-group">
+                        <label>Khai giá
+                        </label>
+                        <input [ngModel]="shipment.insured" class="input-sm form-control" [style]="{'width':'100%'}" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 form-group">
+                        <label>Địa chỉ giao hàng <b>(*)</b></label>
+                        <input [ngModel]="shipment.shippingAddress" class="input-sm form-control"
+                            [style]="{'width':'100%'}" />
+                    </div>
+                    <div class="col-sm-2 form-group">
+                        <label>Tỉnh/thành <b>(*)</b></label>
+                        <!-- <input [ngModel]="shipment.toProvince?.name" class="input-sm form-control" [style]="{'width':'100%'}" /> -->
+                        <p-dropdown styleClass="select-input form-control" [options]="toProvinces"
+                            (onChange)="onToProvinceChange()" [(ngModel)]="shipment.toProvinceId"
+                            [style]="{'width':'100%'}" filter="filter">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-sm-2 form-group">
+                        <label>Quận/huyện <b>(*)</b></label>
+                        <p-dropdown styleClass="select-input form-control" [options]="toDistricts"
+                            (onChange)="onToDistrictChange()" [(ngModel)]="shipment.toDistrictId"
+                            [style]="{'width':'100%'}" filter="filter"></p-dropdown>
+                    </div>
+                    <div class="col-sm-2 form-group">
+                        <label>Phường/xã
+                        </label>
+                        <p-dropdown styleClass="select-input form-control" [options]="toWards"
+                            [(ngModel)]="shipment.toWardId" [style]="{'width':'100%'}" filter="filter"></p-dropdown>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 form-group">
+                        <label>Nội dung hàng hóa
+                            <b></b>
+                        </label>
+                        <input [(ngModel)]="shipment.content" class="input-sm form-control"
+                            [style]="{'width':'100%'}" />
+                    </div>
+                    <div class="col-sm-6 form-group">
+                        <label>Ghi chú
+                            <b></b>
+                        </label>
+                        <input [(ngModel)]="shipment.cusNote" class="input-sm form-control"
+                            [style]="{'width':'100%'}" />
+                    </div>
+                </div>
+                <div class="row text-center">
+                    <button type="button" class="btn btn-sm btn-primary" *ngIf="isAdd" [disabled]="checkSubmit"
+                        (click)="wareHousingShipment()">
+                        Xác nhận</button>
+                    <button type="button" class="btn btn-sm btn-danger" (click)="refresh()">Hủy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End Modal-->
+<ng-template #templateBox>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button" (click)="hideBox()">
+            <span aria-hidden="true">×</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Dài</label>
+                    <input type="text" id="txtLenght" class="input-sm form-control" [(ngModel)]="boxs.length"
+                        currencyFormatter placeholder="dài" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Rộng</label>
+                    <input type="text" class="input-sm form-control" [(ngModel)]="boxs.width" currencyFormatter
+                        placeholder="rộng" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Cao</label>
+                    <input type="text" class="input-sm form-control" [(ngModel)]="boxs.height" currencyFormatter
+                        placeholder="cao" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>TL {{unit}}</label>
+                    <input type="text" class="input-sm form-control" [(ngModel)]="boxs.weight" currencyFormatter
+                        placeholder="cao" (keydown.Enter)="addBox(false)" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" style="text-align: right">
+                <button class="btn btn-primary" type="button" (click)="addBox(false)">Thêm kiện</button>
+                <button class="btn btn-warning" type="button" (click)="addBox(true)">Thêm kiện & đóng</button>
+                <button class="btn btn-white" data-dismiss="modal" (click)="hideBox()" type="button">Đóng</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p-table [value]="shipment.boxes">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>#</th>
+                            <th>STT</th>
+                            <th>Dài(cm)</th>
+                            <th>Rộng(cm)</th>
+                            <th>Cao(cm)</th>
+                            <th>TL{{unit}}</th>
+                            <th>QĐ{{unit}}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                        <tr>
+                            <td>
+                                <button class="btn btn-danger" type="button" (click)="deleteBox(rowIndex)">Xóa</button>
+                            </td>
+                            <td>{{rowIndex+1}}</td>
+                            <td>{{item.length}}</td>
+                            <td>{{item.width}}</td>
+                            <td>{{item.height}}</td>
+                            <td>{{item.weight}}</td>
+                            <td>{{item.excWeight}}</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                        <tr>
+                            <th>#</th>
+                            <th colspan="2">Tổng TL: {{shipment.weight}} {{unit}}</th>
+                            <th colspan="2">Tổng TLQĐ: {{shipment.excWeight}} {{unit}}</th>
+                            <th colspan="2">Tổng TLTG: {{shipment.calWeight}} {{unit}}</th>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="modal-footer">
+        <button class="btn btn-white" data-dismiss="modal" (click)="hideBox()" type="button">Đóng</button>
+    </div> -->
+</ng-template>
+<!--End Modal-->
+
+<div id="form-print" [hidden]="true">
+    <div *ngIf="idPrint === 'print-create-multi-shipment'">
+        <form-create-shipment></form-create-shipment>
+    </div>
+</div>
+<iframe class="hidden-iframe" name="print-create-multi-shipment"></iframe>

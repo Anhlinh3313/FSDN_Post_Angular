@@ -1,0 +1,127 @@
+<div [id]="formId" style="font-size: 11px !important">
+  <div class="bk-delivery-page" style="padding: 16px;">
+    <div class="page-header">
+      <div class="row" style="border-top: 1px solid black;">
+        <div class="col-xs-6" *ngFor="let item of selectData; index as i" style="border: 1px solid black; border-top: none">
+          <div [style.margin-top]="(i !== 0 && ((i) % 4 === 0) && selectData.length > 4) ? '55px' : 'unset'">
+            <div class="row" style="margin-top: 10px">
+              <div class="col-xs-3">
+                <img class="img-responsive" src="{{logo}}">
+              </div>
+              <div class="col-xs-9">
+                <div><b>{{selectData.companyName}}</b></div>
+                <div>{{selectData.hotline}}</div>
+                <div>{{selectData.centerHubAddress}}</div>
+              </div>
+            </div>
+
+            <div class="barcode-wrapper text-center">
+              <div style="margin-top: 10x">{{selectData.listGoods}} - {{selectData.length}}/{{i + 1}}</div>
+              <div class="barcode" style="margin-bottom: 0px;">
+                <img id="listGoods" />
+              </div>
+              <div>{{item.shipmentNumber}}</div>
+            </div>
+
+            <div class="page-title" style="padding-bottom: 0px;">
+              <strong style="padding-top: 10px; font-size: 12px">BẢNG KÊ PHÁT HÀNG</strong>
+            </div>
+            <div class="text-center">
+              <span>Ngày lập: {{selectData.dateCreate | dateFormat}}</span>
+            </div>
+            <div class="content-wrapper mt-1">
+              <div class="row">
+                <div class="col-xs-12 table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr style="font-size: 12px">
+                        <th>Tổng VĐ</th>
+                        <th>Tổng tiền COD</th>
+                        <th>Tổng cước</th>
+                        <th>Tổng phải thu</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr style="font-size: 12px">
+                        <td>{{selectData.length}}</td>
+                        <td>{{selectData.totalCOD | number}}</td>
+                        <td>{{selectData.totalPrice | number}}</td>
+                        <td>{{selectData.totalPriceAll | number}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" style="padding-bottom: 10px">
+              <div class="col-xs-6">
+                Mã KH: {{item.currentEmp?.code}}
+              </div>
+              <div class="col-xs-6">
+                ĐT: {{item.receiverPhone}}
+              </div>
+              <div class="col-xs-12">
+                Người nhận: {{item.receiverName}}
+              </div>
+              <div class="col-xs-12">
+                Địa chỉ: {{item.addressNoteTo ? item.addressNoteTo + ' -' : ''}} {{item.shippingAddress}}
+              </div>
+              <div class="col-xs-6">
+                Trọng lượng: {{item.weight}} {{envir.unit}}
+              </div>
+              <div class="col-xs-6">
+                Số kiện: {{item.totalBox}}
+              </div>
+              <div class="col-xs-6">
+                Dịch vụ: {{item.service?.name}}
+              </div>
+              <div class="col-xs-6">
+                COD: {{item.cod}}
+              </div>
+              <div class="col-xs-6">
+                HTTT: {{item.paymentType?.name}}
+              </div>
+            </div>
+
+            <div class="row" style="border-top: 1px solid black; padding-bottom: 15px">
+              <div class="col-xs-6 text-center" style="border-right: 1px solid black;">
+                <div style="padding-top: 5px">
+                  <strong class="text-uppercase">Bên lập phiếu</strong>
+                </div>
+                <div>
+                  <strong>{{selectData.userHubName}}</strong>
+                </div>
+                <div>
+                  <strong>Bộ phận {{selectData.userDepartmentName}}</strong>
+                </div>
+                <div>
+                  <span style="font-weight: normal">{{selectData.createdBy}}</span>
+                </div>
+                <div class="signature"></div>
+                <div style="font-weight: normal;">Ngày ..../ ..../{{selectData.getFullYear}}</div>
+              </div>
+              <div class="col-xs-6 text-center" style="position: relative; width: 200px">
+                <div style="padding-top: 5px">
+                  <strong class="text-uppercase">Nhân viên giao nhận</strong>
+                </div>
+                <div>
+                  <strong>{{selectData.empHubName}}</strong>
+                </div>
+                <div>
+                  <strong>Bộ phận {{selectData.empDepartmentName}}</strong>
+                </div>
+                <div>
+                  <span style="font-weight: normal">{{selectData?.currentEmp}}</span>
+                </div>
+                <div class="signature"></div>
+                <div style="font-weight: normal;">Ngày ..../ ..../{{selectData.getFullYear}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <img src="{{logo}}" class="logo-img-background">
+    </div>
+  </div>
+</div>

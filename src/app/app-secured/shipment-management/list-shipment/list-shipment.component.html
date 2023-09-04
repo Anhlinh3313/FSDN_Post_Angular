@@ -1,0 +1,1113 @@
+<app-card>
+    <a class="parentPage">{{parentPage}}</a>
+    <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <!-- <div class="div-flex"> Loại vận đơn</div> -->
+                <tabset>
+                    <tab name="managementlist">
+                        <ng-template tabHeading>
+                            <i class="fa fa-list"></i>Danh sách vận đơn
+                        </ng-template>
+                        <div class="row">
+                            <div class="col-sm-6"
+                                style="margin-top:-30px;float:right;margin-bottom:5px; text-align: right">
+                                <button class="btn btn-primary" (click)="exportCSVNew(dt)">
+                                    <i class="fa fa-file-excel-o"></i> Export Beta
+                                </button>
+                                <button class="btn btn-primary" (click)="exportCSV(dt)">
+                                    <i class="fa fa-file-excel-o"></i> Export
+                                </button>
+                                <button class="btn btn-success" (click)="loadShipmentPaging()">
+                                    <i class="fa fa-eye"></i> Xem
+                                </button>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Khách hàng</label>
+                                    <p-autoComplete #atcSenderCode [(ngModel)]="customerChange"
+                                        [suggestions]="filteredCustomers" [minLength]="1" [forceSelection]="true"
+                                        (completeMethod)="filterCustomers($event)" (onSelect)="changeSender()"
+                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                                        [dropdown]="false" showIcon="false">
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>HT Thanh Toán</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="paymentTypesLS"
+                                        [(ngModel)]="selectedPaymentTypeLS" [style]="{'width':'100%'}" filter="filter"
+                                        (onChange)="changePaymentType()" autofocus tabindex="1">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Từ ngày</label>
+                                    <p-calendar [(ngModel)]="selectedDateFrom" dateFormat="yy/mm/dd"
+                                        [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}">
+                                    </p-calendar>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Đến ngày</label>
+                                    <p-calendar [(ngModel)]="selectedDateTo" dateFormat="yy/mm/dd"
+                                        [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}">
+                                    </p-calendar>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Tỉnh đi</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="fromProvincesLS"
+                                        [(ngModel)]="fromSelectedProvinceLS" [style]="{'width':'100%'}" filter="filter"
+                                        (onChange)="changeFromProvince()" autofocus tabindex="1">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Tỉnh đến</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="toProvincesLS"
+                                        [(ngModel)]="toSelectedProvinceLS" [style]="{'width':'100%'}" filter="filter"
+                                        (onChange)="changeToProvince()" autofocus tabindex="1">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Vận đơn</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="shipmentType"
+                                        [(ngModel)]="shipmentFilterViewModel.isBox" [style]="{'width':'100%'}"
+                                        filter="filter">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Chọn trạng thái</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="statuses"
+                                        [(ngModel)]="shipmentFilterViewModel.groupStatusId" [style]="{'width':'100%'}"
+                                        filter="filter">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <label>{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}}
+                                    Nhận</label>
+                                <p-autoComplete [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                                    (onSelect)="eventOnSelectedFromHub()" [suggestions]="fromHubFilters"
+                                    [(ngModel)]="fromHubSelected" (completeMethod)="eventFilterFromHubs($event)"
+                                    forceSelection="true" [dropdown]="true" [minLength]="1"
+                                    [placeholder]="placeHolderHub">
+                                    <ng-template let-data pTemplate="item">
+                                        <div>{{data}}</div>
+                                    </ng-template>
+                                </p-autoComplete>
+                            </div>
+                            <!-- <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Chọn Dịch Vụ</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="servicesLS"
+                                        [(ngModel)]="selectedServicesLS" [style]="{'width':'100%'}" filter="filter"
+                                        (onChange)="changeServices()" autofocus tabindex="1">
+                                    </p-dropdown>
+                                </div>
+                            </div> -->
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Mã yêu cầu</label>
+                                    <input #requestShipmentNumber id="requestShipmentNumber" type="text"
+                                        placeholder="Mã yêu cầu ..." class="input-sm form-control"
+                                        [(ngModel)]="txtRequestShipmentNumber"
+                                        (keyup.Enter)="changeRequestShipmentNumber(requestShipmentNumber)" />
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <label>Mã vận đơn</label>
+                                <input #txtShipment type="text" placeholder="Mã vận đơn ..."
+                                    class="input-sm form-control" [(ngModel)]="txtShipmentNumber"
+                                    (keyup.Enter)="changeShipmentNumber(txtShipment)" />
+                            </div>
+                            <div class="col-sm-2">
+                                <label>Số tham chiếu</label>
+                                <input #referencesCode type="text" placeholder="Mã vận đơn ..."
+                                    class="input-sm form-control" [(ngModel)]="shipmentFilterViewModel.referencesCode"
+                                    (keyup.Enter)="changeReferencesCode(referencesCode)" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Danh sách thiếu/đủ</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="infoDelivery"
+                                        [(ngModel)]="isExistInfoDelivery" [style]="{'width':'100%'}" filter="filter"
+                                        autofocus tabindex="1">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Có/Không có ảnh</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="imagePickup"
+                                        [(ngModel)]="isExistImagePickup" [style]="{'width':'100%'}" filter="filter"
+                                        autofocus tabindex="1">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <label>Nhân viên</label>
+                                <p-autoComplete [(ngModel)]="user" [suggestions]="filteredUsers" [minLength]="1"
+                                    (completeMethod)="filterUsers($event)" (onSelect)="onSelectedUser()"
+                                    styleClass="select-input form-control none-padding" [dropdown]="false"
+                                    (keydown.Tab)="keyTabUser($event)">
+                                </p-autoComplete>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Đã in</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="printBills"
+                                        [(ngModel)]="shipmentFilterViewModel.isPrintBill" [style]="{'width':'100%'}"
+                                        filter="filter" autofocus tabindex="1">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Lịch sử Upload Excel</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="uploadExcelHistories"
+                                        [(ngModel)]="selectedUploadExcelHistory" [style]="{'width':'100%'}"
+                                        filter="filter" (onChange)="changeUploadExcelHistory()">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Tìm kiếm ...</label>
+                                    <input type="text" placeholder="Nhập chuỗi cần tìm ..." [(ngModel)]="searchText"
+                                        (keyup.enter)="search($event.target.value)" class="input-sm form-control"
+                                        id="filter" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ibox-content">
+                            <div style="float: right;">
+                                <div class="view-shipment">
+                                    Xem:
+                                </div>
+                                <div class="select-ic-shipment">
+                                    <span>
+                                        <i class="fa fa-th-list list" [style.color]="colorList"
+                                            (click)="showListTable()"></i>
+                                    </span>
+                                    <span>
+                                        <i class="fa fa-th-large list" [style.color]="colorGrib"
+                                            (click)="showGribTable()"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div style="justify-content: space-between">
+                                        <a class="btn btn-info" (click)="multiPrintShipment(false, true)">
+                                            <i class="fa fa-print"></i> In Vđ</a>
+                                        <a class="btn btn-info" (click)="multiPrintCodeA4()" style="margin-right: 15px">
+                                            <i class="fa fa-print"></i> In A4</a>
+                                        <a class="btn btn-info" (click)="multiPrintCodeSticker()"
+                                            style="margin-right: 15px">
+                                            <i class="fa fa-print"></i> In BarCode</a>
+                                        <!-- <a class="btn btn-info" (click)="multiPrintShipment(false, false)" style="margin-right: 19px">
+                                            <i class="fa fa-print"></i> In vđ và Phiếu BP</a>
+                                        <a class="btn btn-info" (click)="multiPrintShipment(true, false)" style="margin-right: 19px">
+                                            <i class="fa fa-print"></i> In phiếu BP</a>
+                                        <a class="btn btn-info" (click)="multiPrintBox()" style="margin-right: 19px">
+                                            <i class="fa fa-print"></i> In số kiện</a> -->
+                                        <a class="btn btn-info" (click)="multiPrintBill()" style="margin-right: 15px">
+                                            <i class="fa fa-print"></i> In Label</a>
+                                        <a class="btn btn-danger" *ngIf="isDelete" (click)="onCancelLSMultiply(templateCancels)" style="margin-right: 15px">
+                                            <i class="fa fa-print"></i> Huỷ đơn</a>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <a class="btn btn-warning"
+                                        *ngIf="isEdit && (selectedPaymentTypeLS==2 || selectedPaymentTypeLS==4)"
+                                        (click)="openModelReCalculete(templateReCalculate,dt)"
+                                        style="margin-right: 15px">
+                                        <i class="fa fa-update"></i> Cập nhật cước phí</a>
+                                </div>
+                                <div class="col-sm-2 pull-right">
+                                    <p-checkbox [(ngModel)]="isScanAndPrint" binary="true"></p-checkbox>
+                                    <label> Scan và in</label>
+                                </div>
+                                <div class="col-sm-2 pull-right">
+                                    <p-checkbox [(ngModel)]="reviewChecked" binary="true" (onChange)="onChangeReview()">
+                                    </p-checkbox>
+                                    <label> DS đã chọn (
+                                        <strong>{{(selectedData) ? (selectedData.length) : 0}}</strong> vđ)</label>
+                                </div>
+                            </div>
+                            <div class="row" [hidden]="isListTable">
+                                <div class="col-sm-12">
+                                    <div class="table-responsive">
+                                        <p-table [value]="datasource" [responsive]="true" [paginator]="true"
+                                            [rows]="rowPerPage" [rowsPerPageOptions]="[10,20,50,100]"
+                                            [alwaysShowPaginator]="true" (onPage)="onPageChange($event)"
+                                            [(selection)]="selectedData" [lazy]="true" [totalRecords]="totalRecords"
+                                            (onLazyLoad)="loadLazy($event)" [(first)]="first">
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th style="width:2.2em">
+                                                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                                    </th>
+                                                    <th class="ui-column-title" style="font-weight: bold;">
+                                                        Thông tin yêu cầu
+                                                    </th>
+                                                    <th class="ui-column-title" style="font-weight: bold;">
+                                                        Thông tin người gửi
+                                                    </th>
+                                                    <th class="ui-column-title" style="font-weight: bold;">
+                                                        Thông tin người nhận
+                                                    </th>
+                                                    <th class="ui-column-title" style="font-weight: bold;">
+                                                        Thông tin giá cước
+                                                    </th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-data let-columns="columns">
+                                                <tr [pSelectableRow]="data">
+                                                    <td style="width:2.2em">
+                                                        <p-tableCheckbox [value]="data"></p-tableCheckbox>
+                                                    </td>
+                                                    <td>
+                                                        <div
+                                                            class="ui-grid-table ui-grid-responsive ui-grid-pad request">
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    Mã yêu cầu
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    {{data.shipmentNumber}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    Ngày VĐ
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    {{data.orderDate | dateFormat}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    HTTT
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    {{data.paymentTypeName}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    Dịch vụ
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    {{data.serviceeName}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    Dịch vụ gia tăng
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    {{data.shipmentServiceDVGTs}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    Trạng thái
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    {{data.shipmentStatusName}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    Người nhận thực tế
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    {{data.realRecipientName}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    TG giao hàng
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    {{data.endDeliveryTime}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    Tùy chọn
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    <div
+                                                                        style="display: flex; justify-content: space-between">
+                                                                        <a #detailShipmentTemplate
+                                                                            class="btn btn-success"
+                                                                            [(ngModel)]="data.shipmentNumber"
+                                                                            (click)="onDetailShipment(detailShipmentTemplate, data)"
+                                                                            *ngIf="isEdit && data.shipmentStatusId"
+                                                                            ngDefaultControl>
+                                                                            <i class="fa fa-eye"></i>Xem</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    &nbsp;
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    &nbsp;
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div
+                                                            class="ui-grid-table ui-grid-responsive ui-grid-pad request">
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-3">
+                                                                    Tên
+                                                                </div>
+                                                                <div class="ui-grid-col-9">
+                                                                    {{data.senderName}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-3">
+                                                                    Điện thoại
+                                                                </div>
+                                                                <div class="ui-grid-col-9">
+                                                                    <i class="fa fa-phone"></i>
+                                                                    {{data.senderPhone}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-3">
+                                                                    CTY
+                                                                </div>
+                                                                <div class="ui-grid-col-9">
+                                                                    <i class="fa fa-home"></i>
+                                                                    {{data.companyFrom}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-3">
+                                                                    Địa chỉ
+                                                                </div>
+                                                                <div class="ui-grid-col-9">
+                                                                    <i class="fa fa-map-marker"></i>
+                                                                    {{data.pickingAddress}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-3">
+                                                                    Tỉnh đi
+                                                                </div>
+                                                                <div class="ui-grid-col-9">
+                                                                    {{data.fromProvinceName}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-3">
+                                                                    Trạm lấy
+                                                                </div>
+                                                                <div class="ui-grid-col-9">
+                                                                    {{data.fromHubName}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-3">
+                                                                    Tuyến lấy
+                                                                </div>
+                                                                <div class="ui-grid-col-9">
+                                                                    {{data.fromHubRoutingName}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div
+                                                            class="ui-grid-table ui-grid-responsive ui-grid-pad request">
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-3">
+                                                                    Tên
+                                                                </div>
+                                                                <div class="ui-grid-col-9">
+                                                                    {{data.receiverName}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-3">
+                                                                    Điện thoại
+                                                                </div>
+                                                                <div class="ui-grid-col-9">
+                                                                    <i class="fa fa-phone"></i>
+                                                                    {{data.receiverPhone}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-3">
+                                                                    CTY
+                                                                </div>
+                                                                <div class="ui-grid-col-9">
+                                                                    <i class="fa fa-home"></i>
+                                                                    {{data.companyTo}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-3">
+                                                                    Địa chỉ
+                                                                </div>
+                                                                <div class="ui-grid-col-9">
+                                                                    <i class="fa fa-map-marker"></i>
+                                                                    {{data.shippingAddress}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-3">
+                                                                    Tỉnh đến
+                                                                </div>
+                                                                <div class="ui-grid-col-9">
+                                                                    {{data.toProvinceName}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-3">
+                                                                    Trạm giao
+                                                                </div>
+                                                                <div class="ui-grid-col-9">
+                                                                    {{data.toHubName}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-3">
+                                                                    Tuyến giao
+                                                                </div>
+                                                                <div class="ui-grid-col-9">
+                                                                    {{data.toHubRoutingName}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div
+                                                            class="ui-grid-table ui-grid-responsive ui-grid-pad request">
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    COD
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    {{data.cod | currencyFormat}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    Khai giá
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    {{data.insured | currencyFormat}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    Cước chính
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    {{data.defaultPrice | currencyFormat}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    VAT
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    {{data.vatPrice | currencyFormat}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    PPXD
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    {{data.fuelPrice | currencyFormat}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    VSVX
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    {{data.remoteAreasPrice | currencyFormat}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    Phí DVGT
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    {{data.totalDVGT | currencyFormat}}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex" class="ui-grid-row">
+                                                                <div class="ui-grid-col-5">
+                                                                    Tổng cước
+                                                                </div>
+                                                                <div class="ui-grid-col-7">
+                                                                    {{data.totalPrice | currencyFormat}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="summary">
+                                                <span class="ui-column-title" style="font-weight: bold;">Tổng:
+                                                    {{totalRecords}} vận đơn</span>
+                                            </ng-template>
+                                        </p-table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="row" [hidden]="!isListTable">
+                                    <div class="col-sm-12">
+                                        <p-table #dt [value]="datasource" [responsive]="true" [paginator]="true"
+                                            [rows]="rowPerPage" [rowsPerPageOptions]="[10,20,50,100]"
+                                            (onPage)="onPageChange($event)" [lazy]="true" [totalRecords]="totalRecords"
+                                            (onLazyLoad)="loadLazy($event)" sortMode="single"
+                                            [(selection)]="selectedData" [columns]="columns" scrollHeight="200px"
+                                            paginatorPosition="both" sortField="orderDate" sortOrder="-1">
+                                            <ng-template pTemplate="caption">
+                                                <span class="ui-column-title" style="font-weight: bold;">Tổng:
+                                                    {{totalRecords}} vận đơn</span>
+                                            </ng-template>
+                                            <ng-template pTemplate="header" let-columns>
+                                                <tr>
+                                                    <th style="width: 28px">
+                                                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                                    </th>
+                                                    <th style="width: 200px">Thao tác
+                                                    </th>
+                                                    <th pSortableColumn="id" Class="p-col-numPick">ID
+                                                        <p-sortIcon field="id"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="shipmentNumber" Class="p-col-normal"
+                                                        style="width: 220px">Mã
+                                                        vận đơn
+                                                        <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="requestShipmentId" Class="p-col-normal">Mã
+                                                        bill tổng
+                                                        <p-sortIcon field="requestShipmentId"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="cusNote" Class="p-col-normal">Yêu cầu phục vụ
+                                                        <p-sortIcon field="cusNote"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="orderDate" Class="p-col-date">Ngày VĐ
+                                                        <p-sortIcon field="orderDate"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="paymentType.name" Class="p-col-normal">HTTT
+                                                        <p-sortIcon field="paymentType.name"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="service.name" Class="p-col-normal">Dịch vụ
+                                                        <p-sortIcon field="service.name"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="shipmentServiceDVGTs" Class="p-col-normal">Dịch
+                                                        vụ gia tăng
+                                                        <p-sortIcon field="shipmentServiceDVGTs"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="content" Class="p-col-address">Nội dung HH
+                                                        <p-sortIcon field="content"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="cod" Class="p-col-normal">COD
+                                                        <p-sortIcon field="cod"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="insured" Class="p-col-normal">Khai giá
+                                                        <p-sortIcon field="insured"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="defaultPrice" Class="p-col-normal">Cước chính
+                                                        <p-sortIcon field="defaultPrice"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="vatPrice" Class="p-col-normal">VAT
+                                                        <p-sortIcon field="vatPrice"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="fuelPrice" Class="p-col-normal">PPXD
+                                                        <p-sortIcon field="fuelPrice"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="remoteAreasPrice" Class="p-col-normal">VSVX
+                                                        <p-sortIcon field="remoteAreasPrice"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="totalDVGT" Class="p-col-normal">Phí DVGT
+                                                        <p-sortIcon field="totalDVGT"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="totalPrice" Class="p-col-normal">Tổng cước
+                                                        <p-sortIcon field="totalPrice"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="shipmentStatusName" Class="p-col-orderdate">
+                                                        Trạng
+                                                        thái
+                                                        <p-sortIcon field="shipmentStatusName"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="senderCode" Class="p-col-normal">Mã người
+                                                        gửi
+                                                        <p-sortIcon field="senderCode"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="senderName" Class="p-col-address">Tên người
+                                                        gửi
+                                                        <p-sortIcon field="senderName"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="senderPhone" Class="p-col-normal">Đt gửi
+                                                        <p-sortIcon field="senderPhone"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="companyFrom" Class="p-col-normal">CTY gửi
+                                                        <p-sortIcon field="companyFrom"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="pickingAddress" Class="p-col-max">Địa chỉ gửi
+                                                        <p-sortIcon field="pickingAddress"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="fromProvinceName" Class="p-col-normal">Tỉnh
+                                                        đi
+                                                        <p-sortIcon field="fromProvinceName">
+                                                        </p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="fromHubName" Class="p-col-normal">Trạm đi
+                                                        <p-sortIcon field="fromHubName"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="fromHubRouting.name" Class="p-col-orderdate">
+                                                        Tuyến đi
+                                                        <p-sortIcon field="fromHubRouting.name"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="receiverName" Class="p-col-address">Tên người
+                                                        nhận
+                                                        <p-sortIcon field="receiverName"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="receiverPhone" Class="p-col-normal">Đt nhận
+                                                        <p-sortIcon field="receiverPhone"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="companyTo" Class="p-col-normal">CTY nhận
+                                                        <p-sortIcon field="companyTo"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="addressNoteTo" Class="p-col-max">Địa chỉ
+                                                        nhận chi tiết
+                                                        <p-sortIcon field="addressNoteTo"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="shippingAddress" Class="p-col-max">Địa chỉ
+                                                        nhận
+                                                        <p-sortIcon field="shippingAddress"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="realRecipientName" Class="p-col-normal">Tên
+                                                        người nhận thực tế
+                                                        <p-sortIcon field="realRecipientName"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="endDeliveryTime" Class="p-col-normal">TG giao
+                                                        hàng
+                                                        <p-sortIcon field="endDeliveryTime"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="toProvinceName" Class="p-col-normal">Tỉnh
+                                                        đến
+                                                        <p-sortIcon field="toProvinceName"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="toHubName" Class="p-col-normal">Trạm đến
+                                                        <p-sortIcon field="toHubName"></p-sortIcon>
+                                                    </th>
+                                                    <th pSortableColumn="toHubRoutingName" Class="p-col-orderdate">
+                                                        Tuyến đến
+                                                        <p-sortIcon field="toHubRoutingName"></p-sortIcon>
+                                                    </th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-data let-columns="columns">
+                                                <tr [ngStyle]="{'color': colorRow(data)}" [pSelectableRow]="data">
+                                                    <td style="width: 2.25em">
+                                                        <p-tableCheckbox [value]="data"></p-tableCheckbox>
+                                                    </td>
+                                                    <td style="width: 200px">
+                                                        <div style="display: flex;">
+                                                            <!-- <button class="btn btn-warning" [(ngModel)]="data.shipmentNumber"
+                                                                (click)="onDetailShipment(data)" *ngIf="isEdit && (data.shipmentStatusId != deliveryCompleteStatus||data.paymentTypeId == paymentTypeTTCT||!data.paymentTypeId)"
+                                                                ngDefaultControl>
+                                                                <i class="fa fa-edit"></i> Sửa</button> -->
+                                                            <button class="btn btn-success"
+                                                                [(ngModel)]="data.shipmentNumber"
+                                                                (click)="onViewVersion(data)"
+                                                                *ngIf="data.isExistVersion" ngDefaultControl>
+                                                                <i class="fa fa-eye"></i> Version</button>
+                                                            <!-- <button class="btn btn-danger"
+                                                                (click)="onCancelLS(templateCancel, data)"
+                                                                *ngIf="isDelete">
+                                                                <i class="fa fa-trash"></i> Hủy</button> -->
+                                                            <button class="btn btn-primary"
+                                                                (click)="onEnterSearchGB(data.shipmentNumber)"
+                                                                *ngIf="isDelete">
+                                                                <i class="fa fa-eye"></i> Xem</button>
+                                                        </div>
+                                                    </td>
+                                                    <td class="p-col-numPick">
+                                                        {{data.id}}
+                                                    </td>
+                                                    <td class="p-col-normal" style="width: 220px">
+                                                        {{data.shipmentNumber}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.reShipmentNumber}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.cusNote}}
+                                                    </td>
+                                                    <td class="p-col-date">
+                                                        {{data.orderDate | dateFormat}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.paymentTypeName}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.serviceName}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.serviceDVGTCodes}}
+                                                    </td>
+                                                    <td class="p-col-address one-row">
+                                                        {{data.content}}
+                                                    </td>
+                                                    <td class="p-col-address one-row">
+                                                        {{data.cod | currencyFormat}}
+                                                    </td>
+                                                    <td class="p-col-address one-row">
+                                                        {{data.insured | currencyFormat}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.defaultPrice | currencyFormat}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.vatPrice | currencyFormat}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.fuelPrice | currencyFormat}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.remoteAreasPrice | currencyFormat}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.totalDVGT | currencyFormat}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.totalPrice | currencyFormat}}
+                                                    </td>
+                                                    <td class="p-col-orderdate">
+                                                        {{data.shipmentStatusName}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.senderCode}}
+                                                    </td>
+                                                    <td class="p-col-address">
+                                                        {{data.senderName}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.senderPhone}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.companyFrom}}
+                                                    </td>
+                                                    <td class="p-col-max one-row">
+                                                        {{data.pickingAddress}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.fromProvinceName}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.fromHubName}}
+                                                    </td>
+                                                    <td class="p-col-orderdate">
+                                                        {{data.fromHubRoutingName}}
+                                                    </td>
+                                                    <td class="p-col-address">
+                                                        {{data.receiverName}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.receiverPhone}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.companyTo}}
+                                                    </td>
+                                                    <td class="p-col-max one-row">
+                                                        {{data.addressNoteTo}}
+                                                    </td>
+                                                    <td class="p-col-max">
+                                                        {{data.shippingAddress}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.realRecipientName}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.endDeliveryTime | dateFormat}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.toProvinceName}}
+                                                    </td>
+                                                    <td class="p-col-normal">
+                                                        {{data.toHubName}}
+                                                    </td>
+                                                    <td class="p-col-orderdate">
+                                                        {{data.toHubRoutingName}}
+                                                    </td>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="summary">
+                                                <span class="ui-column-title" style="font-weight: bold;">Tổng:
+                                                    {{totalRecords}} vận đơn</span>
+                                            </ng-template>
+                                        </p-table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </tab>
+                </tabset>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Start Modal rEcALCULaTE-->
+<ng-template #templateReCalculate>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button"
+            (click)="bsModalRef.hide()">
+            <span aria-hidden="true">×</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">CẬP NHẬT CƯỚC PHÍ</h5>
+    </div>
+    <div class="modal-body" style="padding-top: 10px;">
+        <div class="row">
+            <div class="col-sm-12">
+                <label class="label-control">Cập nhật cước phí cho: {{this.totalRecords}} vận đơn.</label>
+            </div>
+            <div *ngIf="isReCalculate" class="col-sm-12" style="margin-bottom: 15px">
+                <p-progressBar [value]="percentReCal"></p-progressBar>
+            </div>
+            <div class="col-sm-4" *ngIf="isReCalculate"><label class="label-control">Đã tính: {{totalReCal}}</label>
+            </div>
+            <div class="col-sm-4" *ngIf="isReCalculate"><label class="label-control isDanger">Thất bại:
+                    {{totalReCalFail}}</label></div>
+            <div class="col-sm-4" *ngIf="isReCalculate"><label class="label-control isPickupFail">Thành công:
+                    {{totalReCalSuccess}}</label></div>
+            <div class="col-sm-12" style="text-align: center;margin-top: 10px" *ngIf="totalReCal>=totalRecords">
+                <button class="btn btn-success" (click)="bsModalRef.hide()" type="button"><i class="fa fa-check"></i>
+                    Hoàn tất</button>
+            </div>
+            <div style="margin-top: 10px" class="col-sm-12" *ngIf="totalReCal>=totalRecords && listError">
+                <label class="label-control isDanger">Vận đơn cập nhật lỗi:
+                    {{listError}}</label>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-info" [disabled]="isReCalculate" (click)="reCalculateShipment(dt)" type="button">Xác
+            nhận</button>
+        <button class="btn btn-white" [disabled]="isReCalculate" data-dismiss="modal" (click)="bsModalRef.hide()"
+            type="button">Đóng</button>
+    </div>
+</ng-template>
+<!--End Modal-->
+
+<!--Start Modal Cancel Shipment-->
+<ng-template #templateCancel>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button"
+            (click)="bsModalRefCancel.hide()">
+            <span aria-hidden="true">×</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5>
+    </div>
+    <div class="modal-body" style="padding-top: 10px;">
+        <div class="row">
+            <label class="label-control">Lý do hủy vđ</label>
+            <div class="input-group" style="width: 100%;">
+                <textarea placeholder="Nhập lý do ..." [(ngModel)]="txtNoteCancel" class="input-sm form-control"
+                    cols="50" rows="3"></textarea>
+            </div>
+            <h4> Bạn có chắc chăn muốn hủy vđ  <strong>{{shipmetCancel?.shipmentNumber}}</strong> không?</h4>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-danger" type="button" (click)="confirmCancelShipment()">Xác nhận</button>
+        <button class="btn btn-white" data-dismiss="modal" (click)="bsModalRefCancel.hide()" type="button">Đóng</button>
+    </div>
+</ng-template>
+<!--End Modal-->
+<!--Start Modal Cancel Shipments-->
+<ng-template #templateCancels>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button"
+            (click)="bsModalRefCancel.hide()">
+            <span aria-hidden="true">×</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5>
+    </div>
+    <div class="modal-body" style="padding-top: 10px;">
+        <div class="row">
+            <label class="label-control">Lý do hủy vđ</label>
+            <div class="input-group" style="width: 100%;">
+                <textarea placeholder="Nhập lý do ..." [(ngModel)]="txtNoteCancel" class="input-sm form-control"
+                    cols="50" rows="3"></textarea>
+            </div>
+            <h4> Bạn có chắc chăn muốn hủy <strong>{{totalShipmentCancel}}</strong> vđ không?</h4>
+        </div>
+        <div>
+            <p-progressBar [value]="value"></p-progressBar>
+        </div>
+        <div *ngIf="isConfirmCancels">
+            <p class="f-w-b m-b-5 m-t-5" style="color: #28a745">Đã huỷ {{countSuccessCancelShipment}} / {{totalShipmentCancel}} vđ thành công!</p>
+            <p *ngIf="countErrorCancelShipment > 0" class="text-danger f-w-b m-b-5">
+                Huỷ không thành công {{countErrorCancelShipment}} vđ!
+                <span (click)="exportExcelCancels()" class="text-excel">Xuất Excel</span>
+            </p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-danger" *ngIf="!isClickCancels" type="button" (click)="confirmCancelShipments()">Xác nhận</button>
+        <button class="btn btn-white" data-dismiss="modal" (click)="bsModalRefCancel.hide()" type="button">Đóng</button>
+    </div>
+</ng-template>
+<!--End Modal-->
+
+
+
+<!--Start Modal Cancel Shipment-->
+<ng-template #templateInsured>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button"
+            (click)="bsModalRef.hide()">
+            <span aria-hidden="true">×</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <!-- <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5> -->
+    </div>
+    <div class="modal-body" style="padding-top: 10px;">
+        <div class="row">
+            <label class="label-control">Mã khách hàng nhận</label>
+            <div class="input-group" style="width: 100%;">
+                <input id="txtReceiverCode" #txtReceiverCode autofocus placeholder="Mã khách hàng nhận"
+                    [(ngModel)]="customerReceipt" class="input-sm form-control"
+                    (keydown.Tab)="keyTabCustomerReceipt($event)" />
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()" type="button">Đóng</button>
+        <!-- <button class="btn btn-danger" type="button" (click)="confirmCancelShipment()">Hủy</button> -->
+    </div>
+</ng-template>
+<!--End Modal-->
+
+<p-dialog header="Cảnh báo" [(visible)]="displayNoTotalPrice" [responsive]="true" [positionTop]="200" [width]="350"
+    [minWidth]="200">
+    <span>Tổng cước = 0 , bạn có muốn lưu vđ này không?</span>
+    <p-footer>
+        <button class="btn btn-success" type="button" pButton (click)="createShipmentNoTotalPrice()">
+            Có
+        </button>
+        <button class="btn btn-success" type="button" pButton (click)="displayNoTotalPrice=false">
+            Không
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!-- cảnh báo tạo vận đơn hỗ trợ -->
+<p-dialog header="Cảnh báo" [(visible)]="displayStatusDeliveryComplete" [responsive]="true" [positionTop]="200"
+    [width]="350" [minWidth]="200">
+    <span>Chỉ hỗ trợ đơn giao hàng thành công!</span>
+    <p-footer>
+        <button class="btn btn-success" type="button" pButton (click)="displayStatusDeliveryComplete=false">
+            Đóng
+        </button>
+    </p-footer>
+</p-dialog>
+<p-dialog header="Cảnh báo" [(visible)]="displayTotalShipment" [responsive]="true" [positionTop]="200" [width]="350"
+    [minWidth]="200">
+    <span>Đã hỗ trợ: {{data.totalShipment}} lần, bạn có muốn hỗ trợ tiếp không?</span>
+    <p-footer>
+        <button class="btn btn-success" type="button" pButton (click)="displayTotalShipment=false">
+            Có
+        </button>
+        <button class="btn btn-success" type="button" pButton (click)="refresh(); displayTotalShipment=false">
+            Không
+        </button>
+    </p-footer>
+</p-dialog>
+<p-dialog header="Cảnh báo" [(visible)]="displayCustomer" [responsive]="true" [positionTop]="200" [width]="350"
+    [minWidth]="200" [attr.minY]="70">
+    <span>Chức năng hỗ trợ chỉ được áp dụng cho khách hợp đồng</span>
+    <p-footer>
+        <button class="btn btn-success" type="button" pButton (click)="displayCustomer=false">
+            Đóng
+        </button>
+    </p-footer>
+</p-dialog>
+<p-dialog header="Cảnh báo" [(visible)]="displayInsured" [responsive]="true" [positionTop]="200" [width]="350"
+    [minWidth]="200">
+    <span>Giá trị trả về bằng 0, bạn có chắc chắn muốn tạo vđ hỗ trợ này không?</span>
+    <p-footer>
+        <button class="btn btn-success" type="button" pButton (click)="clickSaveShipmentSP()">
+            <i class="fa fa-check"></i>Lưu
+        </button>
+        <button class="btn btn-success" type="button" pButton (click)="displayInsured=false">
+            <i class="fa fa-close"></i>Đóng
+        </button>
+    </p-footer>
+</p-dialog>
+<app-image-pick-up [hidden]="true"></app-image-pick-up>
+
+<!-- print -->
+<div id="form-print" [hidden]="true">
+    <div *ngIf="idPrint === 'print-code-create-shipment'">
+        <form-print-code-create-shipment></form-print-code-create-shipment>
+    </div>
+    <div *ngIf="idPrint === 'print-create-multi-shipment'">
+        <form-create-shipment></form-create-shipment>
+    </div>
+    <div *ngIf="idPrint === 'print-code-a4-detail-shipment'">
+        <form-print-code-a4-detail-shipment></form-print-code-a4-detail-shipment>
+    </div>
+    <div *ngIf="idPrint === 'print-code-sticker-detail-shipment'">
+        <form-print-code-sticker-detail-shipment></form-print-code-sticker-detail-shipment>
+    </div>
+    <div *ngIf="idPrint === 'print-create-multi-box'">
+        <form-print-create-multi-box></form-print-create-multi-box>
+    </div>
+    <div *ngIf="idPrint === 'print-multi-bill'">
+        <form-print-bill></form-print-bill>
+    </div>
+</div>
+<iframe class="hidden-iframe" name="print-code-create-shipment"></iframe>
+<iframe class="hidden-iframe" name="print-create-multi-shipment"></iframe>
+<iframe class="hidden-iframe" name="print-code-a4-detail-shipment"></iframe>
+<iframe class="hidden-iframe" name="print-code-sticker-detail-shipment"></iframe>
+<iframe class="hidden-iframe" name="print-create-multi-box"></iframe>
+<iframe class="hidden-iframe" name="print-multi-bill"></iframe>
+<!-- cvbvc -->

@@ -1,0 +1,267 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <!-- <h5>{{currentPage}}</h5> -->
+                <!-- <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div> -->
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <button class="btn btn-success" (click)="refresh()">
+                            <i class="fa fa-refresh"></i>&nbsp;refresh
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label style="width: 5px;height: 31px;"></label>
+                            <a *ngIf="isAdd" class="btn btn-primary" (click)="openModel(template)">
+                                <i class="fa fa-file-o"></i> Tạo mới</a>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Chọn nhớm mức cân</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="weight" [(ngModel)]="selectedWeight" [style]="{'width':'100%'}"
+                                filter="filter" (onChange)="changeWeight()" autofocus tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label></label>
+                            <div class="input-group">
+                                <input type="text" placeholder="Nhập chuỗi cần tìm ..." (input)="dt.filterGlobal($event.target.value, 'contains')" class="input-sm form-control"
+                                    id="filter" />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-sm btn-primary"> Tìm kiếm</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <!-- <p-dataTable [value]="listData" [paginator]="true" rows="10" [responsive]="true" [rowsPerPageOptions]="[10,20,50,100]" [globalFilter]="filterGb"
+                                [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="loadLazy($event)" [(first)]="first">
+                                <p-column field="code" header="Mã" [sortable]="true"></p-column>
+                                <p-column field="weightGroup.name" header="Nhóm mức cân" [sortable]="true"></p-column>
+                                <p-column field="weightFrom" header="Từ mức cân" [sortable]="true"></p-column>
+                                <p-column field="weightTo" header="Đến mức cân" [sortable]="true"></p-column>
+                                <p-column field="weightPlus" header="Mức cộng giá" [sortable]="false"></p-column>
+                                <p-column field="formula.name" header="Công thức tính" [sortable]="true"></p-column>
+                                <p-column styleClass="col-button2">
+                                    <ng-template let-data="rowData" pTemplate="body">
+                                        <a *ngIf="isEdit" class="btn btn-info" (click)="openModel(template, data)">
+                                            <i class="fa fa-paste"></i> Sửa</a>
+                                        <a *ngIf="isDelete" class="btn btn-danger" (click)="openDeleteModel(templateDelete, data)">
+                                            <i class="fa fa-trash-o"></i>
+                                            <span class="bold">Xóa</span>
+                                        </a>
+                                    </ng-template>
+                                </p-column>
+                            </p-dataTable> -->
+                            <p-table #dt [value]="listData" [responsive]="true" [lazy]="true" (onLazyLoad)="loadLazy($event)" [totalRecords]="totalRecords"
+                                [responsive]="true" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50,100]">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th [pSortableColumn]="'code'">Mã
+                                            <p-sortIcon [field]="'code'"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="weightGroup.name">Tên
+                                            <p-sortIcon [field]="'weightGroup.name'"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="weightFrom">Từ mức cân
+                                            <p-sortIcon [field]="'weightFrom'"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="weightTo">Đến mức cân
+                                            <p-sortIcon [field]="'weightTo'"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="weightPlus">Mức cộng giá
+                                            <p-sortIcon [field]="'weightPlus'"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="formula.name">Công thức tính
+                                            <p-sortIcon [field]="'formula.name'"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="structure.name">Loại hàng hóa
+                                            <p-sortIcon [field]="'structure.name'"></p-sortIcon>
+                                        </th>
+                                        <th style="width:70px" pSortableColumn="isWeightCal">Theo TL/Items
+                                            <p-sortIcon [field]="'isWeightCal'"></p-sortIcon>
+                                        </th>
+                                        <th style="width:100px" class="text-center">Giá trị từ</th>
+                                        <th style="width:100px" class="text-center">Giá trị đến</th>
+                                        <th style="width: 65px">
+                                            <a class="btn btn-info" (click)="refresh()">
+                                                <i class="fa fa-refresh"></i>
+                                            </a>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-data>
+                                    <tr *ngIf="!data.isAuto">
+                                        <td>{{data.code}}</td>
+                                        <td>{{data.weightGroup.name}}</td>
+                                        <td>{{data.weightFrom}}</td>
+                                        <td>{{data.weightTo}}</td>
+                                        <td>{{data.weightPlus}}</td>
+                                        <td>{{data.formula.name}}</td>
+                                        <td>{{data.structure?.name}}</td>
+                                        <td class="text-center">
+                                            <input type="checkbox" name="isWeightCal" [(ngModel)]="data.isWeightCal" />
+                                        </td>
+                                        <td>{{data.valueFrom}}</td>
+                                        <td>{{data.valueTo}}</td>
+                                        <td style="width: 65px">
+                                            <a *ngIf="isEdit" class="btn btn-info" (click)="openModel(template, data)">
+                                                <i class="fa fa-paste"></i> Xem</a>
+                                            <a *ngIf="isDelete" class="btn btn-danger" (click)="openDeleteModel(templateDelete, data)">
+                                                <i class="fa fa-trash-o"></i>
+                                                <span class="bold">Xóa</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="11">
+                                            Không tìm thấy dữ liệu
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Start Modal-->
+<ng-template #template>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5>
+    </div>
+    <div class="modal-body" style="overflow:-webkit-paged-x;" *ngIf="data">
+        <div class="col-md-12 no-padding">
+            <div class="form-group">
+                <label>Mã</label>
+                <input type="text" placeholder="Nhập mã" class="input-sm form-control" id="code" [(ngModel)]="data.code" autofocus />
+            </div>
+            <div class="form-group">
+                <label>Nhóm mức cân</label>
+                <!-- <select class="select-input form-control" [compareWith]="compareFn" [(ngModel)]="selectedWeightGroup">
+                    <option *ngFor="let item of weightGroups" [ngValue]="item">{{item.name}}</option>
+                </select> -->
+                <p-dropdown styleClass="select-input form-control" [options]="weightGroups" [(ngModel)]="selectedWeightGroup" [style]="{'width':'100%'}"
+                    filter="filter" autofocus tabindex="1">
+                </p-dropdown>
+            </div>
+            <div class="form-group">
+                <label>Công thức tính</label>
+                <!-- <select class="select-input form-control" [compareWith]="compareFn" [(ngModel)]="selectedFormula">
+                    <option *ngFor="let item of formulas" [ngValue]="item">{{item.name}}</option>
+                </select> -->
+                <p-dropdown styleClass="select-input form-control" [options]="formulas" [(ngModel)]="selectedFormula" [style]="{'width':'100%'}"
+                    filter="filter" autofocus tabindex="1">
+                </p-dropdown>
+            </div>
+            <div class="form-group">
+                <label>Loại hàng hóa</label>
+                <!-- <p-dropdown [options]="structure" [(ngModel)]="selectedStructure" [style]="{'width':'100%'}"></p-dropdown> -->
+                <p-dropdown styleClass="select-input form-control" [options]="structure" [(ngModel)]="selectedStructure" [style]="{'width':'100%'}"
+                    filter="filter" autofocus tabindex="1">
+                </p-dropdown>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>MC từ</label>
+                        <input type="number" min=0 placeholder="Nhập mức cân từ" class="input-sm form-control" [(ngModel)]="data.weightFrom" id="weightFrom"
+                        />
+                    </div>
+                    <div class="col-md-3">
+                        <label>Đến MC</label>
+                        <input type="number" min=0 placeholder="Nhập mức cân đến" class="input-sm form-control" [(ngModel)]="data.weightTo" id="weightTo"
+                        />
+                    </div>
+                    <div class="col-md-3">
+                        <label>Mức công thêm</label>
+                        <input type="number" min=0 placeholder="Nhập mức công giá" class="input-sm form-control" [(ngModel)]="data.weightPlus" id="pricePlus"
+                        />
+                    </div>
+                    <div class="col-md-3">
+                        <label for="isWeightCal">Theo TL/Items</label>
+                        <br />
+                        <input type="checkbox" name="isWeightCal" [(ngModel)]="data.isWeightCal" id="isWeightCal" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Giá trị từ</label>
+                        <input type="number" min=0 placeholder="Giá trị từ" class="input-sm form-control" [(ngModel)]="data.valueFrom" id="valueFrom"
+                        />
+                    </div>
+                    <div class="col-md-3">
+                        <label>Giá trị đến</label>
+                        <input type="number" min=0 placeholder="Giá trị đến" class="input-sm form-control" [(ngModel)]="data.valueTo" id="valueTo"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button *ngIf="isEdit" type="button" class="btn btn-primary" (click)="save()">Lưu</button>
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+    </div>
+</ng-template>
+
+<ng-template #templateDelete>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+    </div>
+    <div class="modal-body" style="overflow:hidden;" *ngIf="data">
+        <div class="col-md-12 no-padding">
+            <h4>Bạn có chắc chắn muốn xoá
+                <b>&quot;{{data.code}}&quot;</b>?</h4>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button *ngIf="isDelete" type="button" class="btn btn-danger" (click)="delete()">Xoá</button>
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+    </div>
+</ng-template>
+<!--End Modal-->

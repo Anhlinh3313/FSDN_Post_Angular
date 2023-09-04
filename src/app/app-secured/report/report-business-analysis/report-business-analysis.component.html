@@ -1,0 +1,153 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <div class="ibox-tools">
+                    <p-header>
+                        <div>
+                            <button type="button" class="btn btn-primary" (click)="exportCSV(dt)">
+                                <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+                            <button type="button" class="btn btn-success" (click)="loadData()">
+                                <i class="fa fa-refresh"></i>&nbsp;Xem</button>
+                        </div>
+                    </p-header>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Từ ngày</label>
+                        <div class="form-group">
+                            <p-calendar [(ngModel)]="filterModel.dateFrom" [showIcon]="false" hourFormat="24"
+                                dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                                [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Đến ngày</label>
+                        <div class="form-group">
+                            <p-calendar [(ngModel)]="filterModel.dateTo" [showIcon]="false" hourFormat="24"
+                                dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                                [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Khách hàng</label>
+                        <p-autoComplete [(ngModel)]="customerChange" [suggestions]="filteredCustomers" [minLength]="1"
+                            (completeMethod)="filterCustomers($event)" (onSelect)="changeSender()"
+                            styleClass="select-input form-control none-padding" [dropdown]="false"
+                            (keydown.Tab)="keyTabSender($event)">
+                        </p-autoComplete>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Tỉnh thành</label>
+                            <p-multiSelect [options]="provinces" [(ngModel)]="multiSelectProvinces"
+                                defaultLabel="Chọn tỉnh thành" selectedItemsLabel="{0} Tỉnh thành đã chọn"
+                                [style]="{'width':'100%'}" (onChange)="changeFilter()">
+                            </p-multiSelect>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Nhân viên giao hàng</label>
+                        <p-dropdown [options]="employees" [(ngModel)]="selectedUserId"
+                            [styleClass]="'form-control input-sm'" [style]="{'width':'100%'}" filter="true"
+                            (onChange)="changeFilter()">
+                        </p-dropdown>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <p-table #dt [value]="listData" [paginator]="true" rows="10"
+                                [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true" [totalRecords]="totalRecords"
+                                [responsive]="true" [scrollable]="true" scrollHeight="500px">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width:40px">STT</th>
+                                        <th class="p-col-normal">Người gửi</th>
+                                        <th class="p-col-normal">Tỉnh thành đến</th>
+                                        <th class="p-col-normal">Tổng số vận đơn</th>
+                                        <th class="p-col-normal">Tổng Số tiền COD</th>
+                                        <th class="p-col-normal">Tổng Trị giá đơn hàng</th>
+                                        <th class="p-col-normal">Tổng phí dịch vụ</th>
+                                        <th class="p-col-normal">Tổng trọng lượng </th>
+                                        <th class="p-col-normal">Tổng Số kiện </th>
+                                        <th class="p-col-normal">Số đơn hàng giao thành công </th>
+                                        <th class="p-col-normal">Số đơn giao lần 1</th>
+                                        <th class="p-col-normal">Số đơn giao lần 2</th>
+                                        <th class="p-col-normal">Số đơn giao lần 3</th>
+                                        <th class="p-col-normal">Số đơn hoàn hàng</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                                    <tr>
+                                        <td style="width:40px; text-align: center;">{{rowIndex+1}}</td>
+                                        <td class="p-col-normal">{{rowData.code}}</td>
+                                        <td class="p-col-normal">{{rowData.toProvince}}</td>
+                                        <td class="p-col-normal">{{rowData.totalShipment}}</td>
+                                        <td class="p-col-normal">{{rowData.totalCOD | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalInsured | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalAmount | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalWeight}}</td>
+                                        <td class="p-col-normal">{{rowData.totalBox}}</td>
+                                        <td class="p-col-normal">{{rowData.totalShipmentDeliveryComplete}}</td>
+                                        <td class="p-col-normal">{{rowData.l1}}</td>
+                                        <td class="p-col-normal">{{rowData.l2}}</td>
+                                        <td class="p-col-normal">{{rowData.l3}}</td>
+                                        <td class="p-col-normal">{{rowData.totalShipmentReturn}}</td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer" let-columns>
+                                    <tr>
+                                        <th style="width:40px"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal">{{sumValue(listData,'totalShipment') | number}}</th>
+                                        <th class="p-col-normal">{{sumValue(listData,'totalCOD') | number}}</th>
+                                        <th class="p-col-normal">{{sumValue(listData,'totalInsured') | number}}</th>
+                                        <th class="p-col-normal">{{sumValue(listData,'totalAmount') | number}}</th>
+                                        <th class="p-col-normal">{{sumValue(listData,'totalWeight') | number}}</th>
+                                        <th class="p-col-normal">{{sumValue(listData,'totalBox') | number}}</th>
+                                        <th class="p-col-normal">{{sumValue(listData,'totalShipmentDeliveryComplete') | number}}</th>
+                                        <th class="p-col-normal">{{sumValue(listData,'l1') | number}}</th>
+                                        <th class="p-col-normal">{{sumValue(listData,'l2') | number}}</th>
+                                        <th class="p-col-normal">{{sumValue(listData,'l3') | number}}</th>
+                                        <th class="p-col-normal">{{sumValue(listData,'totalShipmentReturn') | number}}</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td [attr.colspan]="'32'">
+                                            Không tìm thấy dữ liệu
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="summary">
+                                    <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecords}} vận
+                                        đơn | Tổng cước chưa TT: {{totalRecevice | number}} Đ</span>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

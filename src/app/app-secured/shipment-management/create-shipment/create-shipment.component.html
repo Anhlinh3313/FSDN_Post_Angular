@@ -1,0 +1,1004 @@
+<app-card>
+    <a class="parentPage">{{parentPage}}</a>
+    <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <!-- <div class="div-flex"> Loại vận đơn</div> -->
+                <tabset>
+                    <div *ngIf="isActiveTabOne" class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-10"></div>
+                            <div class="col-sm-2" style="margin-top: -30px; padding-right: 0px;">
+                                <select class="select-input form-control" [(ngModel)]="selectedShipmentType"
+                                    (change)="onChangeTypeShipment()" [disabled]="isEditLS">
+                                    <option *ngFor="let item of shipmentTypes" [ngValue]="item">{{item.label}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <tab name="createlist" [active]="isActiveTabOne" (select)="onSelectTabOne()">
+                        <ng-template tabHeading>
+                            <i class="fa fa-edit"></i>{{titleTabOne}}
+                        </ng-template>
+                        <div class="panel-body">
+                            <!-- form create shipment -->
+                            <div *ngIf="!isViewVersion || isShowItemVersion">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group" id="data_1">
+                                            <label>
+                                                Ngày gửi <b>(*)</b>
+                                            </label>
+                                            <div class="form-group">
+                                                <p-calendar [(ngModel)]="data.orderDate" [showIcon]="false"
+                                                    hourFormat="24" dateFormat="yy/mm/dd" [showTime]="true">
+                                                </p-calendar>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Mã vận đơn</label>
+                                            <input id="idShipmentNumber" #shipmentNumberTxt #input="ngModel"
+                                                name="input" class="input-sm form-control" placeholder="Mã vận đơn"
+                                                type="text" pattern="[0-9a-zA-Z]+" [(ngModel)]="inputShipmentNumber"
+                                                (keydown.Tab)="eventTabShipmentNumber()"
+                                                (keydown.Enter)="eventTabShipmentNumber()" autofocus>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>NV lấy hàng</label>
+                                            <p-autoComplete #atcPickupUserCode
+                                                [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                                                (onSelect)="eventOnSelectedPickUser()" [suggestions]="pickUserFilters"
+                                                [(ngModel)]="pickUserSelected"
+                                                (completeMethod)="eventFilterPickUsers($event)" forceSelection="true"
+                                                [dropdown]="false" [minLength]="1" placeholder="Nv lấy hàng"
+                                                (keydown.Tab)="keyTabPickuser($event)">
+                                                <ng-template let-data pTemplate="item">
+                                                    <div>{{data}}</div>
+                                                </ng-template>
+                                            </p-autoComplete>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2" *ngIf="this.selectedShipmentType?.value !== 1">
+                                        <div class="form-group">
+                                            <label>Mã vận đơn liên quan</label>
+                                            <div class="form-group">
+                                                <input id="txtShipmentNumberSupport" #txtShipmentNumberSupport autofocus
+                                                    placeholder="Mã vận đơn liên quan" [(ngModel)]="scanShipmentNumber"
+                                                    (change)="scanAndCreateShipmentNumber(txtShipmentNumberSupport)"
+                                                    class="input-sm form-control" [disabled]="isEditLS"
+                                                    [style]="{'width':'100%'}" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2" *ngIf="this.selectedShipmentType?.value == 1">
+                                        <div class="form-group">
+                                            <label>Mã yêu cầu</label>
+                                            <input class="input-sm form-control" placeholder="Mã yêu cầu" type="text"
+                                                (change)="checkRequestShipmentId()" [(ngModel)]="requestShipmentCode">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2" *ngIf="this.selectedShipmentType?.value == 1">
+                                        <div class="form-group">
+                                            <label>Mã tham chiếu</label>
+                                            <input class="input-sm form-control" placeholder="Nhập mã vận đơn"
+                                                type="text" [(ngModel)]="shopCode">
+                                        </div>
+                                    </div>
+                                    <div *ngIf="data.pickupImagePath && data.pickupImagePath.trim() !== ''"
+                                        class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Hình ảnh nhận hàng</label>
+                                            <div>
+                                                <a class="btn btn-primary" (click)="openModel(data)">
+                                                    <i class="fa fa-eye"></i> Xem
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="">
+                                            <label class="label-primary"
+                                                style="display:block;padding:3px 15px">{{stringInfoFrom}}
+                                                <div class="pull-right">
+                                                    <span>
+                                                        <p-checkbox [(ngModel)]="isPickupInHub" binary="true"
+                                                            tabindex="2" (onChange)="changePickupInHub()"></p-checkbox>
+                                                        Nhận hàng tại bưu cục
+                                                    </span>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 form-group">
+                                                <label>Mã cty
+                                                    <b>(*)</b>
+                                                </label>
+                                                <p-autoComplete #atcSenderCode [(ngModel)]="customer"
+                                                    [suggestions]="filteredCustomers" [minLength]="1"
+                                                    (completeMethod)="filterCustomers($event)"
+                                                    (onSelect)="onSelectedCustomer()"
+                                                    styleClass="select-input form-control none-padding"
+                                                    [dropdown]="false" (keydown.Tab)="keyTabSender($event)">
+                                                </p-autoComplete>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>SĐT liên hệ
+                                                        <b>(*)</b>
+                                                    </label>
+                                                    <input [(ngModel)]="senderPhone"
+                                                        style="padding: 3px 6px; font-weight: normal; width: 100%"
+                                                        appPhoneNumber placeholder="SĐT liên hệ" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Tên người liên hệ
+                                                        <b>(*)</b>
+                                                    </label>
+                                                    <input [(ngModel)]="senderName"
+                                                        style="padding: 3px 6px; font-weight: normal; width: 100%"
+                                                        placeholder="Tên người liên hệ" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <label>Tên công ty </label>
+                                                    <input [(ngModel)]="senderCompany"
+                                                        style="padding: 3px 6px; font-weight: normal; width: 100%"
+                                                        placeholder="Tên công ty" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Địa chỉ chi tiết</label>
+                                                    <input class="input-sm form-control"
+                                                        placeholder="Phòng ban, toà nhà..." type="text"
+                                                        [(ngModel)]="data.addressNoteFrom">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label>Địa chỉ
+                                                        <b>(*)</b>
+                                                    </label>
+                                                    <input [(ngModel)]="data.pickingAddress" placeholder="Địa chỉ"
+                                                        autocorrect="off" autocapitalize="off" spellcheck="off"
+                                                        type="text" class="input-sm form-control" #searchFrom
+                                                        [formControl]="searchFromControl"
+                                                        [(ngModel)]="inputPickingAddress" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" [style.display]="fromLocation">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Tỉnh / thành
+                                                        <b>(*)</b>
+                                                    </label>
+                                                    <p-autoComplete [(ngModel)]="fromProvince"
+                                                        [suggestions]="filteredFromProvinces"
+                                                        (completeMethod)="filterFromProvinces($event)" [minLength]="1"
+                                                        [forceSelection]="true"
+                                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                                                        (onSelect)="onSelectedFromProvinces()" [dropdown]="false"
+                                                        (keydown.Tab)="keyTabFromProvince($event)">
+                                                    </p-autoComplete>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Quận / huyện <b>(*)</b></label>
+                                                    <p-autoComplete [(ngModel)]="fromDistrict"
+                                                        [suggestions]="filteredFromDistricts"
+                                                        (completeMethod)="filterFromDistricts($event)" [minLength]="1"
+                                                        [forceSelection]="true"
+                                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                                                        (onSelect)="onSelectedFromDistricts()" [dropdown]="false"
+                                                        (keydown.Tab)="keyTabFromDistrict($event)">
+                                                    </p-autoComplete>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Phường / xã</label>
+                                                    <p-autoComplete [(ngModel)]="fromWard"
+                                                        [suggestions]="filteredFromWards"
+                                                        (completeMethod)="filterFromWards($event)" [minLength]="1"
+                                                        [forceSelection]="true"
+                                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                                                        (onSelect)="onSelectedFromWards()" [dropdown]="false"
+                                                        (keydown.Tab)="keyTabFromWard($event)">
+                                                    </p-autoComplete>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="label-primary chxbox-info">
+                                            <label>{{stringInfoTo}}</label>
+                                            <div class="pull-right">
+                                                <span>
+                                                    <p-checkbox [(ngModel)]="isViewToLocation" binary="true"
+                                                        (onChange)="onViewToLocation()" tabindex="2"></p-checkbox>
+                                                    Xem tỉnh thành / quận huyện / phường xã
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+
+                                            <!-- <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Mã Cty
+                                                    </label>
+                                                    <input [(ngModel)]="customerReceipt" placeholder="mã cty"
+                                                        style="padding: 3px 6px; font-weight: normal; width: 100%"
+                                                        (keydown.Tab)="keyTabCustomerReceipt($event)" disabled />
+                                                </div>
+                                            </div> -->
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>SĐT liên hệ
+                                                        <b>(*)</b>
+                                                    </label>
+                                                    <p-autoComplete [(ngModel)]="receiverPhone"
+                                                        [suggestions]="filteredReceiverPhones"
+                                                        (completeMethod)="filterReceiverPhones($event)" [minLength]="1"
+                                                        [forceSelection]="false" placeholder="SĐT liên hệ"
+                                                        [inputStyle]="{'padding':'3px 6px','font-weight':'normal','width':'100%'}"
+                                                        (onSelect)="selectedReceiverPhone()" appPhoneNumber
+                                                        (keydown.Tab)="keyTabReceiverPhones($event)">
+                                                    </p-autoComplete>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <label>Tên người liên hệ
+                                                        <b>(*)</b>
+                                                    </label>
+                                                    <input [(ngModel)]="receiverName"
+                                                        style="padding: 3px 6px; font-weight: normal; width: 100%" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <label>Tên cty</label>
+                                                    <input class="input-sm form-control" placeholder="Nhập cty nhận"
+                                                        type="text" [(ngModel)]="data.companyTo">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Địa chỉ chi tiết</label>
+                                                    <input class="input-sm form-control" placeholder="Địa chỉ chi tiết"
+                                                        type="text" [(ngModel)]="data.addressNoteTo">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label style="display: block">Địa chỉ
+                                                        <b>(*)</b>
+                                                        <a class="label label-warning pull-right"
+                                                            (click)="openModelTemplateToHub(templateToHub)"
+                                                            title="Xuất kho nhanh">Phát tại BC</a>
+                                                    </label>
+                                                    <input [(ngModel)]="data.shippingAddress" placeholder="Nhập địa chỉ"
+                                                        autocorrect="off" autocapitalize="off" spellcheck="off"
+                                                        type="text" class="input-sm form-control" #searchTo
+                                                        id="atcShippingAddress" [formControl]="searchToControl"
+                                                        (keydown.Enter)="openModelTemplateToHub(templateToHub)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" [style.display]="toLocation">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Tỉnh / thành
+                                                        <b>(*)</b>
+                                                    </label>
+                                                    <p-autoComplete [(ngModel)]="toProvince"
+                                                        [suggestions]="filteredToProvinces"
+                                                        (completeMethod)="filterToProvinces($event)" [minLength]="1"
+                                                        [forceSelection]="true"
+                                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                                                        (onSelect)="onSelectedToProvinces()" [dropdown]="false"
+                                                        (keydown.Tab)="keyTabToProvince($event)">
+                                                    </p-autoComplete>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Quận / huyện
+                                                        <b>(*)</b>
+                                                    </label>
+                                                    <p-autoComplete [(ngModel)]="toDistrict"
+                                                        [suggestions]="filteredToDistricts"
+                                                        (completeMethod)="filterToDistricts($event)" [minLength]="1"
+                                                        [forceSelection]="true"
+                                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                                                        (onSelect)="onSelectedToDistricts()" [dropdown]="false"
+                                                        (keydown.Tab)="keyTabToDistrict($event)">
+                                                    </p-autoComplete>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Phường / xã</label>
+                                                    <p-autoComplete [(ngModel)]="toWard" [suggestions]="filteredToWards"
+                                                        (completeMethod)="filterToWards($event)" [minLength]="1"
+                                                        [forceSelection]="true"
+                                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                                                        (onSelect)="onSelectedToWards()" [dropdown]="false"
+                                                        (keydown.Tab)="keyTabToWard($event)">
+                                                    </p-autoComplete>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="label-primary chxbox-info">
+                                            <label>Thông tin vận đơn: Số km: {{data.distance}} , BG: {{usingPriceService}}
+                                            </label>
+                                            <div class="pull-right">
+                                                <span title="GT: {{usingPriceServicePlus}}">
+                                                    Phân tuyến giao: {{toHubName}} / {{toHubRoutingName}} /
+                                                    {{toHubRoutingUser}}
+                                                </span>
+                                            </div>
+                                            <div class="pull-right">
+                                                <span>
+                                                    <p-checkbox [(ngModel)]="data.isTruckDelivery" binary="true"
+                                                        tabindex="2" (onChange)="viewInfoDelivery()"></p-checkbox>
+                                                    Xe tải giao hàng /
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Loại hàng hoá <b>(*)</b></label>
+                                            <p-autoComplete [(ngModel)]="structure" [suggestions]="filteredStructures"
+                                                (completeMethod)="filterStructures($event)" [minLength]="1"
+                                                [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                                                (onSelect)="onSelectedStructures()" [dropdown]="false"
+                                                (keydown.Tab)="keyTabStructure($event)">
+                                            </p-autoComplete>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Dịch vụ chính <b>(*)</b></label>
+                                            <p-autoComplete [(ngModel)]="service" [suggestions]="filteredServices"
+                                                (completeMethod)="filterServices($event)" [minLength]="1"
+                                                [forceSelection]="true"
+                                                [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                                                (onSelect)="onSelectedServices()" [dropdown]="false"
+                                                (keydown.Tab)="keyTabService($event)">
+                                            </p-autoComplete>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <label style="display:block">
+                                                SK
+                                                <a class="label label-primary pull-right"
+                                                    (click)="openModelBox(templateBox)">Nhập</a>
+                                            </label>
+                                            <input #txtTotalBox class="input-sm form-control" type="text"
+                                                [(ngModel)]="data.totalBox" currencyFormatter placeholder="1"
+                                                (keydown.Enter)="openModelBox(templateBox)" (change)="changeWeight()" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <label>TL {{unit}}</label>
+                                            <input class="input-sm form-control" (change)="changeWeight()" type="text"
+                                                [(ngModel)]="data.weight" currencyFormatter placeholder="{{unit}}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <label style="display:block">
+                                                Số DOC
+                                            </label>
+                                            <input #txtTotalBox class="input-sm form-control" type="text"
+                                                [(ngModel)]="data.doc" currencyFormatter placeholder="0" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <label>TL TG {{unit}}</label>
+                                            <input class="input-sm form-control" type="text"
+                                                [(ngModel)]="data.calWeight" currencyFormatter placeholder="{{unit}}"
+                                                (change)="changeWeight()" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <label style="position: relative; display: block;">
+                                                Cước chính
+                                            </label>
+                                            <input #defaultPrice class="input-sm form-control"
+                                                (change)="calculatePrice()" type="text" [(ngModel)]="data.defaultPrice"
+                                                [input]="data.defaultPrice" currencyFormatter placeholder="0"
+                                                [disabled]="!isAgreementPrice" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <label>VAT</label>
+                                            <input class="input-sm form-control" type="text" [(ngModel)]="data.vatPrice"
+                                                currencyFormatter [input]="data.vatPrice" placeholder="1" disabled />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <label>
+                                                PPVX
+                                            </label>
+                                            <input class="input-sm form-control" type="text"
+                                                [(ngModel)]="data.remoteAreasPrice" [input]="data.remoteAreasPrice"
+                                                currencyFormatter placeholder="0" disabled />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <label>
+                                                PPXD
+                                            </label>
+                                            <input class="input-sm form-control" type="text"
+                                                [(ngModel)]="data.fuelPrice" [input]="data.fuelPrice" currencyFormatter
+                                                placeholder="0" disabled />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <label>
+                                                Phí ban đầu
+                                            </label>
+                                            <input id="txtDisCount" class="input-sm form-control" type="text"
+                                                [(ngModel)]="data.priceReturn" [input]="data.priceReturn"
+                                                currencyFormatter placeholder="0" disabled />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <label>Số lượng</label>
+                                            <input class="input-sm form-control" (change)="calculatePrice()" type="text"
+                                                [(ngModel)]="data.totalItem" currencyFormatter placeholder="1" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>
+                                                Khai giá
+                                            </label>
+                                            <input class="input-sm form-control" type="text" [(ngModel)]="data.insured"
+                                                currencyFormatter placeholder="0" (change)="calculatePrice()" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <label>DVGT
+                                                <!-- <a *ngIf="isEditPriceDVGT" class="label label-primary pull-right"
+                                                    (click)="openModalEditPriceDVGT(templateEditPriceDVGT)">N</a> -->
+                                            </label>
+                                            <input id="txtServiceDVGT" class="input-sm form-control" type="text"
+                                                placeholder="enter để mở" [ngModel]="data.strServiceDVGTName"
+                                                (keydown.Enter)="openModalEditPriceDVGT(templateEditPriceDVGT)" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <label>
+                                                % Giảm
+                                            </label>
+                                            <input id="txtDisCount" class="input-sm form-control" type="text"
+                                                [(ngModel)]="data.disCount" currencyFormatter placeholder="0"
+                                                (change)="changeDisCount()"
+                                                (keydown.Enter)="keyDownEscapePaymentType($event)" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <label style="display:block">
+                                                Phí DVGT
+                                            </label>
+                                            <input class="input-sm form-control" type="text"
+                                                [(ngModel)]="data.totalDVGT" [input]="data.totalDVGT" currencyFormatter
+                                                placeholder="0" disabled />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <label>
+                                                Tổng phí
+                                            </label>
+                                            <input class="input-sm form-control" type="text"
+                                                [(ngModel)]="data.totalPriceSYS" [input]="data.totalPriceSYS"
+                                                currencyFormatter placeholder="0" disabled />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label style="color:green">
+                                                Tổng phí KS
+                                            </label>
+                                            <input style="border: green 1px solid; color: green"
+                                                class="input-sm form-control" type="text" [(ngModel)]="data.totalPrice"
+                                                currencyFormatter placeholder="0" (change)="resetTotalCollect()" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>HT thanh toán <b>(*)</b></label>
+                                            <p-autoComplete #atcPaymentType [(ngModel)]="paymentType"
+                                                [suggestions]="filteredPaymentTypes"
+                                                (completeMethod)="filterPaymentTypes($event)" [minLength]="1"
+                                                [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                                                (onSelect)="onSelectedPaymentTypes()" [dropdown]="false"
+                                                [forceSelection]="true" [disabled]="isPaidPrice"
+                                                (keydown.Tab)="keyTabPayment($event)"
+                                                (keydown.Enter)="keyDownEscapePaymentType($event)">
+                                            </p-autoComplete>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>
+                                                        Nội dung hàng hóa
+                                                    </label>
+                                                    <textarea #txtAreaContent class="input-sm form-control"
+                                                        placeholder="Nội dung hàng hóa" type="text"
+                                                        [(ngModel)]="data.content" rows="3"
+                                                        autoResize="true"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>
+                                                        Ghi chú của khách hàng
+                                                    </label>
+                                                    <textarea class="input-sm form-control" placeholder="Ghi chú"
+                                                        type="text" [(ngModel)]="data.cusNote" rows="3"
+                                                        autoResize="true"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>
+                                                        Số tiền thu hộ - COD
+                                                    </label>
+                                                    <input class="input-sm form-control" type="text"
+                                                        [(ngModel)]="data.cod" currencyFormatter placeholder="0"
+                                                        (change)="changeCOD()" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>
+                                                        Cước thu hộ
+                                                    </label>
+                                                    <input class="input-sm form-control" type="text"
+                                                        [(ngModel)]="data.priceCOD" [input]="data.priceCOD"
+                                                        currencyFormatter placeholder="0" disabled />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>HT thanh toán COD</label>
+                                                    <p-autoComplete #atcPaymentCOD [(ngModel)]="paymentCODType"
+                                                        [suggestions]="filteredPaymentCODTypes"
+                                                        (completeMethod)="filterPaymentCODTypes($event)" [minLength]="1"
+                                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                                                        (onSelect)="onSelectedPaymentCODTypes()" [dropdown]="false"
+                                                        [forceSelection]="false"
+                                                        (keydown.Tab)="keyTabPaymentCOD($event)">
+                                                    </p-autoComplete>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <b>Tổng tiền phải thu khi giao hàng:</b>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input class="input-sm form-control" type="text"
+                                                    [(ngModel)]="totalCollect" [input]="totalCollect" currencyFormatter
+                                                    placeholder="0" disabled />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="!isShowItemVersion">
+                                    <div class="col-md-12 text-right">
+                                        <div class="div-flex" style="justify-content: center">
+                                            <button style="margin-right: 5px;" *ngIf="isAdd || (isEdit && isEditLS)"
+                                                [disabled]="checkSubmit" class="btn btn-primary"
+                                                (click)="clickSaveChange()" tabindex="1">Lưu</button>
+                                            <button style="margin-right: 5px;" *ngIf="isAdd && !isEditLS"
+                                                [disabled]="checkSubmitPrintSection" class="btn btn-primary"
+                                                (click)="clickSavePrintChange()" tabindex="1">
+                                                <i class="fa fa-print"></i> Lưu và In
+                                            </button>
+                                            <button style="margin-right: 5px;" *ngIf="isAdd && !isEditLS"
+                                                [disabled]="checkSubmitPrintCode" class="btn btn-primary"
+                                                (click)="clickSavePrintCode()" tabindex="1">
+                                                <i class="fa fa-print"></i> Lưu và In Mã
+                                            </button>
+                                            <button style="margin-right: 5px;" class="btn btn-white"
+                                                (click)="refresh()">Không
+                                                lưu</button>
+                                            <div *ngIf="isEditLS">
+                                                <a class="btn btn-info"
+                                                    (click)="selectedData = [this.data];multiPrintShipment(false, true)"
+                                                    style="margin-right: 5px">
+                                                    <i class="fa fa-print"></i> In</a>
+                                                <a class="btn btn-info"
+                                                    (click)="selectedData = [this.data];multiPrintCodeSticker()"
+                                                    style="margin-right: 5px">
+                                                    <i class="fa fa-print"></i> In máy barcode</a>
+                                                <!-- <a class="btn btn-info" (click)="selectedData = [this.data];multiPrintShipment(false, false)"
+                                                    style="margin-right: 5px">
+                                                    <i class="fa fa-print"></i> In vđ và Phiếu BP</a>
+                                                <a class="btn btn-info" (click)="selectedData = [this.data];multiPrintShipment(true, false)"
+                                                    style="margin-right: 5px">
+                                                    <i class="fa fa-print"></i> In phiếu BP</a>
+                                                <a class="btn btn-info" (click)="selectedData = [this.data];multiPrintBox()"
+                                                    style="margin-right: 5px">
+                                                    <i class="fa fa-print"></i> In số kiện</a> -->
+                                                <a class="btn btn-info"
+                                                    (click)="selectedData = [this.data];multiPrintBill()"
+                                                    style="margin-right: 5px">
+                                                    <i class="fa fa-print"></i> In Label</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </tab>
+                </tabset>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Start Modal Create Box-->
+<ng-template #templateBox>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button" (click)="hideBox()">
+            <span aria-hidden="true">×</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Dài</label>
+                    <input type="text" id="txtLenght" class="input-sm form-control" [(ngModel)]="boxs.length"
+                        currencyFormatter placeholder="dài" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Rộng</label>
+                    <input type="text" class="input-sm form-control" [(ngModel)]="boxs.width" currencyFormatter
+                        placeholder="rộng" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Cao</label>
+                    <input type="text" class="input-sm form-control" [(ngModel)]="boxs.height" currencyFormatter
+                        placeholder="cao" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>TL {{unit}}</label>
+                    <input type="text" class="input-sm form-control" [(ngModel)]="boxs.weight" currencyFormatter
+                        placeholder="cao" (keydown.Enter)="addBox(false)" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Số lượng</label>
+                    <input type="text" class="input-sm form-control" [(ngModel)]="quantilyBox" currencyFormatter
+                        placeholder="cao" (keydown.Enter)="addBox(false)" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" style="text-align: right">
+                <button class="btn btn-primary" type="button" (click)="addBox(false)">Thêm kiện</button>
+                <button class="btn btn-warning" type="button" (click)="addBox(true)">Thêm kiện & đóng</button>
+                <button class="btn btn-white" data-dismiss="modal" (click)="hideBox()" type="button">Đóng</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p-table [value]="data.boxes">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>#</th>
+                            <th>STT</th>
+                            <th>Dài(cm)</th>
+                            <th>Rộng(cm)</th>
+                            <th>Cao(cm)</th>
+                            <th>TL{{unit}}</th>
+                            <th>QĐ{{unit}}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                        <tr>
+                            <td>
+                                <button class="btn btn-danger" type="button" (click)="deleteBox(rowIndex)">Xóa</button>
+                            </td>
+                            <td>{{rowIndex+1}}</td>
+                            <td>{{item.length}}</td>
+                            <td>{{item.width}}</td>
+                            <td>{{item.height}}</td>
+                            <td>{{item.weight}}</td>
+                            <td>{{item.excWeight}}</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                        <tr>
+                            <th>#</th>
+                            <th colspan="2">Tổng TL: {{data.weight}} {{unit}}</th>
+                            <th colspan="2">Tổng TLQĐ: {{data.excWeight}} {{unit}}</th>
+                            <th colspan="2">Tổng TLTG: {{data.calWeight}} {{unit}}</th>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="modal-footer">
+        <button class="btn btn-white" data-dismiss="modal" (click)="hideBox()" type="button">Đóng</button>
+    </div> -->
+</ng-template>
+<!--End Modal-->
+
+<!--Start Modal Create Box-->
+<ng-template #templateEditPriceDVGT>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button"
+            (click)="bsModalRef.hide()">
+            <span aria-hidden="true">×</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h6 class="modal-title" style="font-size:20px">Dịch vụ gia tăng</h6>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-4">
+                <label style="width: 100%">Dịch vụ gia tăng (*)</label>
+                <p-autoComplete id="atcServiceDVGT" [minLength]="1" styleClass="select-input form-control none-padding"
+                    [dropdown]="false" (completeMethod)="filterServiceDVGT($event)" [suggestions]="filteredServiceDVGT"
+                    [(ngModel)]="selectedServiceDVGT" (keydown.Tab)="keyTabServiceDVGT($event)">
+                </p-autoComplete>
+            </div>
+            <div class="col-md-4">
+                <label style="width: 100%">&nbsp;</label>
+                <p-checkbox label="Sửa giá" (keydown.Tab)="keyTabChangePrice()" (keydown.Enter)="keyEnterSaveDVGT()"
+                    [(ngModel)]="priceDVGT.isAgree" binary="true"></p-checkbox>
+            </div>
+            <div class="col-md-4">
+                <label style="width: 100%">Cước/phí</label>
+                <input type="text" [(ngModel)]="priceDVGT.totalPrice" (keydown.Enter)="keyEnterSaveDVGT()"
+                    class="input-sm form-control" (keydown.Tab)="keyEnterSaveDVGT()" placeholder="0"
+                    [disabled]="!priceDVGT.isAgree" currencyFormatter />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p-table [value]="data.priceDVGTs">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Dịch vụ gia tăng</th>
+                            <th>Cước/phí</th>
+                            <th>#</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr *ngIf="item.code!='COD' && item.code!='cod'">
+                            <td>{{item.code}} - {{item.name}}</td>
+                            <td>{{item.totalPrice | currencyFormat}}</td>
+                            <td><button class="btn btn-primary" type="button"
+                                    (click)="removeServiceDVGT(item.serviceId)">Xóa</button></td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <!-- <button class="btn btn-primary" type="button" (click)="savePriceDVGT()">Lưu</button> -->
+        <button class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()" type="button">Đóng</button>
+    </div>
+</ng-template>
+<!--End Modal-->
+
+<!--Start Modal Cancel Shipment-->
+<ng-template #templateInsured>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button"
+            (click)="bsModalRef.hide()">
+            <span aria-hidden="true">×</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <!-- <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5> -->
+    </div>
+    <div class="modal-body" style="padding-top: 10px;">
+        <div class="row">
+            <label class="label-control">Mã khách hàng nhận</label>
+            <div class="input-group" style="width: 100%;">
+                <input id="txtReceiverCode" #txtReceiverCode autofocus placeholder="Mã khách hàng nhận"
+                    [(ngModel)]="customerReceipt" class="input-sm form-control"
+                    (keydown.Tab)="keyTabCustomerReceipt($event)" />
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()" type="button">Đóng</button>
+        <!-- <button class="btn btn-danger" type="button" (click)="confirmCancelShipment()">Hủy</button> -->
+    </div>
+</ng-template>
+<!--End Modal-->
+
+<!--Start Modal To Hub-->
+<ng-template #templateToHub>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button"
+            (click)="bsModalRef.hide();setFocusShippingAddress()">
+            <span aria-hidden="true">×</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <!-- <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5> -->
+    </div>
+    <div class="modal-body" style="padding-top: 10px;">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="label-control">Nhập bưu cục phát</label>
+                    <p-autoComplete id="atcToHub" [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                        (onSelect)="eventOnSelectedHub()" [suggestions]="receiverHubFilters"
+                        [(ngModel)]="receiverHubSelected" (completeMethod)="eventFilterHubs($event)"
+                        forceSelection="true" [dropdown]="true" [minLength]="1" placeholder="Nhập bưu cục phát"
+                        (keydown.Tab)="eventKeyTabHub($event)">
+                        <ng-template let-data pTemplate="item">
+                            <div>{{data}}</div>
+                        </ng-template>
+                    </p-autoComplete>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide(); setFocusShippingAddress();"
+            type="button">Đóng</button>
+        <!-- <button class="btn btn-danger" type="button" (click)="confirmCancelShipment()">Hủy</button> -->
+    </div>
+</ng-template>
+<!--End Modal-->
+
+<p-dialog header="Cảnh báo" [(visible)]="displayNoTotalPrice" [responsive]="true" [positionTop]="200" [width]="350"
+    [minWidth]="200">
+    <span>Tổng cước = 0 , bạn có muốn lưu vđ này không?</span>
+    <p-footer>
+        <button class="btn btn-success" type="button" pButton (click)="createShipmentNoTotalPrice()">
+            Có
+        </button>
+        <button class="btn btn-success" type="button" pButton (click)="displayNoTotalPrice=false">
+            Không
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!-- cảnh báo tạo vận đơn hỗ trợ -->
+<p-dialog header="Cảnh báo" [(visible)]="displayStatusDeliveryComplete" [responsive]="true" [positionTop]="200"
+    [width]="350" [minWidth]="200">
+    <span>Chỉ hỗ trợ đơn giao hàng thành công!</span>
+    <p-footer>
+        <button class="btn btn-success" type="button" pButton (click)="displayStatusDeliveryComplete=false">
+            Đóng
+        </button>
+    </p-footer>
+</p-dialog>
+<p-dialog header="Cảnh báo" [(visible)]="displayTotalShipment" [responsive]="true" [positionTop]="200" [width]="350"
+    [minWidth]="200">
+    <span>Đã hỗ trợ: {{data.totalShipment}} lần, bạn có muốn hỗ trợ tiếp không?</span>
+    <p-footer>
+        <button class="btn btn-success" type="button" pButton (click)="displayTotalShipment=false">
+            Có
+        </button>
+        <button class="btn btn-success" type="button" pButton (click)="refresh(); displayTotalShipment=false">
+            Không
+        </button>
+    </p-footer>
+</p-dialog>
+<p-dialog header="Cảnh báo" [(visible)]="displayCustomer" [responsive]="true" [positionTop]="200" [width]="350"
+    [minWidth]="200" [attr.minY]="70">
+    <span>Chức năng hỗ trợ chỉ được áp dụng cho khách hợp đồng</span>
+    <p-footer>
+        <button class="btn btn-success" type="button" pButton (click)="displayCustomer=false">
+            Đóng
+        </button>
+    </p-footer>
+</p-dialog>
+<p-dialog header="Cảnh báo" [(visible)]="displayInsured" [responsive]="true" [positionTop]="200" [width]="350"
+    [minWidth]="200">
+    <span>Giá trị trả về bằng 0, bạn có chắc chắn muốn tạo vđ hỗ trợ này không?</span>
+    <p-footer>
+        <!-- <button class="btn btn-success" type="button" pButton (click)="clickSaveShipmentSP()">
+            <i class="fa fa-check"></i>Lưu
+        </button> -->
+        <button class="btn btn-success" type="button" pButton (click)="displayInsured=false">
+            <i class="fa fa-close"></i>Đóng
+        </button>
+    </p-footer>
+</p-dialog>
+<app-image-pick-up [hidden]="true"></app-image-pick-up>
+
+<!-- print -->
+<div id="form-print" [hidden]="true">
+    <div *ngIf="idPrint === 'print-code-create-shipment'">
+        <form-print-code-create-shipment></form-print-code-create-shipment>
+    </div>
+    <div *ngIf="idPrint === 'print-create-multi-shipment'">
+        <form-create-shipment></form-create-shipment>
+    </div>
+    <div *ngIf="idPrint === 'print-code-a4-detail-shipment'">
+        <form-print-code-a4-detail-shipment></form-print-code-a4-detail-shipment>
+    </div>
+    <div *ngIf="idPrint === 'print-code-sticker-detail-shipment'">
+        <form-print-code-sticker-detail-shipment></form-print-code-sticker-detail-shipment>
+    </div>
+    <div *ngIf="idPrint === 'print-create-multi-box'">
+        <form-print-create-multi-box></form-print-create-multi-box>
+    </div>
+    <div *ngIf="idPrint === 'print-multi-bill'">
+        <form-print-bill></form-print-bill>
+    </div>
+</div>
+<iframe class="hidden-iframe" name="print-code-create-shipment"></iframe>
+<iframe class="hidden-iframe" name="print-create-multi-shipment"></iframe>
+<iframe class="hidden-iframe" name="print-code-a4-detail-shipment"></iframe>
+<iframe class="hidden-iframe" name="print-code-sticker-detail-shipment"></iframe>
+<iframe class="hidden-iframe" name="print-create-multi-box"></iframe>
+<iframe class="hidden-iframe" name="print-multi-bill"></iframe>
+<!-- cvbvc -->

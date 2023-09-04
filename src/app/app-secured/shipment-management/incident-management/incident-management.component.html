@@ -1,0 +1,249 @@
+<div class="row">
+  <div class="col-lg-12">
+    <ol class="ibox-title breadcrumb">
+      <li>
+        <a>{{parentPage}}</a>
+      </li>
+      <li class="active">
+        <strong>{{currentPage}}</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-title">
+        <div class="ibox-tools">
+          <a class="collapse-link">
+            <button class="btn btn-success" (click)="refresh()">
+              <i class="fa fa-refresh"></i>&nbsp;refresh
+            </button>
+          </a>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-md-2">
+            <label>Từ ngày</label>
+            <div class="form-group">
+              <p-calendar [(ngModel)]="filterModel.fromDate" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                (onSelect)="selectedDateBK()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                [style]="{'width': '100%'}"></p-calendar>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <label>Đến ngày</label>
+            <div class="form-group">
+              <p-calendar [(ngModel)]="filterModel.toDate" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                (onSelect)="selectedDateBK()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                [style]="{'width': '100%'}"></p-calendar>
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div class="form-group">
+              <label>Nhân viên</label>
+              <!-- <p-dropdown [options]="users" [(ngModel)]="shipmentFilterViewModel.handlingEmpId" [styleClass]="'form-control'" (onChange)="changeEmp()"
+                [style]="{'width':'100%'}" filter="true"></p-dropdown> -->
+              <p-autoComplete [(ngModel)]="employee" [suggestions]="filteredEmployees" [minLength]="1" (completeMethod)="filterEmployee($event)"
+                (onSelect)="onSelectedEmployee()" styleClass="select-input form-control none-padding" [dropdown]="false"
+                (keydown.Tab)="keyTabEmployee($event)">
+              </p-autoComplete>
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div class="form-group">
+              <label>Mã vận đơn</label>
+              <input type="text" class="form-control input-sm" [(ngModel)]="filterModel.shipmentNumber" (keyup.enter)="changeShipmentNumber()">
+            </div>
+          </div>
+
+          <!-- <div class="col-md-2">
+            <div class="form-group">
+              <p-triStateCheckbox [(ngModel)]="filterModel.isCompleted" label="Tình trạng"></p-triStateCheckbox>
+            </div>
+          </div> -->
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12">
+            <p-table #dt [value]="lstData" [paginator]="true" [rows]="pageSize" [totalRecords]="totalRecords" [lazy]="true"
+              [rowsPerPageOptions]="[10,20,50,100]" (onPage)="onPageChange($event)">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width: 110px">Thao tác</th>
+                  <th pSortableColumn="code">
+                    Mã
+                    <p-sortIcon field="code"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="createdWhen">
+                    Thời gian báo
+                    <p-sortIcon field="createdWhen"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="incidentsReason.name">
+                    Sự cố
+                    <p-sortIcon field="incidentsReason.name"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="createdByEmp.fullName">
+                    Nhân viên báo sự cố
+                    <p-sortIcon field="createdByEmp.fullName"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="incidentsByEmp.fullName">
+                    Nhân viên xử lý
+                    <p-sortIcon field="incidentsByEmp.fullName"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="isCompleted">
+                    Tình trạng
+                    <p-sortIcon field="isCompleted"></p-sortIcon>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr style="height: 50px">
+                  <td>
+                    <button *ngIf="rowData.isCompleted" class="btn btn-default" (click)="openModal(template, rowData)">Xem</button>
+                    <button *ngIf="!rowData.isCompleted" class="btn btn-danger" (click)="openModal(template, rowData)">Xử
+                      lý</button>
+                  </td>
+                  <td>{{rowData.code}}</td>
+                  <td>{{rowData.createdWhen | date:'dd/MM/yyyy'}}</td>
+                  <td>{{rowData.incidentsReason?.name}}</td>
+                  <td>{{rowData.createdByEmp?.fullName}}</td>
+                  <td>{{rowData.incidentsByEmp?.fullName}}</td>
+                  <td>{{rowData.isCompleted ? 'Đã hoàn thành' : 'Chưa hoàn thành'}}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                  <td colspan="7">
+                    Không tìm thấy dữ liệu
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #template>
+  <div class="modal-header" style="padding: 5px; text-align:left;">
+    <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+      <span class="sr-only">Close</span>
+    </button>
+    <h5 class="modal-title" style="font-size:20px">Xử lý
+    </h5>
+  </div>
+  <div class="modal-body" style="overflow: hidden;">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label>Mã:</label>
+          <label class="form-control" disabled>{{dataModal.code}}</label>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label>Thời gian báo: </label>
+          <label class="form-control" disabled>{{dataModal.createdWhen | date:'dd/MM/yyyy'}}</label>
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <div class="form-group">
+          <label>Sự cố: </label>
+          <label class="form-control" disabled>{{dataModal.incidentsReason?.name}}</label>
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <div class="form-group">
+          <label>Nội dung sự cố: </label>
+          <label class="form-control" disabled>{{dataModal.incidentsContent}}</label>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label>NV báo cáo sự cố:</label>
+          <label class="form-control" disabled>{{dataModal.createdByEmp?.code}} - {{dataModal.createdByEmp?.fullName}}</label>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label>NV xử lý:</label>
+          <label class="form-control" disabled>{{dataModal.handleByEmp?.code}} - {{dataModal.handleByEmp?.fullName}}</label>
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <div class="form-group">
+          <label>Hình ảnh: </label>
+          <button *ngIf="lstImages.length > 0" class="btn btn-primary" (click)="openModelImages(templateImages)">
+            <i class="fa fa-eye"></i> Xem
+          </button>
+          <span *ngIf="lstImages.length == 0">Không có</span>
+        </div>
+      </div>
+
+      <div class="col-md-12" *ngIf="dataModal.isCompleted">
+        <div class="form-group">
+          <label>NV chịu trách nhiệm:</label>
+          <label class="form-control" disabled>{{dataModal.incidentsByEmp?.code}} - {{dataModal.incidentsByEmp?.fullName}}</label>
+        </div>
+
+        <div class="form-group">
+          <label>Báo đền bù:</label>
+          <label class="form-control" disabled>{{dataModal.isCompensation? 'Đền bù' : 'Không đền bù'}}</label>
+        </div>
+
+        <div class="form-group">
+          <label>Nội dung xử lý:</label>
+          <label class="form-control" disabled>{{dataModal.handleContent}}</label>
+        </div>
+      </div>
+
+      <div class="col-md-12" *ngIf="!dataModal.isCompleted">
+        <div class="form-group">
+          <label>Nhân viên chịu trách nhiệm: </label>
+          <p-autoComplete [(ngModel)]="employee_2" [suggestions]="filteredEmployees_2" [minLength]="1" (completeMethod)="filterEmployee_2($event)"
+            (onSelect)="onSelectedEmployee_2()" styleClass="select-input form-control none-padding" [dropdown]="false"
+            (keydown.Tab)="keyTabEmployee_2($event)">
+          </p-autoComplete>
+        </div>
+
+        <div class="form-group">
+          <p-checkbox label="Báo đền bù" [(ngModel)]="dataModal.isCompensation" binary="true" id="isCompensation"></p-checkbox>
+        </div>
+
+        <div class="form-group">
+          <label>Nội dung xử lý:</label>
+          <textarea class="form-control" rows="5" [(ngModel)]="dataModal.handleContent"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button *ngIf="!dataModal.isCompleted" type="button" class="btn btn-primary" (click)="save()">Xử lý</button>
+    <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+  </div>
+</ng-template>
+
+<ng-template #templateImages>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-12">
+        <ngx-image-viewer [src]="lstImages" [config]="configImageViewer"></ngx-image-viewer>
+      </div>
+    </div>
+  </div>
+</ng-template>

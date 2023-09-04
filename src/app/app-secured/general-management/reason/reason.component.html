@@ -1,0 +1,359 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <!-- <h5>{{currentPage}}</h5> -->
+                <div style="margin:0 auto;margin-bottom:5px; text-align: right">
+                    <button class="btn btn-success" (click)="refresh()">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <a *ngIf="isAdd" class="btn btn-primary" (click)="openModel(template)">
+                            <i class="fa fa-file-o"></i> Tạo mới</a>
+                    </div>
+                    <div class="col-sm-4">
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="input-group">
+                            <input #filterGb type="text" placeholder="Nhập chuỗi cần tìm ..." [(ngModel)]="txtFilterGb"
+                                class="input-sm form-control" id="filter" (input)="dt.filterGlobal($event.target.value, 'contains')" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-sm btn-primary"> Tìm kiếm</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <!-- <p-dataTable [value]="listData" [paginator]="true" rows="10" [responsive]="true" [rowsPerPageOptions]="[10,20,50,100]" [globalFilter]="filterGb"
+                                [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="loadLazy($event)" [(first)]="first">
+                                <p-column styleClass="p-col-shipmentNumber" field="code" header="Mã" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="name" header="Tên" [sortable]="true"></p-column>
+                                <p-column styleClass="col-button3" field="pickFail">
+                                    <ng-template pTemplate="header">
+                                        <span class="ui-column-title">Đặt hàng thất bại</span>
+                                        <span class="ui-sortable-column-icon fa fa-fw fa-sort"></span>
+                                    </ng-template>
+                                    <ng-template let-col let-data="rowData" pTemplate="body">
+                                        <div class="ui-g" style="width:250px;margin-bottom:10p">
+                                            <div class="ui-g-6">
+                                                <p-checkbox class="reason-checkbox" [ngModel]="data[col.field]" [disabled]="true" binary="true"></p-checkbox>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="col-button" field="pickCancel">
+                                    <ng-template pTemplate="header">
+                                        <span class="ui-column-title">Hủy đặt hàng</span>
+                                        <span class="ui-sortable-column-icon fa fa-fw fa-sort"></span>
+                                    </ng-template>
+                                    <ng-template let-col let-data="rowData" pTemplate="body">
+                                        <div class="ui-g" style="width:250px;margin-bottom:10p">
+                                            <div class="ui-g-6">
+                                                <p-checkbox class="reason-checkbox" [ngModel]="data[col.field]" [disabled]="true" binary="true"></p-checkbox>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="col-button" field="deliverFail">
+                                    <ng-template pTemplate="header">
+                                        <span class="ui-column-title">Giao hàng thất bại</span>
+                                        <span class="ui-sortable-column-icon fa fa-fw fa-sort"></span>
+                                    </ng-template>
+                                    <ng-template let-col let-data="rowData" pTemplate="body">
+                                        <div class="ui-g" style="width:250px;margin-bottom:10p">
+                                            <div class="ui-g-6">
+                                                <p-checkbox class="reason-checkbox" [ngModel]="data[col.field]" [disabled]="true" binary="true"></p-checkbox>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="col-button" field="deliverCancel">
+                                    <ng-template pTemplate="header">
+                                        <span class="ui-column-title">Hủy giao hàng</span>
+                                        <span class="ui-sortable-column-icon fa fa-fw fa-sort"></span>
+                                    </ng-template>
+                                    <ng-template let-col let-data="rowData" pTemplate="body">
+                                        <div class="ui-g" style="width:250px;margin-bottom:10p">
+                                            <div class="ui-g-6">
+                                                <p-checkbox class="reason-checkbox" [ngModel]="data[col.field]" [disabled]="true" binary="true"></p-checkbox>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="col-button" field="returnFail">
+                                    <ng-template pTemplate="header">
+                                        <span class="ui-column-title">Trả hàng thất bại</span>
+                                        <span class="ui-sortable-column-icon fa fa-fw fa-sort"></span>
+                                    </ng-template>
+                                    <ng-template let-col let-data="rowData" pTemplate="body">
+                                        <div class="ui-g" style="width:250px;margin-bottom:10p">
+                                            <div class="ui-g-6">
+                                                <p-checkbox class="reason-checkbox" [ngModel]="data[col.field]" [disabled]="true" binary="true"></p-checkbox>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="col-button" field="returnCancel">
+                                    <ng-template pTemplate="header">
+                                        <span class="ui-column-title">Hủy trả hàng</span>
+                                        <span class="ui-sortable-column-icon fa fa-fw fa-sort"></span>
+                                    </ng-template>
+                                    <ng-template let-col let-data="rowData" pTemplate="body">
+                                        <div class="ui-g" style="width:250px;margin-bottom:10p">
+                                            <div class="ui-g-6">
+                                                <p-checkbox class="reason-checkbox" [ngModel]="data[col.field]" [disabled]="true" binary="true"></p-checkbox>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </p-column>
+
+                                <p-column styleClass="col-button2">
+                                    <ng-template pTemplate="header">
+                                    </ng-template>
+                                    <ng-template let-data="rowData" pTemplate="body">
+                                        <a class="btn btn-info" (click)="openModel(template, data)">
+                                            <i class="fa fa-paste"></i> Xem</a>
+                                        <a *ngIf="isDelete" class="btn btn-danger" (click)="openDeleteModel(templateDelete, data)">
+                                            <i class="fa fa-trash-o"></i>
+                                            <span class="bold">Xóa</span>
+                                        </a>
+                                    </ng-template>
+                                </p-column>
+                            </p-dataTable> -->
+
+                            <p-table #dt [value]="listData" [paginator]="true" [rows]="10" [responsive]="true"
+                                [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true" [totalRecords]="totalRecords"
+                                (onLazyLoad)="loadLazy($event)">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width:150px;" pSortableColumn="code">Mã
+                                            <p-sortIcon field="code"></p-sortIcon>
+                                        </th>
+                                        <th style="width:150px;" pSortableColumn="name">Tên
+                                            <p-sortIcon field="name"></p-sortIcon>
+                                        </th>
+                                        <th style="width:50px;" pSortableColumn="pickFail">Đặt hàng thất bại
+                                            <p-sortIcon field="pickFail"></p-sortIcon>
+                                        </th>
+                                        <th style="width:50px;" pSortableColumn="pickCancel">Hủy đặt hàng
+                                            <p-sortIcon field="pickCancel"></p-sortIcon>
+                                        </th>
+                                        <th style="width:50px;" pSortableColumn="deliverFail">Giao hàng thất bại
+                                            <p-sortIcon field="deliverFail"></p-sortIcon>
+                                        </th>
+                                        <th style="width:50px;" pSortableColumn="deliverCancel">Hủy giao hàng
+                                            <p-sortIcon field="deliverCancel"></p-sortIcon>
+                                        </th>
+                                        <th style="width:50px;" pSortableColumn="returnFail">Trả hàng thất bại
+                                            <p-sortIcon field="returnFail"></p-sortIcon>
+                                        </th>
+                                        <th style="width:50px;" pSortableColumn="returnCancel">Hủy trả hàng
+                                            <p-sortIcon field="returnCancel"></p-sortIcon>
+                                        </th>
+                                        <th style="width:50px;" pSortableColumn="isDelay">Delay
+                                            <p-sortIcon field="isDelay"></p-sortIcon>
+                                        </th>
+                                        <th style="width:50px;" pSortableColumn="isIncidents">Sự cố
+                                            <p-sortIcon field="isIncidents"></p-sortIcon>
+                                        </th>
+                                        <th style="width:50px;" pSortableColumn="isIncidents">Ghi chú bắt buộc
+                                            <p-sortIcon field="isIncidents"></p-sortIcon>
+                                        </th>
+                                        <th style="width:50px;"></th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData>
+                                    <tr>
+                                        <td style="width:150px; height: 50px">{{rowData.code}}</td>
+                                        <td style="width:150px;">{{rowData.name}}</td>
+                                        <td style="width:50px;">
+                                            <p-checkbox class="reason-checkbox" [(ngModel)]="rowData.pickFail"
+                                                [disabled]="true" binary="true"></p-checkbox>
+                                        </td>
+                                        <td style="width:50px;">
+                                            <p-checkbox class="reason-checkbox" [(ngModel)]="rowData.pickCancel"
+                                                [disabled]="true" binary="true"></p-checkbox>
+                                        </td>
+                                        <td style="width:50px;">
+                                            <p-checkbox class="reason-checkbox" [(ngModel)]="rowData.deliverFail"
+                                                [disabled]="true" binary="true"></p-checkbox>
+                                        </td>
+                                        <td style="width:50px;">
+                                            <p-checkbox class="reason-checkbox" [(ngModel)]="rowData.deliverCancel"
+                                                [disabled]="true" binary="true"></p-checkbox>
+                                        </td>
+                                        <td style="width:50px;">
+                                            <p-checkbox class="reason-checkbox" [(ngModel)]="rowData.returnFail"
+                                                [disabled]="true" binary="true"></p-checkbox>
+                                        </td>
+                                        <td style="width:50px;">
+                                            <p-checkbox class="reason-checkbox" [(ngModel)]="rowData.returnCancel"
+                                                [disabled]="true" binary="true"></p-checkbox>
+                                        </td>
+                                        <td style="width:50px;">
+                                            <p-checkbox class="reason-checkbox" [(ngModel)]="rowData.isDelay"
+                                                [disabled]="true" binary="true"></p-checkbox>
+                                        </td>
+                                        <td style="width:50px;">
+                                            <p-checkbox class="reason-checkbox" [(ngModel)]="rowData.isIncidents"
+                                                [disabled]="true" binary="true"></p-checkbox>
+                                        </td>
+                                        <td style="width:50px;">
+                                            <p-checkbox class="reason-checkbox" [(ngModel)]="rowData.isMustInput"
+                                                [disabled]="true" binary="true"></p-checkbox>
+                                        </td>
+                                        <td style="width:50px;">
+                                            <a class="btn btn-info" (click)="openModel(template, rowData)">
+                                                <i class="fa fa-paste"></i> Xem</a>
+                                            <a *ngIf="isDelete" class="btn btn-danger" (click)="openDeleteModel(templateDelete, rowData)">
+                                                <i class="fa fa-trash-o"></i>
+                                                <span class="bold">Xóa</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage" let-columns>
+                                    <tr>
+                                        <td colspan="12">
+                                            Không tìm thấy dữ liệu
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Start Modal-->
+<ng-template #template>
+    <div (keydown)="keyDownFunction($event)">
+        <div class="modal-header" style="padding: 5px; text-align:left;">
+            <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span>
+            </button>
+            <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5>
+        </div>
+        <div class="modal-body" *ngIf="data">
+            <div class="col-md-12 no-padding">
+                <div class="form-group">
+                    <label>Mã</label>
+                    <input type="text" placeholder="Nhập mã" class="input-sm form-control" id="code" [(ngModel)]="data.code"
+                        autofocus />
+                </div>
+                <div class="form-group">
+                    <label>Tên</label>
+                    <input type="text" placeholder="Nhập tên" class="input-sm form-control" id="name" [(ngModel)]="data.name" />
+                </div>
+                <div class="form-group">
+                    <label>Chọn quyền xử lý</label>
+                    <p-dropdown styleClass="select-input form-control" [options]="listRoles" [(ngModel)]="data.roleId"
+                        [style]="{'width':'100%'}" filter="filter">
+                    </p-dropdown>
+                </div>
+                <div class="form-group">
+                    <label>Cho khánh hàng xem: </label>
+                    <input type="checkbox" [(ngModel)]="data.isPublic" />
+
+                    <label style="margin-left: 30px">Chờ duyệt chuyển hoàn: </label>
+                    <input type="checkbox" [(ngModel)]="data.isAcceptReturn" />
+                </div>
+                <div class="form-group">
+                    <label>Lý do</label>
+                    <div class="ui-g" style="width:250px;margin-bottom:10px">
+                        <div class="flex-creater-reason" style="display: flex">
+                            <div class="item-flex-reason" style="width: 300px">
+                                <div class="ui-g-12">
+                                    <p-checkbox [(ngModel)]="data.pickFail" value="data.pickFail" label="Đặt hàng thất bại"
+                                        binary="true"></p-checkbox>
+                                </div>
+                                <div class="ui-g-12">
+                                    <p-checkbox [(ngModel)]="data.deliverFail" value="data.deliverFail" label="Giao hàng thất bại"
+                                        binary="true"></p-checkbox>
+                                </div>
+                                <div class="ui-g-12">
+                                    <p-checkbox [(ngModel)]="data.returnFail" value="data.returnFail" label="Trả hàng thất bại"
+                                        binary="true"></p-checkbox>
+                                </div>
+                                <div class="ui-g-12">
+                                    <p-checkbox [(ngModel)]="data.isDelay" value="data.isDelay" label="Delay" binary="true"></p-checkbox>
+                                </div>
+                                <div class="ui-g-12">
+                                    <p-checkbox [(ngModel)]="data.isMustInput" value="data.isMustInput" label="Ghi chú bắt buộc"
+                                        binary="true"></p-checkbox>
+                                </div>
+                            </div>
+                            <div class="item-flex-reason" style="width: 300px">
+                                <div class="ui-g-12">
+                                    <p-checkbox [(ngModel)]="data.pickCancel" value="data.pickCancel" label="Hủy đặt hàng"
+                                        binary="true"></p-checkbox>
+                                </div>
+                                <div class="ui-g-12">
+                                    <p-checkbox [(ngModel)]="data.deliverCancel" value="data.deliverCancel" label="Hủy giao hàng"
+                                        binary="true"></p-checkbox>
+                                </div>
+                                <div class="ui-g-12">
+                                    <p-checkbox [(ngModel)]="data.returnCancel" value="data.returnCancel" label="Hủy trả"
+                                        binary="true"></p-checkbox>
+                                </div>
+                                <div class="ui-g-12">
+                                    <p-checkbox [(ngModel)]="data.isIncidents" value="data.isIncidents" label="Sự cố"
+                                        binary="true"></p-checkbox>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+            <button *ngIf="isEdit" type="button" class="btn btn-primary" (click)="save()">Lưu</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #templateDelete>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+    </div>
+    <div class="modal-body" style="overflow:hidden;" *ngIf="data">
+        <div class="col-md-12 no-padding">
+            <h4>Bạn có chắc chắn muốn xoá
+                <b>&quot;{{data.name}}&quot;</b>?</h4>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+        <button *ngIf="isDelete" type="button" class="btn btn-danger" (click)="delete()">Xoá</button>
+    </div>
+</ng-template>
+<!--End Modal-->

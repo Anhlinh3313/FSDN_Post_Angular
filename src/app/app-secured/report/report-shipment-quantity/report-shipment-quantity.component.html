@@ -1,0 +1,228 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <div class="ibox-tools">
+                    <p-header>
+                        <div>
+                            <button type="button" class="btn btn-primary" (click)="exportCSV()">
+                                <i class="fa fa-file-excel-o"></i>&nbsp;Excel</button>
+                            <button type="button" class="btn btn-success" (click)="loadShipment()">
+                                <i class="fa fa-refresh"></i>&nbsp;Xem</button>
+                        </div>
+                    </p-header>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Từ ngày</label>
+                        <div class="form-group">
+                            <p-calendar [(ngModel)]="fromDateReportQuantity" [showIcon]="false" hourFormat="24"
+                                dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                                [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Đến ngày</label>
+                        <div class="form-group">
+                            <p-calendar [(ngModel)]="toDateReportQuantity" [showIcon]="false" hourFormat="24"
+                                dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                                [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} giữ</label>
+                        <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}" [options]="currentHubs"
+                            [(ngModel)]="selectedCurrentHub" filter="filter" [group]="true" (onChange)="changeCurrentHub()">
+                        </p-dropdown>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <p-table #dt [value]="datasource" [paginator]="true" [rows]="rowPerPage"
+                                [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true" [totalRecords]="totalRecords"
+                                [alwaysShowPaginator]="true" (onPage)="onPageChange($event)" (onLazyLoad)="loadLazy($event)"
+                                [responsive]="true" [columns]="columnsExp" [scrollable]="true" scrollHeight="450px">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="p-col-stt">STT</th>
+                                        <th pSortableColumn="shipmentNumber" class="p-col-user">Vận đơn nhận
+                                            <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="PickupName" class="p-col-user">Nhân viên nhận
+                                            <p-sortIcon field="PickupName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="Weight" class="p-col-address">Trọng lượng nhận (kg)
+                                            <p-sortIcon field="Weight"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="CalWeight" class="p-col-user">Trọng lượng quy đổi
+                                            <p-sortIcon field="CalWeight"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="TotalBox" class="p-col-user">Số kiện
+                                            <p-sortIcon field="TotalBox"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="TotalPrice" class="p-col-user">Doanh thu nhận
+                                            <p-sortIcon field="TotalPrice"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="ShipmentNumberTo" class="p-col-user">Vận đơn
+                                            <p-sortIcon field="ShipmentNumberTo"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="DeliveredName" class="p-col-user">Nhân viên giao
+                                            <p-sortIcon field="DeliveredName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="WeightTo" class="p-col-address">Trọng lượng (kg)
+                                            <p-sortIcon field="WeightTo"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="CalWeightTo" class="p-col-user">Trọng lượng quy đổi
+                                            <p-sortIcon field="CalWeightTo"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="TotalBoxTo" class="p-col-user">Số kiện
+                                            <p-sortIcon field="TotalBoxTo"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="TotalPriceTo" class="p-col-user">Doanh thu
+                                            <p-sortIcon field="TotalPriceTo"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="ServiceName" class="p-col-user">Dịch vụ vận chuyển
+                                            <p-sortIcon field="ServiceName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="COD" class="p-col-user">COD
+                                            <p-sortIcon field="COD"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="ReceiverName" class="p-col-user">Tên khách nhận hàng
+                                            <p-sortIcon field="ReceiverName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="ShipmentNumberExist" class="p-col-user">Vận đơn tồn
+                                            <p-sortIcon field="ShipmentNumberExist"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="ReasonUpdate" class="p-col-user">Lý do cập nhật
+                                            <p-sortIcon field="ReasonUpdate"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="CurrentHubName" class="p-col-user">Kho nhập xuất cuối
+                                            <p-sortIcon field="CurrentHubName"></p-sortIcon>
+                                        </th>
+                                        <th class="p-col-user">Biểu đồ
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                                    <tr>
+                                        <td class="p-col-stt">{{i + 1}}</td>
+                                        <td class="p-col-user">{{rowData.shipmentNumber}}</td>
+                                        <td class="p-col-user">{{rowData.pickupName}}</td>
+                                        <td class="p-col-address">{{rowData.weight}}</td>
+                                        <td class="p-col-user">{{rowData.calWeight}}</td>
+                                        <td class="p-col-user">{{rowData.totalBox}}</td>
+                                        <td class="p-col-user">{{rowData.totalPrice}}</td>
+                                        <td class="p-col-user">{{rowData.shipmentNumberTo}}</td>
+                                        <td class="p-col-user">{{rowData.deliveredName}}</td>
+                                        <td class="p-col-address">{{rowData.weightTo}}</td>
+                                        <td class="p-col-user">{{rowData.calWeightTo}}</td>
+                                        <td class="p-col-user">{{rowData.totalBoxTo}}</td>
+                                        <td class="p-col-user">{{rowData.totalPriceTo}}</td>
+                                        <td class="p-col-user">{{rowData.serviceName}}</td>
+                                        <td class="p-col-user">{{rowData.cod}}</td>
+                                        <td class="p-col-user">{{rowData.receiverName}}</td>
+                                        <td class="p-col-user">{{rowData.shipmentNumberExist}}</td>
+                                        <td class="p-col-user">{{rowData.reasonUpdate}}</td>
+                                        <td class="p-col-user">{{rowData.currentHubName}}</td>
+                                        <td class="p-col-user"></td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer" let-columns>
+                                    <tr>
+                                        <th class="p-col-stt">STT</th>
+                                        <th pSortableColumn="shipmentNumber" class="p-col-user">Vận đơn nhận
+                                            <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="PickupName" class="p-col-user">Nhân viên nhận
+                                            <p-sortIcon field="PickupName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="Weight" class="p-col-address">Trọng lượng nhận (kg)
+                                            <p-sortIcon field="Weight"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="CalWeight" class="p-col-user">Trọng lượng quy đổi
+                                            <p-sortIcon field="CalWeight"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="TotalBox" class="p-col-user">Số kiện
+                                            <p-sortIcon field="TotalBox"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="TotalPrice" class="p-col-user">Doanh thu nhận
+                                            <p-sortIcon field="TotalPrice"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="ShipmentNumberTo" class="p-col-user">Vận đơn 
+                                            <p-sortIcon field="ShipmentNumberTo"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="DeliveredName" class="p-col-user">Nhân viên giao
+                                            <p-sortIcon field="DeliveredName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="WeightTo" class="p-col-address">Trọng lượng (kg)
+                                            <p-sortIcon field="WeightTo"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="CalWeightTo" class="p-col-user">Trọng lượng quy đổi
+                                            <p-sortIcon field="CalWeightTo"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="TotalBoxTo" class="p-col-user">Số kiện
+                                            <p-sortIcon field="TotalBoxTo"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="TotalPriceTo" class="p-col-user">Doanh thu
+                                            <p-sortIcon field="TotalPriceTo"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="ServiceName" class="p-col-user">Dịch vụ vận chuyển
+                                            <p-sortIcon field="ServiceName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="COD" class="p-col-user">COD
+                                            <p-sortIcon field="COD"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="ReceiverName" class="p-col-user">Tên khách nhận hàng
+                                            <p-sortIcon field="ReceiverName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="ShipmentNumberExist" class="p-col-user">Vận đơn tồn
+                                            <p-sortIcon field="ShipmentNumberExist"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="ReasonUpdate" class="p-col-user">Lý do cập nhật
+                                            <p-sortIcon field="ReasonUpdate"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="CurrentHubName" class="p-col-user">Kho nhập xuất cuối
+                                            <p-sortIcon field="CurrentHubName"></p-sortIcon>
+                                        </th>
+                                        <th class="p-col-user">Biểu đồ
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td [attr.colspan]="'32'">
+                                            Không tìm thấy dữ liệu
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="summary">
+                                    <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecords}} vận
+                                        đơn | Tổng tiền: {{totalRecevice | number}} Đ</span>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

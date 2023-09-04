@@ -1,0 +1,530 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+<tabset active="'createlist'">
+    <tab name="createlist">
+        <ng-template tabHeading>
+            <i class="fa fa-edit"></i>Nộp tiền về trung tâm khác
+        </ng-template>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label>{{hub.centerHubLongName}} nhận</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="toHubs" [(ngModel)]="selectedToHub" [style]="{'width':'100%'}"
+                                filter="filter" (onChange)="changeToHub()" placeholder="Chọn dữ liệu">
+                            </p-dropdown>
+                        </div>
+                        <div class="col-sm-9">
+                            <label>Ghi chú</label>
+                            <div class="input-group" style="width:100%">
+                                <input type="text" class="input-sm form-control" [(ngModel)]="txtNote" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            <label>&nbsp;</label>
+                            <div style="margin-bottom: 10px">
+                                <button *ngIf="isEdit" type="button" class="btn btn-success" (click)="save()">Tạo bảng kê</button>
+                                <button class="btn btn-success" (click)="refresh()">
+                                    <i class="fa fa-refresh"></i>&nbsp;refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 none-padding-right col-md-6-small">
+                            <div class="ibox float-e-margins">
+                                <div class="ibox-title">
+                                    <h5>Danh sách vận đơn chờ nộp tiền</h5>
+                                    <div class="ibox-tools">
+                                        <a class="collapse-link">
+                                            <i class="fa fa-chevron-up"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="ibox-content">
+                                    <div class="row">
+                                        <div class="col-sm-9">
+                                            <div class="input-group">
+                                                <input #txtCodeLeft type="text" placeholder="Quét mã vận đơn cần chọn" class="input-sm form-control" (keyup.enter)="onEnterCodeLeft(txtCodeLeft)"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                                <input #filterGbLeft type="text" placeholder="Tìm kiếm ..." [(ngModel)]="txtFilterGbLeft" class="input-sm form-control" (input)="dtLeft.filterGlobal($event.target.value, 'contains')"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ibox-content">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="table-responsive">
+                                                <!-- <p-dataTable [value]="listData" rows="20" [responsive]="true" [globalFilter]="filterGbLeft" [lazy]="true" [totalRecords]="totalRecords"
+                                                    [(selection)]="selectedData" (onLazyLoad)="loadLazy($event)" dataKey="id"
+                                                    scrollable="true" scrollHeight="42vh">
+                                                    <p-footer> Tổng cước: {{ sum(listData,"totalPriceKeeping") | number}} + Tổng COD:
+                                                        {{ sum(listData,"codKeeping") | number}} =
+                                                        <b>{{ sum(listData,"totalPriceKeeping") + sum(listData,"codKeeping")|
+                                                            number}}
+                                                        </b>
+                                                    </p-footer>
+                                                    <p-column [style]="{'width':'50px'}">
+                                                        <ng-template pTemplate="body" let-rowData="rowData">
+                                                            <div style="display: flex;">
+                                                                <button type="button" class="btn btn-primary" (click)="assign(rowData)" title="Chọn">
+                                                                    <i class="fa fa-arrow-right"></i>
+                                                                </button>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-column>
+                                                    <p-column styleClass="p-col-shipmentNumber" field="shipmentNumber" header="Mã" [sortable]="true"></p-column>
+                                                    <p-column styleClass="p-col-normal text-right" field="totalPriceKeeping" header="Tổng phải thu" [sortable]="true">
+                                                        <ng-template pTemplate="body" let-rowData="rowData">
+                                                            {{(rowData.totalPriceKeeping + rowData.codKeeping)| number}}
+                                                        </ng-template>
+                                                    </p-column>
+                                                    <p-column styleClass="p-col-normal text-right" field="codKeeping" header="COD" [sortable]="true">
+                                                        <ng-template pTemplate="body" let-rowData="rowData">
+                                                            {{rowData.codKeeping| number}}
+                                                        </ng-template>
+                                                    </p-column>
+                                                    <p-column styleClass="p-col-normal text-right" field="totalPriceKeeping" header="Tổng cước" [sortable]="true">
+                                                        <ng-template pTemplate="body" let-rowData="rowData">
+                                                            {{rowData.totalPriceKeeping| number}}
+                                                        </ng-template>
+                                                    </p-column>
+                                                    <p-column styleClass="p-col-normal" field="paymentTypeName" header="Hình thức thanh toán" [sortable]="true"></p-column>
+                                                    <p-column styleClass="p-col-normal" field="tPLNumber" header="Mã vận đơn đối tác" [sortable]="true"></p-column>
+                                                    <p-column styleClass="p-col-normal" field="tPLCode" header="Mã đối tác" [sortable]="true"></p-column>
+                                                    <p-column styleClass="p-col-date" field="createdWhen" header="Ngày tạo" [sortable]="true">
+                                                        <ng-template pTemplate="body" let-rowData="rowData">
+                                                            {{rowData.createdWhen | dateFormat}}
+                                                        </ng-template>
+                                                    </p-column>
+                                                    <p-column styleClass="p-col-normal" field="weight" header="Trọng lượng" [sortable]="true"></p-column>
+                                                    <p-column styleClass="p-col-normal" field="serviceName" header="Dịch vụ" [sortable]="true"></p-column>
+                                                    <p-column styleClass="p-col-normal" field="senderName" header="Người gửi" [sortable]="true"></p-column>
+                                                    <p-column styleClass="p-col-normal" field="shipmentStatusName" header="Tình trạng" [sortable]="true"></p-column>
+                                                </p-dataTable> -->
+
+                                                <p-table #dtLeft [value]="listData" [responsive]="true" [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="loadLazy($event)"
+                                                    [paginator]="true" [rows]="20" [rowsPerPageOptions]="[10,20,50,100]">
+                                                    <ng-template pTemplate="header">
+                                                        <tr>
+                                                            <th style="width: 50px"></th>
+                                                            <th style="width: 150px" pSortableColumn="shipmentNumber">Mã
+                                                                <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="totalPriceKeeping">Tổng phải thu
+                                                                <p-sortIcon field="totalPriceKeeping"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="codKeeping">COD
+                                                                <p-sortIcon field="codKeeping"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="totalPriceKeeping">Tổng cước
+                                                                <p-sortIcon field="totalPriceKeeping"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 180px" pSortableColumn="paymentTypeName">Hình thức thanh toán
+                                                                <p-sortIcon field="paymentTypeName"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="tPLNumber">Mã vận đơn đối tác
+                                                                <p-sortIcon field="tPLNumber"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="tPLCode">Mã đối tác
+                                                                <p-sortIcon field="tPLCode"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="createdWhen">Ngày tạo
+                                                                <p-sortIcon field="createdWhen"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="weight">Trọng lượng
+                                                                <p-sortIcon field="weight"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="serviceName">"Dịch vụ
+                                                                <p-sortIcon field="serviceName"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="senderName">Người gửi
+                                                                <p-sortIcon field="senderName"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="shipmentStatusName">Tình trạng
+                                                                <p-sortIcon field="shipmentStatusName"></p-sortIcon>
+                                                            </th>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+                                                        <tr>
+                                                            <td style="width: 50px; height: 50px">
+                                                                Tổng cước: {{ sum(listData,"totalPriceKeeping") | number}} + Tổng COD: {{ sum(listData,"codKeeping") | number}} =
+                                                                <b>{{ sum(listData,"totalPriceKeeping") + sum(listData,"codKeeping")|
+                                                                    number}}
+                                                                </b>
+                                                            </td>
+                                                            <td style="width: 150px">{{data.shipmentNumber}}</td>
+                                                            <td style="width: 150px">{{(data.totalPriceKeeping + data.codKeeping) | number}}</td>
+                                                            <td style="width: 150px">{{data.codKeeping | number}}</td>
+                                                            <td style="width: 150px">{{data.totalPriceKeeping | number}}</td>
+                                                            <td style="width: 180px">{{data.paymentTypeName}}</td>
+                                                            <td style="width: 150px">{{data.tPLNumber}}</td>
+                                                            <td style="width: 150px">{{data.tPLCode}}</td>
+                                                            <td style="width: 150px">{{data.createdWhen | dateFormat}}</td>
+                                                            <td style="width: 150px">{{data.weight}}</td>
+                                                            <td style="width: 150px">{{data.serviceName}}</td>
+                                                            <td style="width: 150px">{{data.senderName}}</td>
+                                                            <td style="width: 150px">{{data.shipmentStatusName}}</td>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="emptymessage">
+                                                        <tr>
+                                                            <td colspan="13">
+                                                                Không tìm thấy dữ liệu
+                                                            </td>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="summary">
+                                                        Tổng cước: {{ sum(listData,"totalPriceKeeping") | number}} + Tổng COD: {{ sum(listData,"codKeeping") | number}} =
+                                                        <b>{{ sum(listData,"totalPriceKeeping") + sum(listData,"codKeeping")|
+                                                            number}}
+                                                        </b>
+                                                    </ng-template>
+                                                </p-table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Left Table -->
+                        <!-- Begin Right Table -->
+                        <div class="col-md-6">
+                            <div class="ibox float-e-margins">
+                                <div class="ibox-title">
+                                    <h5>Danh sách thao tác</h5>
+                                    <div class="ibox-tools">
+                                        <a class="collapse-link">
+                                            <i class="fa fa-chevron-up"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="ibox-content">
+                                    <div class="row">
+                                        <div class="col-sm-9">
+                                            <div class="input-group">
+                                                <input #txtCodeRight type="text" placeholder="Quét mã vận đơn cần hủy" class="input-sm form-control" (keyup.enter)="onEnterCodeRight(txtCodeRight)"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                                <input #filterGbRight type="text" placeholder="Tìm kiếm ..." [(ngModel)]="txtFilterGbRight" class="input-sm form-control"
+                                                    (input)="dtRight.filterGlobal($event.target.value, 'contains')" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ibox-content">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="table-responsive">
+                                                <!-- <p-dataTable [value]="listDataRight" [responsive]="true" [globalFilter]="filterGbRight" scrollable="true" [(selection)]="selectedDataRight"
+                                                    dataKey="id" scrollable="true" scrollHeight="550px">
+                                                    <p-footer> Tổng cước: {{ sum(listDataRight,"totalPriceKeeping") | number}} + Tổng
+                                                        COD: {{ sum(listDataRight,"codKeeping") | number}} =
+                                                        <b>{{ sum(listDataRight,"totalPriceKeeping") + sum(listDataRight,"codKeeping")|
+                                                            number}}
+                                                        </b>
+                                                    </p-footer>
+                                                    <p-column [style]="{'width':'50px'}">
+                                                        <ng-template pTemplate="body" let-rowData="rowData">
+                                                            <div style="display: flex;">
+                                                                <button type="button" class="btn btn-danger" (click)="unAssign(rowData)" title="Hủy">
+                                                                    <i class="fa fa-arrow-left"></i>
+                                                                </button>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-column>
+                                                    <p-column styleClass="p-col-shipmentNumber" field="shipmentNumber" header="Mã" [sortable]="true"></p-column>
+                                                    <p-column styleClass="p-col-normal text-right" field="totalPriceKeeping" header="Tổng phải thu" [sortable]="true">
+                                                        <ng-template pTemplate="body" let-rowData="rowData">
+                                                            {{(rowData.totalPriceKeeping + rowData.codKeeping)| number}}
+                                                        </ng-template>
+                                                    </p-column>
+                                                    <p-column styleClass="p-col-normal text-right" field="codKeeping" header="COD" [sortable]="true">
+                                                        <ng-template pTemplate="body" let-rowData="rowData">
+                                                            {{rowData.codKeeping| number}}
+                                                        </ng-template>
+                                                    </p-column>
+                                                    <p-column styleClass="p-col-normal text-right" field="totalPriceKeeping" header="Tổng cước" [sortable]="true">
+                                                        <ng-template pTemplate="body" let-rowData="rowData">
+                                                            {{rowData.totalPriceKeeping| number}}
+                                                        </ng-template>
+                                                    </p-column>
+                                                    <p-column styleClass="p-col-normal" field="paymentTypeName" header="Hình thức thanh toán" [sortable]="true"></p-column>
+                                                    <p-column styleClass="p-col-normal" field="tPLNumber" header="Mã vận đơn đối tác" [sortable]="true"></p-column>
+                                                    <p-column styleClass="p-col-normal" field="tPLCode" header="Mã đối tác" [sortable]="true"></p-column>
+                                                    <p-column styleClass="p-col-date" field="createdWhen" header="Ngày tạo" [sortable]="true">
+                                                        <ng-template pTemplate="body" let-rowData="rowData">
+                                                            {{rowData.createdWhen | dateFormat}}
+                                                        </ng-template>
+                                                    </p-column>
+                                                    <p-column styleClass="p-col-normal" field="weight" header="Trọng lượng" [sortable]="true"></p-column>
+                                                    <p-column styleClass="p-col-normal" field="serviceName" header="Dịch vụ" [sortable]="true"></p-column>
+                                                    <p-column styleClass="p-col-normal" field="senderName" header="Người gửi" [sortable]="true"></p-column>
+                                                    <p-column styleClass="p-col-normal" field="shipmentStatusName" header="Tình trạng" [sortable]="true"></p-column>
+                                                </p-dataTable> -->
+
+                                                <p-table #dtRight [value]="listDataRight" [responsive]="true" [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="loadLazy($event)"
+                                                    [paginator]="true" [rows]="20" [rowsPerPageOptions]="[10,20,50,100]">
+                                                    <ng-template pTemplate="header">
+                                                        <tr>
+                                                            <th style="width: 50px"></th>
+                                                            <th style="width: 150px" pSortableColumn="shipmentNumber">Mã
+                                                                <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="totalPriceKeeping">Tổng phải thu
+                                                                <p-sortIcon field="totalPriceKeeping"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="codKeeping">COD
+                                                                <p-sortIcon field="codKeeping"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="totalPriceKeeping">Tổng cước
+                                                                <p-sortIcon field="totalPriceKeeping"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 180px" pSortableColumn="paymentTypeName">Hình thức thanh toán
+                                                                <p-sortIcon field="paymentTypeName"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="tPLNumber">Mã vận đơn đối tác
+                                                                <p-sortIcon field="tPLNumber"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="tPLCode">Mã đối tác
+                                                                <p-sortIcon field="tPLCode"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="createdWhen">Ngày tạo
+                                                                <p-sortIcon field="createdWhen"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="weight">Trọng lượng
+                                                                <p-sortIcon field="weight"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="serviceName">"Dịch vụ
+                                                                <p-sortIcon field="serviceName"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="senderName">Người gửi
+                                                                <p-sortIcon field="senderName"></p-sortIcon>
+                                                            </th>
+                                                            <th style="width: 150px" pSortableColumn="shipmentStatusName">Tình trạng
+                                                                <p-sortIcon field="shipmentStatusName"></p-sortIcon>
+                                                            </th>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+                                                        <tr>
+                                                            <td style="width: 50px; height: 50px">
+                                                                Tổng cước: {{ sum(listData,"totalPriceKeeping") | number}} + Tổng COD: {{ sum(listData,"codKeeping") | number}} =
+                                                                <b>{{ sum(listData,"totalPriceKeeping") + sum(listData,"codKeeping")|
+                                                                    number}}
+                                                                </b>
+                                                            </td>
+                                                            <td style="width: 150px">{{data.shipmentNumber}}</td>
+                                                            <td style="width: 150px">{{(data.totalPriceKeeping + data.codKeeping) | number}}</td>
+                                                            <td style="width: 150px">{{data.codKeeping | number}}</td>
+                                                            <td style="width: 150px">{{data.totalPriceKeeping | number}}</td>
+                                                            <td style="width: 180px">{{data.paymentTypeName}}</td>
+                                                            <td style="width: 150px">{{data.tPLNumber}}</td>
+                                                            <td style="width: 150px">{{data.tPLCode}}</td>
+                                                            <td style="width: 150px">{{data.createdWhen | dateFormat}}</td>
+                                                            <td style="width: 150px">{{data.weight}}</td>
+                                                            <td style="width: 150px">{{data.serviceName}}</td>
+                                                            <td style="width: 150px">{{data.senderName}}</td>
+                                                            <td style="width: 150px">{{data.shipmentStatusName}}</td>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="emptymessage">
+                                                        <tr>
+                                                            <td colspan="13">
+                                                                Không tìm thấy dữ liệu
+                                                            </td>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="summary">
+                                                        Tổng cước: {{ sum(listData,"totalPriceKeeping") | number}} + Tổng COD: {{ sum(listData,"codKeeping") | number}} =
+                                                        <b>{{ sum(listData,"totalPriceKeeping") + sum(listData,"codKeeping")|
+                                                            number}}
+                                                        </b>
+                                                    </ng-template>
+                                                </p-table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </tab>
+    <tab name="managementlist">
+        <ng-template tabHeading>
+            <i class="fa fa-list"></i>Danh sách bảng kê nộp tiền về trung tâm khác
+        </ng-template>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <div class="ibox-tools">
+                            <p-header>
+                                <div>
+                                    <button type="button" class="btn btn-primary" (click)="dt.exportCSV()">
+                                        <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+                                    <button type="button" class="btn btn-success" (click)="refreshLRM()">
+                                        <i class="fa fa-refresh"></i>&nbsp;refresh</button>
+                                </div>
+                            </p-header>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label>Ngày tạo</label>
+                                <div class="form-group">
+                                    <div class="input-group" daterangepicker (selected)="selectedDateLRM($event, dateRangeLRM)" (cancelDaterangepicker)="calendarEventsHandler($event)"
+                                        (showDaterangepicker)="calendarEventsHandler($event)">
+                                        <span class="form-control uneditable-input" name="daterange" style="height: 25px;">
+                                            <p style="margin-top: -3px">{{ dateRangeLRM.start | dateFormat }} - {{ dateRangeLRM.end | dateFormat }}
+                                            </p>
+                                        </span>
+                                        <span class="input-group-btn">
+                                            <a type="button" class="btn btn-default">
+                                                <i class="glyphicon glyphicon-calendar"></i>
+                                            </a>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label>{{hub.centerHubLongName}} nhận</label>
+                                <p-dropdown styleClass="select-input form-control" [options]="toHubsLRM" [(ngModel)]="selectedToHubLRM" [style]="{'width':'100%'}"
+                                    filter="filter" (onChange)="changeFilterLRM()">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-sm-3">
+                                <label>Tình trạng</label>
+                                <p-dropdown styleClass="select-input form-control" [options]="statuesLRM" [(ngModel)]="selectedStatusLRM" [style]="{'width':'100%'}"
+                                    filter="filter" (onChange)="changeFilterLRM()">
+                                </p-dropdown>
+                            </div>
+
+                            <div class="col-sm-3">
+
+                                <label>Tìm kiếm</label>
+                                <div class="input-group">
+
+                                    <input #filterGb type="text" placeholder="Nhập chuỗi cần tìm ..." [(ngModel)]="txtFilterGb" class="input-sm form-control"
+                                        id="filter" />
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-sm btn-primary"> Tìm kiếm</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="table-responsive">
+                                    <p-dataTable #dt [value]="listDataLRM" [paginator]="true" rows="10" [rowsPerPageOptions]="[10,20,50,100]" [globalFilter]="filterGb"
+                                        [lazy]="true" [totalRecords]="totalRecordsLRM" (onLazyLoad)="loadLazyListReceiveMoney($event)">
+                                        <p-column styleClass="p-col-checkbox" header="STT">
+                                            <ng-template pTemplate="body" let-i="rowIndex">
+                                                {{i + 1}}
+                                            </ng-template>
+                                        </p-column>
+                                        <p-column styleClass="p-col-normal" field="id" header="Thao tác" [sortable]="true" [style]="{'width': '200px'}">
+                                            <ng-template pTemplate="body" let-rowData="rowData">
+                                                <div style="display: flex;">
+                                                    <button type="button" *ngIf="(rowData.listReceiptMoneyStatusId === 1 || rowData.listReceiptMoneyStatusId === 5) && isEdit"
+                                                        class="btn btn-primary" (click)="lockLRM(rowData)">
+                                                        <i class="fa fa-lock"></i> Khóa</button>
+                                                    <button type="button" *ngIf="rowData.listReceiptMoneyStatusId === 2 && isEdit" class="btn btn-primary" (click)="unlockLRM(rowData)">
+                                                        <i class="fa fa-unlock-alt"></i> Mở khóa</button>
+                                                    <button type="button" *ngIf="(rowData.listReceiptMoneyStatusId === 1 || rowData.listReceiptMoneyStatusId === 5)&& isDelete"
+                                                        class="btn btn-danger" (click)="cancelLRM(rowData)">
+                                                        <i class="fa fa-lock"></i> Hủy</button>
+                                                    <button type="button" class="btn btn-info" (click)="viewLRM(rowData)">
+                                                        <i class="fa fa-eye"></i> Xem</button>
+                                                </div>
+                                            </ng-template>
+                                        </p-column>
+                                        <p-column styleClass="p-col-normal" field="code" header="Mã" [sortable]="true"></p-column>
+                                        <p-column styleClass="p-col-normal" field="listReceiptMoneyStatus.name" header="Tình trạng" [sortable]="true"></p-column>
+                                        <p-column styleClass="p-col-normal" field="toHub.name" header="{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} nhận"
+                                            [sortable]="true"></p-column>
+                                        <p-column styleClass="p-col-normal text-right" field="totalPrice" header="Tổng tiền cước" [sortable]="true">
+                                            <ng-template pTemplate="body" let-rowData="rowData">
+                                                {{rowData.totalPrice | number}}
+                                            </ng-template>
+                                        </p-column>
+                                        <p-column styleClass="p-col-normal text-right" field="totalCOD" header="Tổng tiền COD" [sortable]="true">
+                                            <ng-template pTemplate="body" let-rowData="rowData">
+                                                {{rowData.totalCOD | number}}
+                                            </ng-template>
+                                        </p-column>
+                                        <p-column styleClass="p-col-normal text-right" field="grandTotal" header="Tổng tiền" [sortable]="true">
+                                            <ng-template pTemplate="body" let-rowData="rowData">
+                                                {{rowData.grandTotal | number}}
+                                            </ng-template>
+                                        </p-column>
+                                        <p-column styleClass="p-col-normal" field="userCreated.fullName" header="Người tạo" [sortable]="true"></p-column>
+                                        <p-column styleClass="p-col-date" field="orderDate" header="Ngày tạo" [sortable]="true">
+                                            <ng-template pTemplate="body" let-rowData="rowData">
+                                                {{rowData.createdWhen | dateFormat}}
+                                            </ng-template>
+                                        </p-column>
+                                        <p-column styleClass="p-col-normal" field="userModified.fullName" header="Người chỉnh sửa" [sortable]="true"></p-column>
+                                        <p-column styleClass="p-col-date" field="orderDate" header="Ngày chỉnh sửa" [sortable]="true">
+                                            <ng-template pTemplate="body" let-rowData="rowData">
+                                                {{rowData.modifiedWhen | dateFormat}}
+                                            </ng-template>
+                                        </p-column>
+                                    </p-dataTable>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </tab>
+</tabset>
+<ng-template #templateConfirmRefresh>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+    </div>
+    <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 no-padding">
+            <h4>Danh sách thao tác sẽ bị làm mới! Bạn có chắc chắn muốn làm mới dữ liệu không?</h4>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+        <button type="button" class="btn btn-danger" (click)="refresh()">Đồng ý</button>
+    </div>
+</ng-template>
+<!-- End Model -->

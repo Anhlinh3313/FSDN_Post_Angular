@@ -1,0 +1,172 @@
+/*
+bootstrap table theme
+*/
+
+.ngx-datatable.bootstrap {
+    box-shadow: none;
+    font-size: 13px;
+    .datatable-header {
+      height: unset !important;
+      .datatable-header-cell {
+        vertical-align: bottom;
+        padding: 0.75rem;
+        border-bottom: 1px solid #d1d4d7;
+        .datatable-header-cell-label {
+          line-height: 24px;
+        }
+      }
+    }
+    .datatable-body {
+      .datatable-body-row {
+        padding: 0.75rem;
+        vertical-align: top;
+        border-top: 1px solid #d1d4d7;
+        &.datatable-row-even {
+          background-color: rgba(0, 0, 0, 0.05);
+        }
+        &.active {
+          background-color: #1483ff;
+          color: #FFF;
+        }
+        .datatable-body-cell {
+          text-align: left;
+          vertical-align: top;
+        }
+      }
+    }
+    .datatable-footer {
+      background: #424242;
+      color: #ededed;
+      margin-top: -1px;
+      .page-count {
+        line-height: 50px;
+        height: 50px;
+        padding: 0 1.2rem;
+      }
+      .datatable-pager {
+        margin: 0 10px;
+        vertical-align: top;
+        ul {
+          li {
+            margin: 10px 0px;
+            a {
+              color:black;
+            }
+            &:not(.disabled) {
+              &.active,
+              &:hover {
+                a {
+                  background-color: #545454;
+                  font-weight: bold;
+                  color:white;
+                }
+              }
+            }
+          }
+        }
+        a {
+          height: 22px;
+          min-width: 24px;
+          line-height: 22px;
+          padding: 0;
+          border-radius: 3px;
+          margin: 0 3px;
+          text-align: center;
+          vertical-align: top;
+          text-decoration: none;
+          vertical-align: bottom;
+          color: #ededed;
+        }
+        .datatable-icon-left,
+        .datatable-icon-skip,
+        .datatable-icon-right,
+        .datatable-icon-prev {
+          font-size: 18px;
+          line-height: 27px;
+          padding: 0 3px;
+          color: black;
+        }
+      }
+    }
+  }
+  
+.input-group {
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+  width: 100%;
+}
+.input-group-append, .input-group-prepend {
+  display: -ms-flexbox;
+  display: flex;    
+  align-items: center;
+}
+.input-group {
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+  width: 100%;
+}
+.input-group-addon {
+  background-color: #fff;
+  border: 1px solid #E5E6E7;
+  border-radius: 1px;
+  color: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  padding: 9px 12px 9px 12px !important;
+  text-align: center;
+  width: 100%;
+}
+.form-control, .single-line {
+  background-color: #FFFFFF;
+  background-image: none;
+  border: 1px solid #e5e6e7;
+  border-radius: 1px;
+  color: inherit;
+  display: block;
+  padding: 6px 12px;
+  transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+  width: 100%;
+}
+.input-group>.custom-file, .input-group>.custom-select, .input-group>.form-control, .input-group>.form-control-plaintext {
+  position: relative;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  width: 1%;
+  margin-bottom: 0;
+}
+.input-group-prepend {
+  margin-right: -1px;
+}
+.f-w-b {
+  font-weight: bold;
+}
+.m-b-5 {
+  margin-bottom: 5px;
+}
+.m-t-5 {
+  margin-top: 5px;
+}
+.ui-progressbar-determinate .ui-progressbar-value-animate {
+  transition: width 0.1s ease-in-out !important;
+}
+
+.text-excel {
+  color: #1ab394;
+  text-decoration: underline;
+  float: right;
+  cursor: pointer;
+}
+.text-excel:hover {
+  color: rgba(26, 179, 148, 0.8);
+}

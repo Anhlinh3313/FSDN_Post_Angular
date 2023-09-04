@@ -1,0 +1,357 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <div class="ibox-tools">
+                    <p-header>
+                        <div>
+                            <button type="button" class="btn btn-primary" (click)="exportCSV(dt)">
+                                <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+                            <button type="button" class="btn btn-success" (click)="loadShipment()">
+                                <i class="fa fa-refresh"></i>&nbsp;Xen</button>
+                        </div>
+                    </p-header>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <!-- <div class="col-sm-2">
+                        <label>&nbsp;</label>
+                        <div class="input-group">
+                            <input type="text" placeholder="Mã vận đơn ..." class="input-sm form-control" [(ngModel)]="txtShipmentNumber"
+                                (keyup.enter)="changeShipmentNumber()" />
+                        </div>
+                    </div> -->
+                    <div class="col-md-2">
+                        <label>Từ ngày</label>
+                        <div class="form-group">
+                            <p-calendar [(ngModel)]="shipmentFilterViewModel.OrderDateFrom" [showIcon]="false"
+                                hourFormat="24" dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                                [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Đến ngày</label>
+                        <div class="form-group">
+                            <p-calendar [(ngModel)]="shipmentFilterViewModel.OrderDateTo" [showIcon]="false"
+                                hourFormat="24" dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                                [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                    <!-- <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Tỉnh đi</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="fromProvincesLS" [(ngModel)]="fromSelectedProvinceLS"
+                                [style]="{'width':'100%'}" filter="filter" (onChange)="changeFromProvince()" autofocus
+                                tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Tỉnh đến</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="toProvincesLS" [(ngModel)]="toSelectedProvinceLS"
+                                [style]="{'width':'100%'}" filter="filter" (onChange)="changeToProvince()" autofocus
+                                tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div> -->
+                    <div class="col-sm-2">
+                        <label>Tỉnh</label>
+                        <p-multiSelect styleClass="select-input form-control" [options]="provinces"
+                            [(ngModel)]="selectedToProvince" 
+                            [style]="{'width':'100%'}" filter="filter"  defaultLabel="-- Chọn tỉnh/thành --">
+                        </p-multiSelect>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Khách hàng</label>
+                            <!-- <p-dropdown styleClass="select-input form-control" [options]="fromSendersLS" [(ngModel)]="fromSelectedSenderLS" [style]="{'width':'100%'}"
+                                filter="filter" (onChange)="changeSender()" autofocus tabindex="1">
+                            </p-dropdown> -->
+
+                            <p-autoComplete [(ngModel)]="customer" [suggestions]="filteredCustomers" [minLength]="1"
+                                (completeMethod)="filterCustomers($event)" (onSelect)="onSelectedCustomer()"
+                                styleClass="select-input form-control none-padding" [dropdown]="false"
+                                (keydown.Tab)="keyTabSender($event)">
+                            </p-autoComplete>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="row">
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>{{hub.stationHubLongName}} hoàn</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="fromHub" [(ngModel)]="selectedFromHub"
+                                [style]="{'width':'100%'}" filter="filter" (onChange)="changeFromHub()" autofocus
+                                tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>{{hub.stationHubLongName}} giữ</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="currentHub" [(ngModel)]="selectedCurrentHub"
+                                [style]="{'width':'100%'}" filter="filter" (onChange)="changeCurrentHub()" autofocus
+                                tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Chọn Dịch Vụ</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="servicesLS" [(ngModel)]="selectedServicesLS"
+                                [style]="{'width':'100%'}" filter="filter" (onChange)="changeServices()" autofocus
+                                tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Chọn Thanh Toán</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="paymentTypesLS" [(ngModel)]="selectedPaymentTypeLS"
+                                [style]="{'width':'100%'}" filter="filter" (onChange)="changePaymentType()" autofocus
+                                tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Chọn Trạng Thái</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="statusesLS" [(ngModel)]="selectedStatusLS"
+                                [style]="{'width':'100%'}" filter="filter" (onChange)="changeShipmentStatus()"
+                                autofocus tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2" style="float: right">
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <div class="">
+                                <input type="text" placeholder="Nhập chuỗi cần tìm ..." (keyup.enter)="search()"
+                                    [(ngModel)]="txtSearchText" class="input-sm form-control" id="filter" />
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <p-table #dt [value]="listData" [responsive]="true" [paginator]="true" [rows]="rowPerPage"
+                                [rowsPerPageOptions]="[10,20,50,100]" (onPage)="onPageChange($event)" [lazy]="true"
+                                [totalRecords]="totalRecords" (onLazyLoad)="loadLazy($event)" [scrollable]="true"
+                                scrollHeight="450px" [columns]="columns">
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th style="width:50px">STT</th>
+                                        <th class="p-col-normal">Mã Người nhận</th>
+                                        <th class="p-col-normal">Giờ Gửi</th>
+                                        <th class="p-col-normal">Ngày Gửi</th>
+                                        <th class="p-col-normal">Vận Đơn</th>
+                                        <th class="p-col-normal">COD</th>
+                                        <th class="p-col-normal">Giá Trị HH</th>
+                                        <th class="p-col-normal">Số Kiện</th>
+                                        <th class="p-col-normal">Trọng Lượng</th>
+                                        <th class="p-col-normal">Người Nhận</th>
+                                        <th class="p-col-normal">Tỉnh Thành</th>
+                                        <th class="p-col-normal">Quận Huyện</th>
+                                        <th class="p-col-normal">Phường Xã</th>
+                                        <th class="p-col-normal" style="width: 300px">ĐC Phát</th>
+                                        <th class="p-col-normal">Mô tả Phát</th>
+                                        <th class="p-col-normal">Ghi Chú Bill</th>
+                                        <!-- <th class="p-col-normal">Tiến độ thực hiện đơn hàng</th> -->
+                                        <!-- <th class="p-col-normal">Thời gian xuất kho</th> -->
+                                        <!-- <th class="p-col-normal">Thời gian giao hàng thành công</th> -->
+                                        <th class="p-col-normal">Hoàn hàng</th>
+                                        <th class="p-col-normal">Lý do hoàn hàng</th>
+                                        <th class="p-col-normal">Thời gian giao hàng lần 1</th>
+                                        <th class="p-col-normal">Lý do ko giao được lần 1</th>
+                                        <th class="p-col-normal">Thời gian giao hàng lần 2</th>
+                                        <th class="p-col-normal">Lý do ko giao được lần 2</th>
+                                        <th class="p-col-normal">Thời gian giao hàng lần 3</th>
+                                        <th class="p-col-normal">Lý do ko giao được lần 3</th>
+                                        <th class="p-col-normal">Người ký nhận</th>
+                                        <!-- <th class="p-col-normal">Hoàn hàng</th> -->
+                                        <!-- <th class="p-col-normal">Khoản cách VSVX</th>
+                                        <th class="p-col-normal">Phụ Phí VSVX</th>
+                                        <th class="p-col-normal">Tổng cộng phí DV</th> -->
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-data let-i="rowIndex">
+                                    <tr>
+                                        <td style="width:50px; text-align: center;">
+                                            {{data.numberAutoUp}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.receiverCode2}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.orderDate | timeFormatNoDate}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.orderDate | dateFormat}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.shipmentNumber}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.cod | number}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.insured | number}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.totalBox}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.weight}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.receiverName}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.toProvinceName}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.toDistrictName}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.toWardName}}
+                                        </td>
+                                        <td class="p-col-normal" style="width: 300px">
+                                            {{data.shippingAddress}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.deliveryNote}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.note}}
+                                        </td>
+                                        <!-- <td class="p-col-normal">
+                                            {{data.shipmentStatusName}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.endPickTime}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.endReturnTime}}
+                                        </td> -->
+                                        <td class="p-col-normal" style="text-align: center;">
+                                            {{data.endReturnTime  }}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.returnReason}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.deliveryWhenOne}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.deliveryReasonOne}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.deliveryWhenTwo}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.deliveryReasonTwo}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.deliveryWhenThree}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.deliveryReasonThree}}
+                                        </td>
+                                        <!-- <td class="p-col-normal">
+                                            <p-checkbox (ngModel)="data.isReturn" binary="false"></p-checkbox>
+                                        </td> -->
+                                        <td class="p-col-normal">
+                                            {{data.realRecipientName}}
+                                        </td>
+                                        <!-- <td class="p-col-normal">
+                                            {{data.remoteAreasPrice | number}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.totalPricePay | number}}
+                                        </td> -->
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td [attr.colspan]="'32'">
+                                            Không tìm thấy dữ liệu
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer" let-columns>
+                                    <tr>
+                                        <th style="width:50px"></th>
+                                        <th class="p-col-normal"> TỔNG CỘNG</th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal">
+                                            {{(listData && listData.length ? listData[0].sumCOD : 0) | number}}
+                                        </th>
+                                        <th class="p-col-normal">
+                                            {{(listData && listData.length ? listData[0].sumInsured : 0) | number}}
+                                        </th>
+                                        <th class="p-col-normal">
+                                            {{(listData && listData.length ? listData[0].totalBoxs  : 0) | number}}
+                                        </th>
+                                        <th class="p-col-normal">
+                                            {{(listData && listData.length ? listData[0].sumWeight   : 0) | number}}
+                                        </th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal" style="width: 300px"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <!-- <th class="p-col-normal"></th> -->
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <!-- <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal">
+                                            {{(listData && listData.length ? listData[0].sumTotalPricePay : 0) | number}}
+                                        </th> -->
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="summary">
+                                    <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecords}} vận
+                                        đơn | Tổng tiền: {{totalRecevice | number}} Đ</span>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

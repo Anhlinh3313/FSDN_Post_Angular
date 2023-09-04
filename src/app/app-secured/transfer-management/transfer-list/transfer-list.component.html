@@ -1,0 +1,167 @@
+<app-card>
+    <a class="parentPage">{{parentPage}}</a>
+    <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+
+<div class="row">
+    <div class="col-md-12 col-md-12-small">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Danh sách hàng đang trung chuyển</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <button class="btn btn-success" (click)="clickRefresh(templateConfirmRefresh)">
+                            <i class="fa fa-refresh"></i>&nbsp;refresh
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Bảng kê</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="listGoods" [(ngModel)]="selectedListGoods" [style]="{'width':'100%'}"
+                                filter="filter" (onChange)="changeListGoods()">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Trạng thái</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="statuses" [(ngModel)]="selectedStatus" [style]="{'width':'100%'}"
+                                filter="filter" (onChange)="changeStatus()">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Mã gói</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="packages" [(ngModel)]="selectedPackage" [style]="{'width':'100%'}"
+                                filter="filter" (onChange)="changeFilterLeft()">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} đi</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="fromHubs" [(ngModel)]="selectedFromHub" [style]="{'width':'100%'}"
+                                filter="filter" (onChange)="changeFromHub()">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} quét BK</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="receiveHubs" [(ngModel)]="selectedReceiveHub" [style]="{'width':'100%'}"
+                                filter="filter" (onChange)="changeReceiveHub()">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} giao</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="toHubs" [(ngModel)]="selectedToHub" [style]="{'width':'100%'}"
+                                filter="filter" (onChange)="changeToHub()">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>&nbsp;</label>
+                        <input #filterGbLeft type="text" placeholder="Tìm kiếm ..." [(ngModel)]="txtFilterGbLeft" class="input-sm form-control" style="width:100%;"
+                            (keyup.enter)="search($event.target.value)"/>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <p-table #dt [value]="datasource" [responsive]="true" [paginator]="true" [rows]="rowPerPage" [rowsPerPageOptions]="[10,20,50,100]"
+                            (onPage)="onPageChange($event)" [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="loadLazy($event)"
+                            [(selection)]="selectedData" scrollable="true" sortField="id" sortOrder="-1" [columns]="columns">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th [pSortableColumn]="'id'" Class="p-col-numPick">ID
+                                    </th>
+                                    <th [pSortableColumn]="'listGoods.name'" Class="p-col-normal">Mã BK
+                                    </th>
+                                    <th [pSortableColumn]="'shipmentNumber'" Class="p-col-shipmentNumber">Mã vận đơn
+                                    </th>
+                                    <th [pSortableColumn]="'package.name'" Class="p-col-normal">Mã gói
+                                    </th>
+                                    <th [pSortableColumn]="'fromHub.name'" Class="p-col-normal">{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} đi
+                                    </th>
+                                    <th [pSortableColumn]="'receiveHub.name'" Class="p-col-normal">{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} quét BK
+                                    </th>
+                                    <th [pSortableColumn]="'toHub.name'" Class="p-col-normal">{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} giao
+                                    </th>
+                                    <th [pSortableColumn]="'transferUser.fullName'" Class="p-col-normal">NV trung chuyển
+                                    </th>
+                                    <th [pSortableColumn]="'shipmentStatus.name'" Class="p-col-normal">Tình trạng
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-data let-columns="columns">
+                                <tr [pSelectableRow]="data">
+                                    <td class="p-col-numPick">
+                                        {{data.id}}
+                                    </td>                                        
+                                    <td class="p-col-normal">
+                                        {{data.listGoods?.code}}
+                                    </td>                                        
+                                    <td class="p-col-shipmentNumber">
+                                        {{data.shipmentNumber}}
+                                    </td>                                        
+                                    <td class="p-col-normal">
+                                        {{data.package?.name}}
+                                    </td>                                        
+                                    <td class="p-col-normal">
+                                        {{data.fromHub?.name}}
+                                    </td>                                        
+                                    <td class="p-col-normal">
+                                        {{data.receiveHub?.name}}
+                                    </td>                                        
+                                    <td class="p-col-normal">
+                                        {{data.toHub?.name}}
+                                    </td>                                        
+                                    <td class="p-col-normal">
+                                        <span *ngIf="data.transferReturnUser">{{data.transferReturnUser?.fullName}}</span>
+                                        <span *ngIf="data.transferUser">{{data.transferUser?.fullName}}</span>
+                                    </td>                                        
+                                    <td class="p-col-normal">
+                                        {{data.shipmentStatus?.name}}
+                                    </td>                                        
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="summary">
+                                <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecords}} vận đơn</span>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Begin Model -->
+<ng-template #templateConfirmRefresh>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+    </div>
+    <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 no-padding">
+            <h4>Danh sách thao tác sẽ bị làm mới! Bạn có chắc chắn muốn làm mới dữ liệu không?</h4>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+        <button type="button" class="btn btn-danger" (click)="refresh()">Đồng ý</button>
+    </div>
+</ng-template>
+<!-- End Model -->

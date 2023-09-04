@@ -1,0 +1,272 @@
+<app-card>
+    <a class="parentPage">{{parentPage}}</a>
+    <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <div style="margin:0 auto;margin-bottom:5px; text-align: right">
+                    <button type="button" class="btn btn-primary" (click)="exportCSV(dt)">
+                        <i class="fa fa-file-excel-o"></i>&nbsp;Excel</button>                    
+                    <button class="btn btn-success" (click)="refresh()">
+                        <i class="fa fa-refresh"></i> refresh
+                    </button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label>Ngày tạo vận đơn</label>
+                        <div class="form-group">
+                            <div class="input-group" daterangepicker (selected)="selectedDate($event, mainInput)" (cancelDaterangepicker)="calendarEventsHandler($event)"
+                                (showDaterangepicker)="calendarEventsHandler($event)">
+                                <span class="form-control uneditable-input" name="daterange" style="height: 25px;">
+                                    <p style="margin-top: -3px">{{ mainInput.start | dateFormatNoTime }} - {{ mainInput.end | dateFormatNoTime }}</p>
+                                </span>
+                                <span class="input-group-btn">
+                                    <a type="button" class="btn btn-default">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Loại In</label>
+                        <div class="form-group">
+                            <p-dropdown styleClass="select-input form-control" [options]="printTypes" [(ngModel)]="selectedPrintType" [style]="{'width':'100%'}"
+                                filter="filter" (onChange)="changePrintTypes()" autofocus tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>{{environment.centerHubSortName}}/{{environment.poHubSortName}}/{{environment.stationHubSortName}}
+                            in
+                        </label>
+                        <p-dropdown styleClass="select-input" [style]="{'width':'100%'}" [options]="hubItemGroups" [(ngModel)]="selectedHub" placeholder="Chọn tất cả"
+                            [group]="true" filter="true" (onChange)="onChangeHub()"></p-dropdown>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Nhân viên in</label>
+                        <div class="form-group">
+                            <p-dropdown styleClass="select-input form-control" [options]="listEmps" [(ngModel)]="selectedEmp" [style]="{'width':'100%'}"
+                                filter="filter" (onChange)="onChangeEmps()" autofocus tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-3" style="float:right">
+                        <label>&nbsp;</label>
+                        <div>
+                            <input #filterGb type="text" placeholder="Nhập chuỗi cần tìm ..." (keyup.enter)="search($event.target.value)" [(ngModel)]="searchText"
+                                class="input-sm form-control" id="filter" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row" style="padding-bottom: 10px;">
+                    <div class="col-sm-12">
+                        <p-splitButton label="Chọn in lại" icon="fa fa-print" (onClick)="onClickButtonRePrint()" [model]="itemTypeRePrints" ></p-splitButton>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <p-table #dt [value]="datasource" [responsive]="true" [paginator]="true" [rows]="rowPerPage" [rowsPerPageOptions]="[10,20,50,100]"
+                            (onPage)="onPageChange($event)" [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="loadLazy($event)"
+                            [(selection)]="selectedData" [columns]="columnsExport" scrollable="true" sortField="createdWhen" sortOrder="-1">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th style="width: 28px">
+                                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                    </th>
+                                    <th style="width: 100px">Thao tác
+                                    </th>
+                                    <th pSortableColumn="shipmentNumber" Class="p-col-normal">Mã vận đơn
+                                        <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="createdWhen" Class="p-col-date">Ngày tạo
+                                        <p-sortIcon field="createdWhen"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="totalPrintDetail" Class="p-col-normal">In chi tiết
+                                        <p-sortIcon field="totalPrintDetail"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="totalPrintCodeA4" Class="p-col-normal">In Code A4
+                                        <p-sortIcon field="totalPrintCodeA4"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="totalPrintSticker" Class="p-col-normal">In máy barcode
+                                        <p-sortIcon field="totalPrintSticker"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="totalPrintBillAndAdviceOfDelivery" Class="p-col-normal">In vđ và Phiếu BP
+                                        <p-sortIcon field="totalPrintBillAndAdviceOfDelivery"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="totalPrintAdviceOfDelivery" Class="p-col-normal">In phiếu BP
+                                        <p-sortIcon field="totalPrintAdviceOfDelivery"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="totalPrintBox" Class="p-col-normal">In số kiện
+                                        <p-sortIcon field="totalPrintBox"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="totalPrintPickup" Class="p-col-normal">In nhận hàng
+                                        <p-sortIcon field="totalPrintPickup"></p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-data let-columns="columns">
+                                <tr [pSelectableRow]="data">
+                                    <td style="width: 2.25em">
+                                        <p-tableCheckbox [value]="data"></p-tableCheckbox>
+                                    </td>
+                                    <td style="width: 100px">
+                                        <div style="display: flex;">
+                                            <button class="btn btn-success" (click)="onViewPrintDetail(template, data)" ngDefaultControl>
+                                                <i class="fa fa-eye"></i> Lịch sử In</button>
+                                        </div>
+                                    </td>
+                                    <td class="p-col-normal">
+                                        {{data.shipmentNumber}}
+                                    </td>
+                                    <td class="p-col-date">
+                                        {{data.createdWhen | dateFormat}}
+                                    </td>
+                                    <td class="p-col-normal text-right">
+                                        {{data.totalPrintDetail}}
+                                    </td>
+                                    <td class="p-col-normal text-right">
+                                        {{data.totalPrintCodeA4}}
+                                    </td>
+                                    <td class="p-col-normal text-right">
+                                        {{data.totalPrintSticker}}
+                                    </td>
+                                    <td class="p-col-normal text-right">
+                                        {{data.totalPrintBillAndAdviceOfDelivery}}
+                                    </td>
+                                    <td class="p-col-normal text-right">
+                                        {{data.totalPrintAdviceOfDelivery}}
+                                    </td>
+                                    <td class="p-col-normal text-right">
+                                        {{data.totalPrintBox}}
+                                    </td>
+                                    <td class="p-col-normal text-right">
+                                        {{data.totalPrintPickup}}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="summary">
+                                <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecords}} vận đơn</span>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal history print shipment -->
+
+<ng-template #template>
+    <div>
+        <div class="modal-header" style="padding: 5px; text-align:left;">
+            <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span>
+            </button>
+            <h5 class="modal-title" style="font-size:16px">Lịch sử in vận đơn {{itemPrint.shipmentNumber}}</h5>
+        </div>
+        <div class="modal-body" style="overflow:hidden; display: table-row-group">
+            <div class="col-md-12" style="padding: 20px 30px 30px 30px;">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label>Ngày in vận đơn</label>
+                        <div class="form-group">
+                            <div class="input-group" daterangepicker (selected)="selectedDateItemPrint($event, mainInputItemPrint)" (cancelDaterangepicker)="calendarEventsHandler($event)"
+                                (showDaterangepicker)="calendarEventsHandler($event)">
+                                <span class="form-control uneditable-input" name="daterange" style="height: 25px;">
+                                    <p style="margin-top: -3px">{{ mainInputItemPrint.start | dateFormatNoTime }} - {{ mainInputItemPrint.end | dateFormatNoTime }}</p>
+                                </span>
+                                <span class="input-group-btn">
+                                    <a type="button" class="btn btn-default">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Loại In</label>
+                        <div class="form-group">
+                            <p-dropdown styleClass="select-input form-control" [options]="printTypes" [(ngModel)]="selectedPrintTypeItem" [style]="{'width':'100%'}"
+                                filter="filter" (onChange)="changePrintTypeItems()" autofocus tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>{{environment.centerHubSortName}}/{{environment.poHubSortName}}/{{environment.stationHubSortName}}
+                            in
+                        </label>
+                        <p-dropdown styleClass="select-input" [style]="{'width':'100%'}" [options]="hubItemGroups" [(ngModel)]="selectedHubItem" placeholder="Chọn tất cả"
+                            [group]="true" filter="true" (onChange)="onChangeHubItem()"></p-dropdown>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Nhân viên in</label>
+                        <div class="form-group">
+                            <p-dropdown styleClass="select-input form-control" [options]="listEmpItems" [(ngModel)]="selectedEmpItem" [style]="{'width':'100%'}"
+                                filter="filter" (onChange)="onChangeEmpItems()" autofocus tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2"></div>                    
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <p-table [value]="listHistoryByShipmentId" [responsive]="true" [paginator]="true" [rows]="rowPerPageItemPrint" [rowsPerPageOptions]="[5,10,20,50]"
+                            (onPage)="onPageChangeItemPrint($event)" [lazy]="true" [totalRecords]="totalRecordsPrintShipmentId" (onLazyLoad)="loadLazyItemPrint($event)"
+                            scrollable="true" sortField="createdWhen" sortOrder="-1">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th pSortableColumn="userFullName" Class="p-col-normal">Nhân viên in
+                                        <p-sortIcon field="userFullName"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="createdWhen" Class="p-col-date">TG in
+                                        <p-sortIcon field="createdWhen"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="hubName" Class="p-col-normal">In tại
+                                        <p-sortIcon field="hubName"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="printTypeName" Class="p-col-normal">Loại in
+                                        <p-sortIcon field="printTypeName"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="statusPrintName" Class="p-col-normal">Trạng thái in
+                                        <p-sortIcon field="statusPrintName"></p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-data let-columns="columns">
+                                <tr [pSelectableRow]="data">
+                                    <td class="p-col-normal">
+                                        {{data.userFullName}}
+                                    </td>
+                                    <td class="p-col-date">
+                                        {{data.createdWhen | dateFormat}}
+                                    </td>
+                                    <td class="p-col-normal">
+                                        {{data.hubName}}
+                                    </td>
+                                    <td class="p-col-normal">
+                                        {{data.printTypeName}}
+                                    </td>
+                                    <td class="p-col-normal">
+                                        {{data.statusPrintName}}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="summary">
+                                <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecordsPrintShipmentId}} lần in</span>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

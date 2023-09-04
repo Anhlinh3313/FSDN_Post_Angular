@@ -1,0 +1,191 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <!-- <h5>{{currentPage}}</h5> -->
+                <!-- <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div> -->
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <button class="btn btn-success" (click)="refresh()">
+                            <i class="fa fa-refresh"></i>&nbsp;refresh
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-8"></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Bảng giá DVGT</label>
+                            <p-autoComplete styleClass="select-input form-control none-padding" [suggestions]="priceListDVGTCodes" [(ngModel)]="priceListDVGTCode"
+                                (completeMethod)="searchByCode($event)" (onSelect)="selectPriceListDVGT($event)" (keyup.enter)="changePriceListDVGT($event)"></p-autoComplete>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>DVGT</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="allServiceDVGTs" [(ngModel)]="priceListDVGT.serviceId" [style]="{'width':'100%'}"
+                                filter="filter" autofocus tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>%VAT</label>
+                            <p-spinner (inputStyle)="{'text-align':'right'}" [min]="0" [step]="1" [(ngModel)]="priceListDVGT.vatPercent" placeholder="%VAT"></p-spinner>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Ưu tiên</label>
+                            <p-spinner (inputStyle)="{'text-align':'right'}" [min]="0" [step]="1" [(ngModel)]="priceListDVGT.numOrder" placeholder="(0-9)"></p-spinner>
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="input-group">
+                            <label>Public</label>
+                            <div class="form-group">
+                                <p-inputSwitch [(ngModel)]="priceListDVGT.isPublic"></p-inputSwitch>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="input-group">
+                            <label>&nbsp;</label>
+                            <div>
+                                <button type="button" (click)="createPriceDVGT()" [style.display]="isAddPL" class="btn btn-sm btn-primary"> Tạo</button>
+                                <button type="button" (click)="savePriceDVGT()" [style.display]="isSavePL" class="btn btn-sm btn-primary"> Lưu</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="ibox float-e-margins">
+                            <div class="table-responsive">
+                                <p-table [value]="datasource" [responsive]="true" [globalFilterFields]="columns" [lazy]="true" [styleClass]="'tablePriceService'">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:30px" class="text-center">#</th>
+                                            <th style="width:100px" class="text-center">Tính theo</th>
+                                            <th style="width:100px" class="text-center">Giá trị từ</th>
+                                            <th style="width:100px" class="text-center">Giá trị đến</th>
+                                            <th style="width:100px" class="text-center">Cước</th>
+                                            <th style="width:100px" class="text-center">Công thức</th>
+                                            <th style="width:60px" class="text-center">Công thêm</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-rowData>
+                                        <tr>
+                                            <td style="width:30px">
+                                                <button type="button" (click)="delete(rowData)" class="btn btn-danger">Xóa</button>
+                                            </td>
+                                            <td style="width:100px">
+                                                <div>
+                                                    <p-dropdown styleClass="select-input form-control" [options]="calculateBys" [(ngModel)]="rowData.calculateById" [style]="{'width':'100%'}"
+                                                        filter="filter">
+                                                    </p-dropdown>
+                                                </div>
+                                            </td>
+                                            <td style="width:100px">
+                                                <p-spinner [min]="0" [step]="0.5" [(ngModel)]="rowData.valueFrom" inputStyleClass="form-control"></p-spinner>
+                                            </td>
+                                            <td style="width:100px">
+                                                <p-spinner [min]="0" [step]="0.5" [(ngModel)]="rowData.valueTo" inputStyleClass="form-control"></p-spinner>
+                                            </td>
+                                            <td style="width:100px">
+                                                <p-spinner [min]="0" [step]="0.5" [(ngModel)]="rowData.price" inputStyleClass="form-control"></p-spinner>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <p-dropdown styleClass="select-input form-control" [options]="formulas" [(ngModel)]="rowData.formulaId" [style]="{'width':'100%'}"
+                                                        filter="filter">
+                                                    </p-dropdown>
+                                                </div>
+                                            </td>
+                                            <td style="width:100px">
+                                                <p-spinner [min]="0" [step]="0.5" [(ngModel)]="rowData.valuePlus" inputStyleClass="form-control"></p-spinner>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="footer">
+                                        <tr>
+                                            <td style="width:30px">
+                                                <button type="button" (click)="addRoww()" class="btn btn-success">Thêm</button>
+                                            </td>
+                                            <td colspan="6">
+
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Khách hàng</label>
+                                <div class="form-group">
+                                    <p-autoComplete [(ngModel)]="customerCode" [suggestions]="customerCodes" 
+                                    (completeMethod)="searchCustomer($event)" (keyup.enter)="enterCustomer($event)"
+                                    (onSelect)="selectCustomer($event)"></p-autoComplete>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <p-table #dtCustomerPriceService [value]="customerPriceListDVGTs" [responsive]="true">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width:50px"></th>
+                                    <th style="width:100px" pSortableColumn="customer.code">Mã khách hàng
+                                        <p-sortIcon field='customer.code'></p-sortIcon>
+                                    </th>
+                                    <th style="width:500px" pSortableColumn="customer.name">khách hàng
+                                        <p-sortIcon field='customer.name'></p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData>
+                                <tr>
+                                    <td style="width:50px">
+                                        <button *ngIf="isDelete" (click)="deleteCPLDVGT(rowData)" class="btn btn-danger">Xóa</button>
+                                    </td>
+                                    <td style="width:100px">{{rowData.customer?.code}}</td>
+                                    <td style="width:500px">{{rowData.customer?.name}}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Start Modal-->
+<!--End Modal-->

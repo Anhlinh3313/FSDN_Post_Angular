@@ -1,0 +1,8 @@
+{
+  "hotkeys": {
+    "ctrl+s": [ "CreateShipmentComponent.Ctrl+S", "EntryShipmentDetailComponent.Ctrl+S" ],
+    "ctrl+b": [ "CreateShipmentComponent.Ctrl+B" ],
+    "ctrl+q": [ "CreateShipmentComponent.Ctrl+Q", "EntryShipmentDetailComponent.Ctrl+Q" ],
+    "ctrl+r": [ "CreateShipmentComponent.Ctrl+R", "EntryShipmentDetailComponent.Ctrl+Q" ]
+  }
+}

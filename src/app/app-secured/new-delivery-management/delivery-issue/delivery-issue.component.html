@@ -1,0 +1,339 @@
+<app-card>
+  <a class="parentPage">{{parentPage}}</a>
+  <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-title">
+        <div style="margin:0 auto;margin-bottom:5px; text-align: right">
+          <button class="btn btn-success" (click)="refresh()">
+            <i class="fa fa-refresh"> Refresh</i>
+          </button>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+
+          <div class="col-sm-2">
+          <div class="form-group">
+            <label>Xuât kho</label>
+            <p-dropdown styleClass="select-input" [style]="{'width':'95%'}" [options]="listGoodsIssueTypes"
+              [(ngModel)]="listGoodsIssue.listGoodsTypeId"  filter="false"></p-dropdown>
+          </div>
+        </div>
+
+          <div class="col-sm-2">
+            <div class="form-group">
+              <label>Nhân viên</label>
+              <p-autoComplete [inputStyle]="{'padding':'3px','font-weight':'normal','width':'95%'}"
+                (onSelect)="eventOnSelectedUser()" [suggestions]="userFilters" [(ngModel)]="userSelected"
+                (completeMethod)="eventFilterUsers($event)" forceSelection="true" [dropdown]="true" [minLength]="1"
+                placeholder="Chọn nhân viên">
+                <ng-template let-data pTemplate="item">
+                  <div>{{data}}</div>
+                </ng-template>
+              </p-autoComplete>
+            </div>
+          </div>
+
+          <div class="col-sm-2">
+            <div class="form-group">
+              <label>Mã xuất kho</label>
+              <p-dropdown styleClass="select-input" [style]="{'width':'95%'}" [options]="listGoodsIssues"
+                [(ngModel)]="listGoodsIssue.id" placeholder="Chọn mã xuất kho" filter="true"
+                (onChange)="eventOnSelectedListGoods(modalComfirmCreate)"></p-dropdown>
+            </div>
+          </div>
+
+          <div class="col-sm-2">
+            <div class="form-group">
+              <label>Biển số</label>
+              <div>
+                <!-- <input type="text" [(ngModel)]="listGoodsIssue.truckNumber" placeholder="Nhập biển số"
+                        class="input-sm form-control" /> -->
+                <p-autoComplete [(ngModel)]="selectedTruck" [suggestions]="filterTrucks" [minLength]="1"
+                  (completeMethod)="filterTruck($event)" (onSelect)="onSelectedCustomer()"
+                  styleClass="select-input form-control none-padding" [dropdown]="false"
+                  (keydown.Tab)="keyTabSender($event)">
+                </p-autoComplete>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-2" *ngIf="isFeeRent">
+            <div class="form-group">
+              <label>Chi phí thuê xe</label>
+              <div>
+                <input type="text" [(ngModel)]="listGoodsIssue.feeRent" placeholder="Nhập chi phí thuê xe"
+                  class="input-sm form-control" />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-2">
+            <div class="form-group" style="margin-bottom: -5px">
+              <label>Lọc nhân viên GN</label>
+              <p-autoComplete [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                (onSelect)="eventOnSelectedUser_filter()" [suggestions]="userFilters_filter"
+                [(ngModel)]="userSelected_filter" (completeMethod)="eventFilterUsers_Filter($event)"
+                forceSelection="true" [dropdown]="true" [minLength]="1" placeholder="Lọc nhân viên GN">
+                <ng-template let-data pTemplate="item">
+                  <div>{{data}}</div>
+                </ng-template>
+              </p-autoComplete>
+            </div>
+          </div>
+
+          <div class="col-sm-2">
+            <div class="form-group" style="margin-bottom: -5px">
+              <label>Lọc loại xuất kho</label>
+              <p-dropdown styleClass="select-input" [style]="{'width':'100%'}" [options]="typeIssues"
+                [(ngModel)]="shipmentFilterViewModelLeft.groupStatusId" placeholder="Lọc loại xuất kho" filter="false"
+                (onChange)="loadDatasourceLeft()"></p-dropdown>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <!-- list shipment -->
+        <div class="col-md-6">
+          <div class="ibox float-e-margins">
+            <div class="ibox-title">
+              <div class="row">
+                <div class="col-sm-8">
+                  <h5>Danh sách chờ xuất kho - giao hàng</h5>
+                </div>
+              </div>
+            </div>
+            <div class="ibox-content">
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label>Mã vận đơn xuất kho</label>
+                    <input #txtShipmentNumberIssue type="text" placeholder="..." class="input-sm form-control" autofocus
+                      (keyup.enter)="evenScaneShipmentNumberIssue(txtShipmentNumberIssue)" />
+                  </div>
+                </div>
+                <div class="col-sm-3" style="margin-top: 18px">
+                  <span class="ui-column-title"
+                    style="font-weight: bold; color: #26a51a">Chọn:
+                    {{(selectedData) ? (selectedData.length) : 0}}
+                    vđ</span>                                    
+                </div>                
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label style="display:block">&nbsp;</label>
+                    <!-- <input #filterGbLeft type="text" placeholder="Tìm kiếm ..." [(ngModel)]="txtFilterGbLeft" class="input-sm form-control" (input)="dtLeft.filterGlobal($event.target.value, 'contains')"
+                                          /> -->
+                    <button type="button" class="btn btn-success pull-right" (click)="loadDatasourceLeft()">
+                      <i style="font-size: 16px;" class="fa fa-home"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="col-sm-1">
+                  <button type="button" style="margin-top: 18px"
+                    class="btn btn-warning pull-right" (click)="issueFast()" title="Xuất kho nhanh">>></button>                
+                </div>
+              </div>
+            </div>
+            <div class="ibox-content">
+              <div class="row">
+                <div class="col-sm-12">
+                  <p-table #dtLeft [value]="datasource" [responsive]="true" [lazy]="true" [paginator]="true"
+                    [rows]="pageSizeLeft" [rowsPerPageOptions]="[20,50,100,200,500]" [totalRecords]="totalRecordLeft"
+                    paginatorPosition="both" [alwaysShowPaginator]="true" (onPage)="onPageChangeLeft($event)"
+                    [(first)]="firstLeft" [(selection)]="selectedData">
+                    <ng-template pTemplate="caption">
+                      <div class="row" style="margin-left: -10px;">
+                        <div class="col-sm-3" style="margin-left: -15px;">
+                          <span class="ui-column-title" style="font-weight: bold; color: #ff8f00">Tổng : {{ (totalRecordLeft) ?
+                            totalRecordLeft :
+                            0 }} vđ
+                          </span>
+                        </div>
+                        <div class="col-sm-3">
+                          <span class="ui-column-title"
+                            style="font-weight: bold; color: #ff8f00">Tổng
+                            : {{
+                            (totalBoxsLeft) ? totalBoxsLeft : 0 }} kiện</span>
+                        </div>
+                      </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th style="width: 28px">
+                          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th class="p-col-shipmentNumber">Mã vận đơn</th>
+                        <th class="p-col-normal">Người nhận</th>
+                        <th class="p-col-address">Địa chỉ nhận</th>
+                        <th class="p-col-normal">COD</th>
+                        <th class="p-col-numFail">SK</th>
+                        <th class="p-col-normal">Dịch vụ</th>
+                        <th class="p-col-normal">
+                          {{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} giao
+                        </th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData>
+                      <tr>
+                        <td style="width: 28px">
+                          <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td>
+                        <td class="p-col-shipmentNumber">{{rowData.shipmentNumber}}</td>
+                        <td class="p-col-normal">{{rowData.receiverName}}</td>
+                        <td class="p-col-address">{{rowData.shippingAddress}}</td>
+                        <td class="p-col-numFail">{{rowData.cod | number}}</td>
+                        <td class="p-col-numFail">{{rowData.totalBox}}</td>
+                        <td class="p-col-normal">{{rowData.serviceName}}</td>
+                        <td class="p-col-normal">{{rowData.toHubName}}</td>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="summary">
+                      <span class="ui-column-title" style="font-weight: bold;">Tổng : {{ (totalRecordLeft) ?
+                        totalRecordLeft :
+                        0 }} vận đơn</span>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="ibox float-e-margins">
+            <div class="ibox-title">
+              <h5>Danh sách đã xuất kho - giao hàng</h5>
+            </div>
+            <div class="ibox-content">
+              <div class="row">
+                <div class="col-sm-6">
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group  text-right">
+                    <label>&nbsp;</label>
+                    <button type="button" class="btn btn-success" (click)="loadDatasourceRight()"
+                      [style]="{'margin-right':'5px'}">KS
+                      XUẤT KHO</button>
+                    <button *ngIf="isEdit" type="button" class="btn btn-success"
+                      (click)="eventConfirmBlockListGoods(modalComfirmBlockListGoods)">CHỐT
+                      XUẤT KHO</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="ibox-content">
+              <div class="row">
+                <div class="col-sm-12">
+                  <p-table #dtRight [value]="datasourceRightClient" [responsive]="true" [lazy]="true"
+                    [totalRecords]="totalRecordRight" [paginator]="true" [rows]="pageSizeRight" [first]="firstRight"
+                    [rowsPerPageOptions]="[20,50,100,200,500]" paginatorPosition="both" [alwaysShowPaginator]="true"
+                    (onPage)="onPageChangeRight($event)">
+                    <ng-template pTemplate="caption">
+                      <div class="row" style="margin-left: -10px;">
+                        <div class="col-sm-3" style="margin-left: -15px;">
+                          <span class="ui-column-title" style="font-weight: bold; color: #26a51a">Tổng : {{ (totalRecordRight)
+                            ?
+                            totalRecordRight : 0 }} vđ</span>
+                        </div>
+                        <div class="col-sm-3">
+                          <span class="ui-column-title"
+                            style="font-weight: bold; color: #26a51a">Tổng
+                            : {{
+                            (totalBoxsRight) ? totalBoxsRight : 0 }} kiện</span>
+                        </div>                        
+                      </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th style="width:50px">#</th>
+                        <th class="p-col-shipmentNumber">Mã vận đơn</th>
+                        <th class="p-col-normal">Người nhận</th>
+                        <th class="p-col-address">Địa chỉ nhận</th>
+                        <th class="p-col-normal">COD</th>
+                        <th class="p-col-numFail">SK</th>
+                        <th class="p-col-normal">Dịch vụ</th>
+                        <th class="p-col-normal">
+                          {{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} giao
+                        </th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData>
+                      <tr>
+                        <td style="width: 50px">
+                          <button type="button" class="btn btn-danger" (click)="removeIssueWarehousing(rowData.id)">Gỡ</button>
+                        </td>   
+                        <td class="p-col-shipmentNumber">{{rowData.shipmentNumber}}</td>
+                        <td class="p-col-normal">{{rowData.receiverName}}</td>
+                        <td class="p-col-address">{{rowData.shippingAddress}}</td>
+                        <td class="p-col-numFail">{{rowData.cod | number}}</td>
+                        <td class="p-col-numFail">{{rowData.totalBox}}</td>
+                        <td class="p-col-normal">{{rowData.service?.name}}</td>
+                        <td class="p-col-normal">{{rowData.toHub?.name}}</td>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="summary">
+                      <span class="ui-column-title" style="font-weight: bold;">Tổng : {{ (totalRecordRight) ?
+                        totalRecordRight : 0 }} vận đơn</span>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Begin Model -->
+<ng-template #modalComfirmCreate>
+  <div class="modal-header" style="padding: 5px; text-align:left;">
+    <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+      (click)="noneCreateListGoods()">
+      <span aria-hidden="true">&times;</span>
+      <span class="sr-only">Close</span>
+    </button>
+  </div>
+  <div class="modal-body" style="overflow:hidden;">
+    <div class="col-md-12 no-padding">
+      <h4>Bạn muốn tạo tạo mã xuất kho mới?</h4>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-danger" (click)="createNewListGoods()">Đồng ý</button>
+    <button type="button" class="btn btn-white" data-dismiss="modal" (click)="noneCreateListGoods()">Không</button>
+  </div>
+</ng-template>
+<!-- End Model -->
+
+
+<!-- Begin Model -->
+<ng-template #modalComfirmBlockListGoods>
+  <div class="modal-header" style="padding: 5px; text-align:left;">
+    <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+      (click)="noneBlockListGoods()">
+      <span aria-hidden="true">&times;</span>
+      <span class="sr-only">Close</span>
+    </button>
+  </div>
+  <div class="modal-body" style="overflow:hidden;">
+    <div class="col-md-12 no-padding">
+      <h4>Bạn muốn chốt xuất kho?</h4>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-danger" (click)="blockListGoods()">Chốt</button>
+    <button type="button" class="btn btn-danger" (click)="blockAndPrintListGoods()">Chốt và in</button>
+    <button type="button" class="btn btn-white" data-dismiss="modal" (click)="noneBlockListGoods()">Không</button>
+  </div>
+</ng-template>
+<!-- End Model -->
+
+<div id="print-section" [hidden]="true">
+  <div *ngIf="idPrint === 'print-detail-delivery'">
+    <form-detail-delivery id="print-detail-delivery"></form-detail-delivery>
+  </div>
+  <iframe class="hidden-iframe" name="print-detail-delivery"></iframe>
+</div>

@@ -1,0 +1,115 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <!-- <div class="ibox-title">
+                <h5>{{currentPage}}</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div> -->
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Bảng giá</label>
+                            <!-- <select class="select-input form-control" (change)="priceListSelectChange()" [compareWith]="compareFn" [(ngModel)]="selectedPriceList">
+                                <option>-- Chọn bảng giá --</option>
+                                <option *ngFor="let item of priceLists" [ngValue]="item">{{item.name}}</option>
+                            </select> -->
+                            <p-dropdown [options]="priceLists" [(ngModel)]="selectedPriceList" (onChange)="priceListSelectChange()" [style]="{'width':'100%'}" filter="true"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Bảng giá dịch vụ</label>
+                            <select class="select-input form-control" [compareWith]="compareFn" [(ngModel)]="selectedPriceService">
+                                <option *ngFor="let item of priceServices" [ngValue]="item">{{item.name ? item.name : "auto-" + item.id}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div *ngIf="priceServices && priceServices.length > 0" class="col-sm-1">
+                        <b>%VAT</b>
+                        <p-spinner (inputStyle)="{'text-align':'right'}" [min]="0" [step]="0.5" [(ngModel)]="selectedPriceService.vatPercent" placeholder="%VAT"></p-spinner>
+                    </div>
+                    <div *ngIf="priceServices && priceServices.length > 0" class="col-sm-1">
+                        <b>%PPXD</b>
+                        <p-spinner (inputStyle)="{'text-align':'right'}" [min]="0" [step]="0.5" [(ngModel)]="selectedPriceService.fuelPercent" placeholder="%PPXD"></p-spinner>
+                    </div>
+                    <div *ngIf="priceServices && priceServices.length > 0" class="col-sm-1">
+                        <b>%VSVX</b>
+                        <p-spinner (inputStyle)="{'text-align':'right'}" [min]="0" [step]="0.5" [(ngModel)]="selectedPriceService.remoteAreasPricePercent"
+                            placeholder="%VSVX"></p-spinner>
+                    </div>
+                    <div *ngIf="priceServices && priceServices.length > 0" class="col-sm-1">
+                        <b>DIM</b>
+                        <p-spinner (inputStyle)="{'text-align':'right'}" [min]="0" [step]="0.5" [(ngModel)]="selectedPriceService.dim" placeholder="DIM"></p-spinner>
+                    </div>
+                    <div *ngIf="priceServices && priceServices.length > 0" class="col-sm-2">
+                        <div>&nbsp;</div>
+                        <button class="btn btn-danger" tabindex="1" (click)="savePriceService()">Lưu</button>
+                    </div>
+                    <!-- <div class="col-sm-3">
+                        <div class="form-group">
+                            <label style="display:block;width:100%">&nbsp; </label>
+                            <a class="btn btn-primary" (click)="openModel(template)">
+                                <i class=""></i> Nhập giá</a>
+                        </div>
+                    </div> -->
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <input #myInputFiles type="file" (change)="onFileChange($event)" multiple="false" />
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <button *ngIf="isAdd" class="btn btn-primary" (click)="uploadExcel()">
+                                <i class="fa fa-arrow-circle-o-up"></i> Upload data</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <button class="btn btn-warning" (click)="viewPrice()">
+                                <i class="fa fa-eye"></i> Xem bảng giá</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <button *ngIf="isAdd" class="btn btn-warning" (click)="SimpleExcel()">
+                                <i class="fa fa-arrow-circle-o-down"></i> Download bảng mẫu</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <table class="sjs-table table table-striped table-bordered">
+                                <tr *ngFor="let row of datas">
+                                    <td *ngFor="let val of row">
+                                        {{val}}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

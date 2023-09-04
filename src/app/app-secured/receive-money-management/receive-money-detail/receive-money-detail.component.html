@@ -1,0 +1,99 @@
+<div class="row blue-bg p-md">
+    <div class="wrapper" style="padding:0 10px;">
+        <div class="gray-bg" style="color:#676a6c;">
+            <div class="wrapper wrapper-content">
+                <div class="row">
+                    <!-- Begin Left Table -->
+                    <div class="col-md-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-content">
+                                <h3 style="text-transform: uppercase;">Danh sách vận đơn theo bảng kê {{listReceiptMoney?.code}}
+                                    <p-header>
+                                        <button type="button" style="float:right;" class="btn btn-primary" (click)="SimpleExcel()">
+                                            <i class="fa fa-file-excel-o"></i>&nbsp;Excel</button>
+                                    </p-header>
+                                </h3>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="panel-body">
+                                            <div class="row">
+                                                <div class="col-sm-8">&nbsp;</div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <input #filter type="text" placeholder="Tìm kiếm ..." class="input-sm form-control" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <p-dataTable [value]="listData" scrollable="true"  [globalFilter]="filter" 
+                                                    scrollHeight="450px" scrollWidth="100%">
+                                                        <p-footer> Tổng cước: {{ sum(listData,"totalPrice") | number}} + Tổng COD: {{
+                                                            sum(listData,"cod") | number}} =
+                                                            <b>{{ sum(listData,"totalPrice") + sum(listData,"cod")| number}}</b>
+                                                        </p-footer>
+                                                        <p-column styleClass="width-70" field="shipment.id" header="">
+                                                            <ng-template pTemplate="body" let-rowData="rowData">
+                                                                <div style="display: flex;">
+                                                                    <button type="button" class="btn btn-success" (click)="view(rowData)">
+                                                                        <i class="fa fa-eye"></i>Xem
+                                                                    </button>
+                                                                </div>
+                                                            </ng-template>
+
+                                                        </p-column>
+                                                        <p-column styleClass="width-200" field="shipment.shipmentNumber" header="Mã vận đơn"></p-column>
+                                                        <p-column styleClass="width-120" field="cod" header="COD phải thu">
+                                                            <ng-template pTemplate="body" let-rowData="rowData">
+                                                                {{rowData.cod | number}}
+                                                            </ng-template>
+                                                        </p-column>
+                                                        <p-column styleClass="width-120" field="totalPrice" header="Tổng đã thu">
+                                                            <ng-template pTemplate="body" let-rowData="rowData">
+                                                                {{rowData.totalPrice + rowData.cod| number}}
+                                                            </ng-template>
+                                                        </p-column>
+                                                        <p-column styleClass="width-120" field="totalPrice" header="Tổng cước đã thu">
+                                                            <ng-template pTemplate="body" let-rowData="rowData">
+                                                                {{rowData.totalPrice | number}}
+                                                            </ng-template>
+                                                        </p-column>
+                                                        <p-column styleClass="width-120" field="cod" header="COD đã thu">
+                                                            <ng-template pTemplate="body" let-rowData="rowData">
+                                                                {{rowData.cod | number}}
+                                                            </ng-template>
+                                                        </p-column>
+                                                        <p-column styleClass="width-200" field="shipment.receiverCode2" header="Mã người nhận"></p-column>
+                                                        <p-column styleClass="width-200" field="shipment.receiverName" header="Tên người nhận"></p-column>
+                                                        <p-column styleClass="width-300" field="shipment.shippingAddress" header="Địa chỉ nhận"></p-column>
+                                                        <p-column styleClass="width-120" field="shipment.sender.code" header="Mã khách gửi"></p-column>
+                                                        <p-column styleClass="width-200" field="shipment.senderName" header="Tên người gửi"></p-column>
+                                                        <p-column styleClass="width-120" field="shipment.paymentType.name" header="HTTT"></p-column>
+                                                        <p-column styleClass="width-120" field="shipment.tplNumber" header="Mã vận đơn ĐT"></p-column>
+                                                        <p-column styleClass="width-120" field="shipment.tpl.code" header="Mã ĐT"></p-column>
+                                                        <p-column styleClass="width-120" field="shipment.orderDate" header="Ngày vận đơn">
+                                                            <ng-template pTemplate="body" let-rowData="rowData">
+                                                                {{rowData.shipment.orderDate | dateFormat}}
+                                                            </ng-template>
+                                                        </p-column>
+                                                        <p-column styleClass="width-120" field="shipment.service.name" header="Dịch vụ"></p-column>
+                                                        <p-column styleClass="width-120" field="shipment.weight" header="Trọng lượng {{unit}}"></p-column>
+                                                        <p-column styleClass="width-120" field="shipment.totalBox" header="Số kiện"></p-column>
+                                                    </p-dataTable>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Ibox content -->
+                        </div>
+                    </div>
+                    <!-- End Left Table -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

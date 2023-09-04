@@ -1,0 +1,374 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <!-- <h5>{{currentPage}}</h5> -->
+                <div class="ibox-tools">
+                    <p-header>
+                        <div>
+                            <button type="button" class="btn btn-primary" (click)="exportCSV(dt)">
+                                <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+                            <button type="button" class="btn btn-success" (click)="refresh()">
+                                <i class="fa fa-refresh"></i>&nbsp;refresh</button>
+                        </div>
+                    </p-header>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div style="cursor: pointer; padding: 0px 15px;" (click)="open(null)"
+                            class="widget style1 lazur-bg">
+                            <div class="row vertical-align">
+                                <div class="col-xs-12" style="text-align: right;">
+                                    <h2 class="font-bold">{{countInventory}}</h2>
+                                    <label style="margin-top: 0">Tất cả</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div style="cursor: pointer; padding: 0px 15px;" (click)="open(1)"
+                            class="widget style1 navy-bg">
+                            <div class="row vertical-align">
+                                <div class="col-xs-12" style="text-align: right;">
+                                    <h2 class="font-bold">{{countNormal}}</h2>
+                                    <label style="margin-top: 0">Bình thường</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div style="cursor: pointer; padding: 0px 15px;" (click)="open(2)"
+                            class="widget style1 yellow-bg">
+                            <div class="row vertical-align">
+                                <div class="col-xs-12" style="text-align: right;">
+                                    <h2 class="font-bold">{{countDeadline}}</h2>
+                                    <label style="margin-top: 0">Sắp đến deadline</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div style="cursor: pointer; padding: 0px 15px;" (click)="open(3)" class="widget style1 red-bg">
+                            <div class="row vertical-align">
+                                <div class="col-xs-12" style="text-align: right;">
+                                    <h2 class="font-bold">{{countIsLate}}</h2>
+                                    <label style="margin-top: 0">Trễ deadline</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div style="cursor: pointer; padding: 0px 15px;" (click)="open(4)"
+                            class="widget style1 yellow-bg">
+                            <div class="row vertical-align">
+                                <div class="col-xs-12" style="text-align: right;">
+                                    <h2 class="font-bold">{{countPriority}}</h2>
+                                    <label style="margin-top: 0">Vận đơn ưu tiên</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div style="cursor: pointer; padding: 0px 15px;" (click)="open(5)" class="widget style1 red-bg">
+                            <div class="row vertical-align">
+                                <div class="col-xs-12" style="text-align: right;">
+                                    <h2 class="font-bold">{{countIncident}}</h2>
+                                    <label style="margin-top: 0">Vận đơn sự cố</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label>Trạng thái kho
+                        </label>
+                        <p-dropdown styleClass="select-input form-control" [options]="statuses"
+                            [(ngModel)]="selectedStatus" [style]="{'width':'100%'}" filter="filter"
+                            (onChange)="changeShipmentStatus()">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Phân loại
+                        </label>
+                        <p-dropdown styleClass="select-input form-control" [options]="listPhanLoaiPhat"
+                            [(ngModel)]="selectedPhanLoaiPhat" [style]="{'width':'100%'}" filter="filter"
+                            (onChange)="changePhanLoaiPhat()">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>&nbsp;</label>
+                        <div class="div-flex">
+                            <div>
+                                <p-checkbox [(ngModel)]="dsDiPhatChecked" binary="true"
+                                    (onChange)="oncheckNotDelivery()"></p-checkbox>
+                            </div>
+                            <div>
+                                <label> Chưa xuất kho giao</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>&nbsp;</label>
+                        <div class="div-flex">
+                            <div>
+                                <p-checkbox [(ngModel)]="reviewChecked" binary="true"
+                                    (onChange)="oncheckDeviveryOverOneTimes()"></p-checkbox>
+                            </div>
+                            <div>
+                                <label> Đã xuất kho giao >1 lần</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>&nbsp;</label>
+                        <div class="div-flex">
+                            <div>
+                                <p-checkbox [(ngModel)]="checkDeviveryThreeTimes" binary="true"
+                                    (onChange)="oncheckDeviveryThreeTimes()"></p-checkbox>
+                            </div>
+                            <div>
+                                <label> Đã xuất kho giao >3 lần</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-9">
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="text" placeholder="Nhập chuỗi cần tìm ..." (keyup.enter)="search()"
+                            [(ngModel)]="txtSearchText" class="input-sm form-control" id="filter"
+                            (input)="dt.filterGlobal($event.target.value, 'contains')" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div style="justify-content: space-between">
+                            <a class="btn btn-danger" *ngIf="isDelete" style="margin-right: 15px"
+                                (click)="confirmReturns(templateNoteReturns)"> <i class="fa fa-check"></i> Hoàn
+                            </a>
+                            <a class="btn btn-info" style="margin-right: 15px"
+                            (click)="sendShopcheck()"> <i class="fa fa-send"></i> Gửi shop check
+                        </a>
+                            <!-- <a class="btn btn-info" *ngIf="isDelete" style="margin-right: 15px"
+                                (click)="check()"> <i class="fa fa-check"></i> xx
+                            </a> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div>
+                            <p-table #dt [value]="listData" [responsive]="true" [paginator]="true" [rows]="rowPerPage"
+                                [rowsPerPageOptions]="[20,50,100]" [globalFilterFields]="columnsExport"
+                                [alwaysShowPaginator]="true" (onPage)="onPageChange($event)" [lazy]="true"
+                                [(selection)]="selectedData" paginatorPosition="both" [totalRecords]="totalRecords"
+                                (selectionChange)="selectionDataChange($event)">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width: 28px">
+                                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                        </th>
+                                        <th style="width:50px;" pSortableColumn="id">Id
+                                        </th>
+                                        <!-- <th style="width:90px;" pSortableColumn="id">#
+                                        </th> -->
+                                        <th style="width:150px;" pSortableColumn="shipmentNumber">Mã vận đơn
+                                            <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                                        </th>
+                                        <th style="width:130px;" pSortableColumn="orderDate">Ngày VĐ
+                                            <p-sortIcon field="orderDate"></p-sortIcon>
+                                        </th>
+                                        <th style="width:130px;" pSortableColumn="fromProvinceName">Từ tỉnh
+                                            <p-sortIcon field="fromProvinceName"></p-sortIcon>
+                                        </th>
+                                        <th style="width:130px;" pSortableColumn="toProvinceName">Đến tỉnh
+                                            <p-sortIcon field="toProvinceName"></p-sortIcon>
+                                        </th>
+                                        <th style="width:130px;" pSortableColumn="toHubName">Bưu cục giao
+                                            <p-sortIcon field="toHubName"></p-sortIcon>
+                                        </th>
+                                        <th style="width:160px;" pSortableColumn="receiverName">Tên người nhận
+                                            <p-sortIcon field="receiverName"></p-sortIcon>
+                                        </th>
+                                        <th style="width:250px;" pSortableColumn="shippingAddress">Địa chỉ nhận
+                                            <p-sortIcon field="shippingAddress"></p-sortIcon>
+                                        </th>
+                                        <th style="width:150px;" pSortableColumn="weight">Trọng lượng
+                                            <p-sortIcon field="weight"></p-sortIcon>
+                                        </th>
+                                        <th style="width:150px;" pSortableColumn="calWeight">Trọng lượng QĐ
+                                            <p-sortIcon field="calWeight"></p-sortIcon>
+                                        </th>
+                                        <th style="width:150px;" pSortableColumn="totalBox">Số kiện
+                                            <p-sortIcon field="totalBox"></p-sortIcon>
+                                        </th>
+                                        <th style="width:150px;" pSortableColumn="serviceName">Dịch vụ
+                                            <p-sortIcon field="serviceName"></p-sortIcon>
+                                        </th>
+                                        <th style="width:150px;" pSortableColumn="cOD">Thu hộ
+                                            <p-sortIcon field="cOD"></p-sortIcon>
+                                        </th>
+                                        <th style="width:150px;" pSortableColumn="totalPrice">Tổng cước KS
+                                            <p-sortIcon field="totalPrice"></p-sortIcon>
+                                        </th>
+                                        <th style="width:150px;" pSortableColumn="reasonName">Lý do cuối
+                                            <p-sortIcon field="reasonName"></p-sortIcon>
+                                        </th>
+                                        <th style="width:150px;" pSortableColumn="cusNote">Khách hàng ghi chú
+                                            <p-sortIcon field="cusNote"></p-sortIcon>
+                                        </th>
+                                        <th style="width:150px;" pSortableColumn="note">Ghi chú nội bộ
+                                            <p-sortIcon field="note"></p-sortIcon>
+                                        </th>
+                                        <th style="width:150px;" pSortableColumn="iSPrioritize">Vận đơn ưu tiên
+                                            <p-sortIcon field="iSPrioritize"></p-sortIcon>
+                                        </th>
+                                        <th style="width:150px;" pSortableColumn="isIncidents">Vận đơn sự cố
+                                            <p-sortIcon field="isIncidents"></p-sortIcon>
+                                        </th>
+                                        <th style="width:150px;" pSortableColumn="shipmentStatusName">Trang thái
+                                            <p-sortIcon field="shipmentStatusName"></p-sortIcon>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData>
+                                    <tr [ngClass]="lookupRowStyleClass(rowData)" [pSelectableRow]="!rowData.isReturn ? rowData : ''">
+                                        <td style="width: 2.25em">
+                                            <p-tableCheckbox [value]="rowData" *ngIf="!rowData.isReturn"></p-tableCheckbox>
+                                        </td>
+                                        <td style="width:50px;">{{rowData.id}}</td>
+                                        <!-- <td style="width:90px;">
+                                            <button *ngIf="!rowData.isReturn" class="btn btn-warning mr-1"
+                                                (click)="confirmReturn(rowData,templateNoteReturn)">
+                                                <i class="fa fa-check"></i> Hoàn
+                                            </button>
+                                        </td> -->
+                                        <td style="width:150px;">{{rowData.shipmentNumber}}</td>
+                                        <td style="width:130px;">{{rowData.orderDate | dateFormat}}</td>
+                                        <td style="width:130px;">{{rowData.fromProvinceName}}</td>
+                                        <td style="width:130px;">{{rowData.toProvinceName}}</td>
+                                        <td style="width:130px;">{{rowData.toHubName}}</td>
+                                        <td style="width:160px;">{{rowData.receiverName}}</td>
+                                        <td style="width:250px;">{{rowData.shippingAddress}}</td>
+                                        <td style="width:150px;">{{rowData.weight | number}}</td>
+                                        <td style="width:150px;">{{rowData.calWeight | number}}</td>
+                                        <td style="width:150px;">{{rowData.totalBox | number}}</td>
+                                        <td style="width:150px;">{{rowData.serviceName}}</td>
+                                        <td style="width:150px;">{{rowData.cod | number}}</td>
+                                        <td style="width:150px;">{{rowData.totalPrice | number}}</td>
+                                        <td style="width:150px;">{{rowData.reasonName}}</td>
+                                        <td style="width:150px;">{{rowData.cusNote}}</td>
+                                        <td style="width:150px;">{{rowData.note}}</td>
+                                        <td style="width:150px;">{{rowData.deliveryNote}}</td>
+                                        <td style="width:150px;">{{rowData.iSPrioritize}}</td>
+                                        <td style="width:150px;">{{rowData.shipmentStatusName}}</td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="summary">
+                                    <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecords}} vận
+                                        đơn</span>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage" let-columns>
+                                    <tr>
+                                        <td colspan="19">
+                                            Không tìm thấy dữ liệu
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End Modal-->
+
+<!--Start Modal Note WareHouse-->
+<ng-template #templateNoteReturn>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button"
+            (click)="bsModalRef.hide()">
+            <span aria-hidden="true">×</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5>
+    </div>
+    <div class="modal-body" style="padding-top: 10px;">
+        <div class="row">
+            <div class="input-group" style="width: 100%;">
+                <label class="label-control">Ghi chú chuyển hoàn vận đơn: <span
+                        style="color:#1ab394">{{acceptReturn.shipmentNumber}}</span></label>
+                <textarea placeholder="Nhập ghi chú ..." [(ngModel)]="acceptReturn.note" class="input-sm form-control"
+                    cols="50" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-group" style="width: 100%;">
+                <label class="label-control">Ghi chú số hóa đơn</label>
+                <textarea placeholder="Ghi chú số hóa đơn..." [(ngModel)]="acceptReturn.cusNote" class="input-sm form-control"
+                    cols="50" rows="3"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" (click)="assignUpdate()">Xác nhận</button>
+        <button class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()" type="button">Đóng</button>
+    </div>
+</ng-template>
+<!--End Modal-->
+
+<!--Start Modal Note WareHouse-->
+<ng-template #templateNoteReturns>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button"
+            (click)="bsModalRef.hide()">
+            <span aria-hidden="true">×</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5>
+    </div>
+    <div class="modal-body" style="padding-top: 10px;">
+        <div class="row">
+            <div class="" style="width: 100%;">
+                <label class="">Ghi chú chuyển hoàn vận đơn: <span
+                        style="color:#1ab394">{{shipmentNumberAssignUpdates.length <= 5 ? shipmentNumberAssignUpdates.join() : shipmentNumberAssignUpdates.length}}</span></label>
+                <textarea placeholder="Nhập ghi chú ..." [(ngModel)]="acceptReturn.note" class="input-sm form-control"
+                    cols="50" rows="3" style="resize: none;"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="" style="width: 100%;">
+                <label class="">Ghi chú số hóa đơn</label>
+                <textarea placeholder="Ghi chú số hóa đơn..." [(ngModel)]="acceptReturn.cusNote" class="input-sm form-control"
+                    cols="50" rows="3" style="resize: none;"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" (click)="assignUpdates()">Xác nhận</button>
+        <button class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()" type="button">Đóng</button>
+    </div>
+</ng-template>
+<!--End Modal-->

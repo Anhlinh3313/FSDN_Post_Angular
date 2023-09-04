@@ -1,0 +1,141 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <div class="ibox-tools">
+                    <p-header>
+                        <div>
+                            <button type="button" class="btn btn-primary" (click)="exportCSV(dt)">
+                                <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+                            <button type="button" class="btn btn-success" (click)="changeFilter()">
+                                <i class="fa fa-refresh"></i>&nbsp;Xem</button>
+                        </div>
+                    </p-header>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Năm</label>
+                        <div class="form-group">
+                            <p-dropdown [options]="listYear" [(ngModel)]="selectedYear"
+                            [styleClass]="'form-control input-sm'" [style]="{'width':'100%'}" filter="true"
+                            (onChange)="selectedYearr()">
+                        </p-dropdown>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <p-table #dt [value]="listData" [paginator]="true" rows="10"
+                                [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true" [totalRecords]="totalRecords"
+                                [responsive]="true" [scrollable]="true" scrollHeight="500px"
+                                (onLazyLoad)="loadLazy($event)">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="p-col-normal">STT</th>
+                                        <th class="p-col-normal">Tên Khách hàng </th>
+                                        <th class="p-col-normal">Mã khách hàng</th>
+                                        <th class="p-col-normal">Tổng phí DV tháng 1</th>
+                                        <th class="p-col-normal">Tổng phí DV tháng 2</th>
+                                        <th class="p-col-normal">Tổng phí DV tháng 3</th>
+                                        <th class="p-col-normal">Tổng phí DV tháng 4</th>
+                                        <th class="p-col-normal">Tổng phí DV tháng 5</th>
+                                        <th class="p-col-normal">Tổng phí DV tháng 6</th>
+                                        <th class="p-col-normal">Tổng phí DV tháng 7</th>
+                                        <th class="p-col-normal">Tổng phí DV tháng 8</th>
+                                        <th class="p-col-normal">Tổng phí DV tháng 9</th>
+                                        <th class="p-col-normal">Tổng phí DV tháng 10</th>
+                                        <th class="p-col-normal">Tổng phí DV tháng 11</th>
+                                        <th class="p-col-normal">Tổng phí DV tháng 12</th>
+                                        <th class="p-col-normal">Tổng {{selectedYear}} </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                                    <tr>
+                                        <td class="p-col-normal">{{rowIndex+1}}</td>
+                                        <td class="p-col-normal">{{rowData.name}}</td>
+                                        <td class="p-col-normal">{{rowData.code}}</td>
+                                        <td class="p-col-normal">{{rowData.totalPrice1 | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalPrice2 | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalPrice3 | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalPrice4 | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalPrice5 | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalPrice6 | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalPrice7 | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalPrice8 | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalPrice9 | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalPrice10 | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalPrice11 | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalPrice12 | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalAmount | number}}</td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer" let-columns>
+                                    <tr>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal"></th>
+                                        <th class="p-col-normal">Mã khách hàng</th>
+                                        <th class="p-col-normal">
+                                            {{sumValue(listData,'totalPrice1') | number}}</th>
+                                        <th class="p-col-normal">
+                                            {{sumValue(listData,'totalPrice2') | number}}</th>
+                                        <th class="p-col-normal">
+                                            {{sumValue(listData,'totalPrice3') | number}}</th>
+                                        <th class="p-col-normal">
+                                            {{sumValue(listData,'totalPrice4') | number}}</th>
+                                        <th class="p-col-normal">
+                                            {{sumValue(listData,'totalPrice5') | number}}</th>
+                                        <th class="p-col-normal">
+                                            {{sumValue(listData,'totalPrice6') | number}}</th>
+                                        <th class="p-col-normal">
+                                            {{sumValue(listData,'totalPrice7') | number}}</th>
+                                        <th class="p-col-normal">
+                                            {{sumValue(listData,'totalPrice8') | number}}</th>
+                                        <th class="p-col-normal">
+                                            {{sumValue(listData,'totalPrice9') | number}}</th>
+                                        <th class="p-col-normal">
+                                            {{sumValue(listData,'totalPrice10') | number}}</th>
+                                        <th class="p-col-normal">
+                                            {{sumValue(listData,'totalPrice11') | number}}</th>
+                                        <th class="p-col-normal">
+                                            {{sumValue(listData,'totalPrice12') | number}}</th>
+                                        <th class="p-col-normal">
+                                            {{sumValue(listData,'totalAmount') | number}}</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td [attr.colspan]="'32'">
+                                            Không tìm thấy dữ liệu
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="summary">
+                                    <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecords}} | Tổng cước chưa TT: {{totalRecevice | number}} Đ</span>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

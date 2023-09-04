@@ -1,0 +1,29 @@
+ export class ReportHanldeEmployee{
+    id: number;
+    shipmentNumber: string;
+    senderName?: any;
+    receiverName?: any;
+    shippingAddress?: any;
+    insured: number;
+    cod: number;
+    shipmentStatusName: string;
+    userCode: string;
+    userFullName: string;
+    realRecipientName?: any;
+    endDeliveryTime?: any;
+    mustReceiveCOD: number;
+    mustReceivePrice: number;
+    keepingCOD: number;
+    keepingPrice: number;
+    awaitAcceptCOD: number;
+    awaitAcceptPrice: number;
+    lastDatetimeUpdate: Date;
+    timeCompare: number;
+    totalMustReceiveCOD: number;
+    totalMustReceivePrice: number;
+    totalKeepingCOD: number;
+    totalKeepingPrice: number;
+    totalAwaitAcceptCOD: number;
+    totalAwaitAcceptPrice: number;
+    totalCount: number;
+ }

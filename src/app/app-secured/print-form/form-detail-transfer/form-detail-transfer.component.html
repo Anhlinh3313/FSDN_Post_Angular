@@ -1,0 +1,360 @@
+<div [id]="formId">
+    <div *ngIf="!selectData.isPrintDetail">
+        <div class="bk-delivery-page" style="padding: 16px;">
+            <div class="page-header">
+                <div class="pull-left">
+                    <div class="logo-wrapper">
+                        <div class="logo">
+                            <img class="logo-img" src="{{logo}}">
+                        </div>
+                    </div>
+                </div>
+                <div class="pull-left">
+                    <div class="company-name">{{selectData.companyName}}</div>
+                    <div>{{selectData.hotLine}}</div>
+                    <div>{{selectData.centerHubAddress}}</div>
+                </div>
+                <div class="pull-right">
+                    <div class="barcode-wrapper">
+                        <div class="barcode" style="margin-bottom: 0px">
+                            <img id="listGoods" />
+                            <!-- <div style="text-align:center">{{selectData.dateCreate | dateFormat}}</div> -->
+                        </div>
+                        <div style="text-align:center">{{selectData.listGoods}}</div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="">
+                <div class="page-title" style="padding-bottom: 0px;">
+                    <strong class="title">BẢNG KÊ CHI TIẾT XUẤT TRUNG CHUYỂN</strong>
+                </div>
+                <div class="text-center">
+                    <span>Ngày lập: {{selectData.dateCreate | dateFormat}}</span>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        Kho/Bưu cục gửi: {{selectData.userHubName}}
+                    </div>
+                    <div class="col-xs-6">
+                        Kho/Bưu cục nhận: {{selectData.toHubName}}
+                    </div>
+                    <div class="col-xs-6">
+                        Nhân viên trung chuyển: {{selectData.emp?.code}} - {{selectData.emp?.fullName}}
+                    </div>
+                    <div class="col-xs-6">
+                        Ghi chú: {{selectData.note}}
+                    </div>
+                </div>
+                <div class="content-wrapper">
+                    <div class="table-wrapper">
+                        <table class="table table-content">
+                            <thead>
+                                <tr>
+                                    <th class="BK-STT">STT</th>
+                                    <th class="BK-ShipmentNumber">Mã vận đơn</th>
+                                    <th class="BK-Weight-CalWeight">TL {{unit}}/ TLQĐ {{unit}}</th>
+                                    <th class="BK-TotalBox">SK</th>
+                                    <th *ngIf="companyName=='delta'" class="BK-SenderName">Người gửi</th>
+                                    <th class="BK-FromProvince">Tỉnh đi</th>
+                                    <th class="BK-ToProvince">Tỉnh đến</th>
+                                    <th *ngIf="companyName=='delta'||companyName=='gsdp'" class="BK-ReceiverName">Người
+                                        nhận</th>
+                                    <th *ngIf="companyName=='delta'||companyName=='gsdp'" class="BK-ShippingAddress">Địa
+                                        chỉ nhận</th>
+                                    <th *ngIf="companyName!='gsdp'" style="width:100px">Dịch vụ</th>
+                                    <th *ngIf="companyName=='gsdp'" style="width:100px">COD</th>
+                                    <th style="width:100px">Ghi chú</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let x of selectData">
+                                    <td class="text-right">{{x.stt}}</td>
+                                    <td style="padding-bottom: 0px !important; text-align: center !important;">
+                                        <div class="barcode" style="margin-bottom: 0px">
+                                            <img [id]="x.fakeId" />
+                                        </div>
+                                        <div>{{x.shipmentNumber}}</div>
+                                    </td>
+                                    <td class="text-right">{{ (x.weight) ? x.weight.toLocaleString('en-US') : "-" }}/ {{ (x.calWeight) ?
+                                        x.calWeight.toLocaleString('en-US') : "-"}}</td>
+                                    <td class="text-right">{{(x.totalBox) ? x.totalBox : 0}}</td>
+                                    <td *ngIf="companyName=='delta'">{{x.senderName}}</td>
+                                    <td>{{(x.fromProvince) ? x.fromProvince.name : "" }}</td>
+                                    <td class="text-right">{{(x.toProvince) ? x.toProvince.name : "" }}</td>
+                                    <td *ngIf="companyName=='delta'||companyName=='gsdp'" class="BK-ReceiverName">
+                                        {{x.receiverName}}</td>
+                                    <td *ngIf="companyName=='delta'||companyName=='gsdp'">{{x.shippingAddress}}</td>
+                                    <td *ngIf="companyName!='gsdp'" class="text-center">{{x.service?.name}}</td>
+                                    <td *ngIf="companyName=='gsdp'" class="text-center">{{(x.cod ? x.cod : 0) | number}}
+                                    </td>
+                                    <td class="text-center">{{(x.cusNote) ? x.cusNote : "" }}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td>{{ ((selectData.totalWeight) ? selectData.totalWeight : 0) | number }}/ {{ ((selectData.totalCalWeight)
+                                        ? selectData.totalCalWeight : 0) | number }}</td>
+                                    <td>{{ (selectData.totalBox) ? selectData.totalBox : 0 }}</td>
+                                    <td *ngIf="companyName=='delta'"></td>
+                                    <td *ngIf="companyName=='delta'"></td>
+                                    <td *ngIf="companyName=='delta'||companyName=='gsdp'"></td>
+                                    <td *ngIf="companyName=='delta'||companyName=='gsdp'"></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="content-wrapper" *ngIf="selectData.selectedPackage && selectData.selectedPackage.length">
+                    <div><b>Danh sách {{pack}}</b></div>
+                    <div class="table-wrapper">
+                        <table class="table table-content">
+                            <thead>
+                                <tr>
+                                    <th class="BK-STT">STT</th>
+                                    <th class="BK-ShipmentNumber">Mã {{pack}}</th>
+                                    <th class="BK-CusNote">Đóng {{pack}} ở</th>
+                                    <th class="BK-CusNote">Gửi đến</th>
+                                    <th class="BK-CusNote">Tổng đơn</th>
+                                    <th class="BK-CusNote">Tổng kiện</th>
+                                    <th class="BK-CusNote">TL({{unit}})</th>
+                                    <th class="BK-CusNote">Nội dung</th>
+                                    <th class="BK-CusNote">Ghi chú</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let xPack of selectData.selectedPackage">
+                                    <td class="text-right">{{xPack.stt}}</td>
+                                    <td style="padding-bottom: 0px !important; text-align: center !important;">
+                                        <div class="barcode" style="margin-bottom: 0px">
+                                            <img [id]="xPack.fakeId" />
+                                        </div>
+                                        <div>{{xPack.packageCode}}</div>
+                                    </td>
+                                    <td>{{xPack.fromHubName}}</td>
+                                    <td class="text-right">{{xPack.toHubName}}</td>
+                                    <td class="text-right">{{xPack.totalShipment}}</td>
+                                    <td class="text-right">
+                                        {{xPack.weight ? xPack.weight.toLocaleString('en-US'):0 | number}}
+                                    </td>
+                                    <td class="text-right">{{xPack.totalBoxs ? xPack.totalBoxs : 0}}</td>
+                                    <td class="text-right">{{xPack.content}}</td>
+                                    <td class="text-center"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <!-- <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td>{{ ((selectData.totalWeight) ? selectData.totalWeight : 0) | number }}/ {{ ((selectData.totalCalWeight)
+                                            ? selectData.totalCalWeight : 0) | number }}</td>
+                                    <td>{{ (selectData.totalBox) ? selectData.totalBox : 0 }}</td>
+                                    <td *ngIf="companyName=='delta'"></td>
+                                    <td *ngIf="companyName=='delta'"></td>
+                                    <td *ngIf="companyName=='delta'||companyName=='gsdp'"></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr> -->
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="page-footer">
+                <div class="signal-wrapper">
+                    <div class="row">
+                        <div class="col-xs-4 text-center">
+                            <div>
+                                <strong class="text-uppercase">Bên gửi</strong>
+                            </div>
+                            <div>
+                                <strong>{{selectData.userHubName}}</strong>
+                            </div>
+                            <div>
+                                <strong>Bộ phận {{selectData.userDepartmentName}}</strong>
+                            </div>
+                            <div class="signature"></div>
+                            <div>
+                                <span style="font-weight: normal">{{selectData.createdBy}}</span>
+                            </div>
+                            <div style="font-weight: normal">.... giờ .... Ngày ..../ ..../{{selectData.getFullYear}}
+                            </div>
+                        </div>
+                        <!-- TransferUserId -->
+                        <div class="col-xs-4 text-center">
+                            <div>
+                                <strong class="text-uppercase">Nhân viên trung chuyển</strong>
+                            </div>
+                            <div>
+                                <strong>{{selectData.empHubName}}</strong>
+                            </div>
+                            <div>
+                                <strong>Bộ phận {{selectData.empDepartmentName}}</strong>
+                            </div>
+                            <div class="signature"></div>
+                            <div>
+                                <span style="font-weight: normal">{{selectData?.currentEmp}}</span>
+                            </div>
+                            <div style="font-weight: normal">.... giờ .... Ngày ..../ ..../{{selectData.getFullYear}}
+                            </div>
+                        </div>
+                        <div class="col-xs-4 text-center">
+                            <div>
+                                <strong class="text-uppercase">Bên nhận</strong>
+                            </div>
+                            <div>
+                                <strong>{{selectData.toHubName}}</strong>
+                            </div>
+                            <div>
+                                <strong class="text-uppercase">Bộ phận ....................</strong>
+                            </div>
+                            <div class="signature"></div>
+                            <div>
+                                <strong class="text-uppercase">..............................</strong>
+                            </div>
+                            <div style="font-weight: normal">.... giờ .... Ngày ..../ ..../{{selectData.getFullYear}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="selectData.isPrintDetail && selectData.printDetail">
+        <div *ngFor="let itemPrintDetail of selectData.printDetail">
+            <div class="bk-delivery-page" style="padding: 16px;">
+                <div class="page-header">
+                    <div class="pull-left">
+                        <div class="logo-wrapper">
+                            <div class="logo">
+                                <img class="logo-img" src="{{logo}}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pull-left">
+                        <div class="company-name">{{selectData.companyName}}</div>
+                        <div>{{selectData.hotLine}}</div>
+                        <div>{{selectData.centerHubAddress}}</div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="">
+                    <div class="page-title" style="padding-bottom: 0px;">
+                        <strong class="title">BẢNG KÊ BÀN GIAO NHÂN VIÊN GIAO</strong>
+                    </div>
+                    <div class="text-center">
+                        <span>Ngày lập: {{selectData.dateCreate | dateFormat}}</span>
+                    </div>
+                    <div class="content-wrapper">
+                        <div *ngIf="itemPrintDetail.data" class="table-wrapper">
+                            <table class="table table-content">
+                                <thead>
+                                    <tr>
+                                        <th class="BK-STT">STT</th>
+                                        <th class="BK-ShipmentNumber">Mã vận đơn</th>
+                                        <th class="BK-Weight-CalWeight">TL {{unit}}/ TLQĐ {{unit}}</th>
+                                        <th class="BK-TotalBox">SK</th>
+                                        <th *ngIf="companyName=='delta'" class="BK-SenderName">Người gửi</th>
+                                        <th class="BK-FromProvince">Tỉnh đi</th>
+                                        <th class="BK-ToProvince">Tỉnh đến</th>
+                                        <th *ngIf="companyName=='delta'||companyName=='gsdp'" class="BK-ReceiverName">
+                                            Người
+                                            nhận</th>
+                                        <th *ngIf="companyName=='delta'||companyName=='gsdp'"
+                                            class="BK-ShippingAddress">Địa
+                                            chỉ nhận</th>
+                                        <th *ngIf="companyName!='gsdp'" style="width:100px">Dịch vụ</th>
+                                        <th *ngIf="companyName=='gsdp'" style="width:100px">COD</th>
+                                        <th style="width:100px">Ghi chú</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let x of itemPrintDetail.data;  let i = index">
+                                        <td class="text-right">{{i+1}}</td>
+                                        <td style="padding-bottom: 0px !important; text-align: center !important;">
+                                            <div class="barcode" style="margin-bottom: 0px">
+                                                <img [id]="x.fakeId" />
+                                            </div>
+                                            <div>{{x.shipmentNumber}}</div>
+                                        </td>
+                                        <td class="text-right">
+                                            {{ (x.weight) ? x.weight.toLocaleString('en-US') : "-" }}/ {{ (x.calWeight) ?
+                                        x.calWeight.toLocaleString('en-US') : "-"}}</td>
+                                        <td class="text-right">{{(x.totalBox) ? x.totalBox : 0}}</td>
+                                        <td *ngIf="companyName=='delta'">{{x.senderName}}</td>
+                                        <td>{{(x.fromProvince) ? x.fromProvince.name : "" }}</td>
+                                        <td class="text-right">{{(x.toProvince) ? x.toProvince.name : "" }}</td>
+                                        <td *ngIf="companyName=='delta'||companyName=='gsdp'" class="BK-ReceiverName">
+                                            {{x.receiverName}}</td>
+                                        <td *ngIf="companyName=='delta'||companyName=='gsdp'">{{x.shippingAddress}}</td>
+                                        <td *ngIf="companyName!='gsdp'" class="text-center">{{x.service?.name}}</td>
+                                        <td *ngIf="companyName=='gsdp'" class="text-center">
+                                            {{(x.cod ? x.cod : 0) | number}}</td>
+                                        <td class="text-center">{{(x.cusNote) ? x.cusNote : "" }}</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>{{ (itemPrintDetail.totalBox) ? itemPrintDetail.totalBox : 0 }}</td>
+                                        <td *ngIf="companyName=='delta'"></td>
+                                        <td *ngIf="companyName=='delta'||companyName=='gsdp'"></td>
+                                        <td *ngIf="companyName=='delta'||companyName=='gsdp'"></td>
+                                        <td *ngIf="companyName!='gsdp'"></td>
+                                        <td *ngIf="companyName=='gsdp'"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-footer">
+                    <div class="signal-wrapper">
+                        <div class="row">
+                            <div class="col-xs-4 text-center">
+                                <div>
+                                    <strong class="text-uppercase">Bàn giao</strong>
+                                </div>
+                                <div class="signature"></div>
+                                <div>
+                                    <span style="font-weight: normal">{{selectData?.currentEmp}}</span>
+                                </div>
+                                <div style="font-weight: normal">.... giờ .... Ngày ..../
+                                    ..../{{selectData.getFullYear}}</div>
+                            </div>
+                            <!-- TransferUserId -->
+                            <div class="col-xs-4 text-center">
+                            </div>
+                            <div class="col-xs-4 text-center">
+                                <div>
+                                    <strong class="text-uppercase">Nhận bàn giao</strong>
+                                </div>
+                                <div class="signature"></div>
+                                <div>
+                                    <span style="font-weight: normal">{{itemPrintDetail.fullName}}</span>
+                                </div>
+                                <div style="font-weight: normal">.... giờ .... Ngày ..../
+                                    ..../{{selectData.getFullYear}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="page-break-after: always;"></div>
+        </div>
+    </div>
+    <img src="{{logo}}" class="logo-img-background">
+</div>

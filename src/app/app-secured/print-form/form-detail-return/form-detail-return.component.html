@@ -1,0 +1,132 @@
+<div [id]="formId">
+    <div class="bk-delivery-page" style="padding: 16px;">
+        <div class="page-header">
+            <div class="pull-left">
+                <div class="logo-wrapper">
+                    <div class="logo">
+                        <img class="logo-img" src="{{logo}}">
+                    </div>
+                </div>
+            </div>
+            <div class="pull-left">
+                    <div class="company-name">{{selectData.companyName}}</div>
+                    <div>{{selectData.hotLine}}</div>
+                    <div>{{selectData.centerHubAddress}}</div>
+            </div>
+            <div class="pull-right">
+                <div class="barcode-wrapper">
+                    <div class="barcode" style="margin-bottom: 0px">
+                        <img id="listGoods" />
+                        <div style="text-align:center">{{selectData.dateCreate | dateFormat}}</div>
+                    </div>
+                    <div style="text-align:center">{{selectData.listGoods}}</div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="">
+            <div class="page-title">
+                <span class="title" *ngIf="selectData.createdHub" >BẢNG KÊ {{selectData.type}}</span>
+            </div>
+            <div class="content-wrapper">
+                <div class="row">
+                    <div class="col-xs-4">
+                        <b>+ Người xuất phiếu:</b>
+                        <span class=""> {{selectData.createdBy}}</span>
+                    </div>
+                    <div class="col-xs-4"></div>
+                    <div class="col-xs-4">
+                        <b>+ NVGN:</b>
+                        <span class="">{{selectData?.currentEmp}}</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <b>+ Ngày/giờ xuất phiếu:</b>
+                        <span class=""> {{selectData.dateCreateWhen | dateFormat}}</span>
+                    </div>
+                    <div class="col-xs-4"></div>
+                    <div class="col-xs-4">
+                        <b>+ Số phiếu:</b>
+                        <span>{{selectData.listGoods}}</span>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table class="table table-content">
+                        <thead>
+                            <tr>
+                                <th style="width:30px">STT</th>
+                                <th style="width:170px">Mã vận đơn</th>
+                                <th style="width:100px">Khách hàng</th>
+                                <th style="width:80px">Điện thoại</th>
+                                <th style="width:120px">Điạ chỉ</th>
+                                <th style="width:50px">Số kiện</th>
+                                <th style="width:70px">Tổng COD</th>
+                                <th style="width:80px">Tổng cước thanh toán</th>
+                                <th style="width:80px">Tổng tiền</th>
+                                <th>Ký xác nhận</th>
+                                <th>Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let x of selectData">
+                                <td>{{x.stt}}</td>
+                                <td style="padding-bottom: 10px !important; text-align: center !important;">
+                                    <div class="barcode" style="margin-bottom: 0px">
+                                        <img [id]="x.fakeId" />
+                                    </div>
+                                    <div style="margin-top: -10px">{{x.shipmentNumber}}</div>
+                                </td>
+                                <td *ngIf="x.senderName;else templateNone">{{x.senderName}} </td>
+                                <ng-template #templateNone>
+                                    <td></td>
+                                </ng-template>
+                                <td *ngIf="x.senderPhone;else templateNone"> {{x.senderPhone}}</td>
+                                <ng-template #templateNone>
+                                    <td></td>
+                                </ng-template>
+                                <td *ngIf="x.shippingAddress;else templateNone"> {{x.shippingAddress}}</td>
+                                <ng-template #templateNone>
+                                    <td></td>
+                                </ng-template>
+                                <td class="text-right">
+                                    {{ (x.totalBox) ? x.totalBox.toLocaleString('vi-VN') : 0 }}
+                                </td>
+                                <td class="text-right">
+                                    {{ (x.cod) ? x.cod.toLocaleString('vi-VN') : 0 }}
+                                </td>
+                                <td class="text-right">
+                                        {{ (x.totalPrice) ? x.totalPrice.toLocaleString('vi-VN') : 0 }}
+                                </td>
+                                <td class="text-right">
+                                        {{ (x.sumPrice) ? x.sumPrice.toLocaleString('vi-VN') : 0 }}
+                                </td>
+                                <td></td>
+                                <td *ngIf="x.cusNote; else templateNone">{{x.cusNote}}</td>
+                                <ng-template #templateNone>
+                                    <td></td>
+                                </ng-template>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="page-footer">
+            <div class="signal-wrapper">
+                <div class="text-right">......................ngày..........tháng..........năm..........</div>
+                <div class="row">
+                    <div class="col-xs-4 text-center">
+                        <p>Nhân viên nhận bàn giao</p>
+                        <p class="signal">(Ký và ghi rõ họ tên)</p>
+                    </div>
+                    <div class="col-xs-offset-4 col-xs-4 text-center">
+                        <p>Nhân viên bàn giao</p>
+                        <p class="signal">(Ký và ghi rõ họ tên)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <img src="{{logo}}" class="logo-img-background">
+</div>

@@ -1,0 +1,188 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Begin Left Table -->
+    <div class="col-md-12 col-md-12-small">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Danh sách vận đơn đối tác</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <button class="btn btn-success" (click)="clickRefresh()">
+                            <i class="fa fa-refresh"></i>&nbsp;refresh
+                        </button>
+                    </a>
+
+                    <a class="collapse-link">
+                        <button class="btn btn-danger" (click)="ExportExcel(table)">
+                            <i class="fa fa-file-excel-o"></i>&nbsp;Xuất excel nội bộ
+                        </button>
+                    </a>
+                    <a class="collapse-link">
+                        <button type="button" class="btn btn-primary" (click)="SimpleExcel(table)">
+                            <i class="fa fa-file-excel-o"></i>&nbsp;Xuất excel EMS</button>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <label>Đối tác</label>
+                        <p-dropdown styleClass="select-input form-control" [options]="tpls" [(ngModel)]="selectedTPL" [style]="{'width':'100%'}"
+                            filter="filter" (onChange)="changeFilter()">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Tình trạng</label>
+                        <p-dropdown styleClass="select-input form-control" [options]="statuses" [(ngModel)]="selectedStatus" [style]="{'width':'100%'}"
+                            filter="filter" (onChange)="changeFilter()">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Từ ngày</label>
+                        <div class="form-group" id="data_1">
+                            <div class="input-group" daterangepicker [options]="singlePicker" (selected)="singleSelectFrom($event)">
+                                <span class="select-input form-control" name="daterange">
+                                    {{ selectedDateFrom | dateFormat }}
+                                </span>
+                                <span class="input-group-btn">
+                                    <a type="button" class="btn btn-default">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Đến ngày</label>
+                        <div class="form-group" id="data_1">
+                            <div class="input-group" daterangepicker [options]="singlePicker" (selected)="singleSelectTo($event)">
+                                <span class="select-input form-control" name="daterange">
+                                    {{ selectedDateTo | dateFormat }}
+                                </span>
+                                <span class="input-group-btn">
+                                    <a type="button" class="btn btn-default">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                    </div>
+                    <div class="col-sm-2">
+                        <label>&nbsp;</label>
+                        <div class="input-group">
+                            <input #filterGb type="text" placeholder="Nhập chuỗi cần tìm ..." [(ngModel)]="txtFilterGb" class="input-sm form-control"
+                                id="filter" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-sm btn-primary"> Tìm kiếm</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <!-- <p-dataTable #table [value]="listData" rows="20" [responsive]="true" [globalFilter]="filterGb" [lazy]="true" [totalRecords]="totalRecords"
+                                (onLazyLoad)="loadLazy($event)" scrollable="true" [(selection)]="selectedData" dataKey="id" scrollable="true"
+                                scrollHeight="550px" virtualScroll="virtualScroll">
+
+                                <p-column styleClass="p-col-normal" field="tplCreatedWhen" header="Ngày đi ĐT" [sortable]="true">
+                                    <ng-template pTemplate="body" let-rowData="rowData">
+                                        {{rowData.tplCreatedWhen | dateFormat}}
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="p-col-normal" field="shipmentNumber" header="Mã vận đơn" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="tplNumber" header="Mã vận đơn ĐT" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="tpl.name" header="Đối tác" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="senderName" header="Người gửi" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="senderPhone" header="Số đt người gửi" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="cod" header="COD" [sortable]="true">
+                                    <ng-template pTemplate="body" let-rowData="rowData">
+                                        {{rowData.cod | number:'1.0-0'}}
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="p-col-normal" field="totalPrice" header="Cước" [sortable]="true">
+                                    <ng-template pTemplate="body" let-rowData="rowData">
+                                        {{rowData.totalPrice | number:'1.0-0'}}
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="p-col-normal" field="receiverName" header="Người nhận" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="receiverPhone" header="Số đt người nhận" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="shippingAddress" header="Địa chỉ nhận hàng" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="toProvince.name" header="Tỉnh giao" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-note" field="cusNote" header="Ghi chú khách hàng" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-note" field="deliveryNote" header="Ghi chú giao hàng" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="shipmentStatus.name" header="Tình trạng" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="orderDate" header="Ngày gửi" [sortable]="true">
+                                    <ng-template pTemplate="body" let-rowData="rowData">
+                                        {{rowData.orderDate | dateFormat}}
+                                    </ng-template>
+                                </p-column>
+                            </p-dataTable> -->
+                            <p-table #table [value]="listData" rows="20" [responsive]="true" [lazy]="true" [totalRecords]="totalRecords"
+                            (onLazyLoad)="loadLazy($event)" scrollable="true"
+                            scrollHeight="550px">
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th Class="p-col-normal">Ngày đi ĐT</th>
+                                        <th Class="p-col-normal">Mã vận đơn NB</th>
+                                        <th Class="p-col-normal">Mã vận đơn ĐT</th>
+                                        <th Class="p-col-normal">Đối tác</th>
+                                        <th Class="p-col-normal">Người gửi</th>
+                                        <th Class="p-col-normal">Số đt người gửi</th>
+                                        <th Class="p-col-normal">COD</th>
+                                        <th Class="p-col-normal">Cước</th>
+                                        <th Class="p-col-normal">Người nhận</th>
+                                        <th Class="p-col-normal">Số đt người nhận</th>
+                                        <th Class="p-col-address">Địa chỉ nhận hàng</th>
+                                        <th Class="p-col-normal">Tỉnh giao</th>
+                                        <th Class="p-col-note">Ghi chú khách hàng</th>
+                                        <th Class="p-col-note">Ghi chú giao hàng</th>
+                                        <th Class="p-col-normal">Tình trạng</th>
+                                        <th Class="p-col-normal">Ngày gửi</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-data let-columns="columns">
+                                    <tr>
+                                        <td Class="p-col-normal">{{data.tplCreatedWhen | dateFormat}}</td>
+                                        <td Class="p-col-normal">{{data.shipmentNumber}}</td>
+                                        <td Class="p-col-normal">{{data.tplNumber}}</td>
+                                        <td Class="p-col-normal">{{data.tpl?.name}}</td>
+                                        <td Class="p-col-normal">{{data.senderName}}</td>
+                                        <td Class="p-col-normal">{{data.senderPhone}}</td>
+                                        <td Class="p-col-normal">{{data.cod | number:'1.0-0'}}</td>
+                                        <td Class="p-col-normal">{{data.totalPrice | number:'1.0-0'}}</td>
+                                        <td Class="p-col-normal">{{data.receiverName}}</td>
+                                        <td Class="p-col-normal">{{data.receiverPhone}}</td>
+                                        <td Class="p-col-address">{{data.shippingAddress}} <br />{{data.addressNoteTo}}</td>
+                                        <td Class="p-col-normal">{{data.toProvince?.name}}</td>
+                                        <td Class="p-col-note">{{data.cusNote}}</td>
+                                        <td Class="p-col-note">{{data.deliveryNote}}</td>
+                                        <td Class="p-col-normal">{{data.shipmentStatus?.name}}</td>
+                                        <td Class="p-col-normal">{{data.orderDate | dateFormat}}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Left Table -->
+</div>

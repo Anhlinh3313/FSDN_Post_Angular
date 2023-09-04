@@ -1,0 +1,235 @@
+<app-card>
+    <a class="parentPage">{{parentPage}}</a>
+    <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="row" style="margin-bottom: 18px;">
+                    <div class="col-sm-3">
+                        <label>Quét mã {{pack}} hoặc Seal</label>
+                        <input #txtPackage type="text" placeholder="..." autofocus [(ngModel)]="txtPackageNumber"
+                            class="input-sm form-control" (keyup.enter)="evenScanePackageNumber(txtPackage)" />
+                    </div>
+                    <div class="col-sm-3">
+                        <label style="display: block">&nbsp;</label>
+                        <button type="button" class="btn btn-success" [disabled]="isCheckOpenPackage"
+                            (click)="confirmOpenPackage()">
+                            Xác nhận mở {{pack}}
+                        </button>
+                    </div>
+                    <div class="col-sm-4">
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Lọc theo</label>
+                        <p-dropdown styleClass="select-input" [style]="{'width':'100%'}" [options]="listStatus"
+                            [(ngModel)]="listStatusId" placeholder="Lọc theo" filter="false"
+                            (onChange)="loadShipment()"></p-dropdown>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label class="label-primary label-block">Thông tin {{pack}}</label>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 18px;">
+                    <div class="col-sm-3">
+                        <label>Mã {{pack}}</label>
+                        <input type="text" readonly class="input-sm form-control" [(ngModel)]="package.code" />
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Số Seal</label>
+                        <input type="text" readonly class="input-sm form-control" [(ngModel)]="package.sealNumber" />
+                    </div>
+                    <div class="col-sm-3">
+                        <label>{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} tạo</label>
+                        <input *ngIf="package.createdHub; else noCreatedHub" type="text" readonly
+                            class="input-sm form-control" [(ngModel)]="package.createdHub.name" />
+                        <ng-template #noCreatedHub>
+                            <input type="text" readonly class="input-sm form-control" />
+                        </ng-template>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>{{pack}} gửi đến
+                            {{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}}</label>
+                        <input *ngIf="package.toHub; else noToHub" type="text" readonly class="input-sm form-control"
+                            [(ngModel)]="package.toHub.name" />
+                        <ng-template #noToHub>
+                            <input type="text" readonly class="input-sm form-control" />
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 18px;">
+                    <div class="col-sm-1">
+                        <label>Dài</label>
+                        <input type="text" readonly class="input-sm form-control" [(ngModel)]="package.length" />
+                    </div>
+                    <div class="col-sm-1">
+                        <label>Rộng</label>
+                        <input type="text" readonly class="input-sm form-control" [(ngModel)]="package.width" />
+                    </div>
+                    <div class="col-sm-1">
+                        <label>Cao</label>
+                        <input type="text" readonly class="input-sm form-control" [(ngModel)]="package.height" />
+                    </div>
+                    <div class="col-sm-1">
+                        <label>TLQĐ</label>
+                        <input type="text" readonly class="input-sm form-control" [(ngModel)]="package.calWeight" />
+                    </div>
+                    <div class="col-sm-2">
+                        <label>TL</label>
+                        <input type="text" readonly class="input-sm form-control" [(ngModel)]="package.weight" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Nội dung</label>
+                        <input type="text" readonly class="input-sm form-control" [(ngModel)]="package.content" />
+                    </div>
+                </div>
+
+                <div class="ibox-content" *ngIf="confirmOpenPackageSuccess">
+                    <div class="row">
+                        <div class="col-sm-3" style="margin-left: -10px;">
+                            <label>Quét mã vận đơn</label>
+                            <div class="input-group">
+                                <input #txtShipment type="text" placeholder="..." autofocus
+                                    [(ngModel)]="txtShipmentNumber" class="input-sm form-control"
+                                    (keyup.enter)="evenScaneShipmentNumber(txtShipment)" />
+                            </div>
+                        </div>
+                        <div class="col-sm-5"></div>
+                        <div class="col-sm-4" style="text-align: right">
+                            <div class="div-flex">
+                                <button type="button" class="btn btn-success"
+                                    (click)="onClickScanAllAndCompleteCheckedPackage(modalScanAllAndCompleteChecked)" style="margin-top: 18px">
+                                    Kiểm nhanh và hoàn tất kiểm {{pack}}
+                                </button>
+                                <button type="button" class="btn btn-success" (click)="onclickCheckedPackage(modalComfirmCheckedPackage)"
+                                    style="margin-top: 18px">
+                                    Hoàn tất kiểm gói
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <p-table #dt [value]="datasource" [responsive]="true" [totalRecords]="totalRecords"
+                                scrollable="true" [paginator]="true" [lazy]="true" [rows]="pageSize"
+                                [rowsPerPageOptions]="[10,20,50,100,500]" [alwaysShowPaginator]="true"
+                                (onPage)="onPageChange($event)">
+                                <ng-template pTemplate="caption">
+                                    <span class="ui-column-title" style="font-weight: bold; color: #ff8f00">Tổng
+                                        : {{
+                                        (totalRecords) ? totalRecords : 0 }} vận đơn</span>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width: 40px">#</th>
+                                        <th class="p-col-shipmentNumber">Mã vận đơn</th>
+                                        <th class="p-col-address">NV đóng {{pack}}</th>
+                                        <th class="p-col-note">Ngày đóng</th>
+                                        <th class="p-col-address">NV kiểm {{pack}}</th>
+                                        <th class="p-col-note">Ngày kiểm</th>
+                                        <th class="p-col-normal">Dịch vụ</th>
+                                        <th class="p-col-numPick">TL</th>
+                                        <th class="p-col-normal">{{hub.stationHubSortName}} đến</th>
+                                        <th class="p-col-address">Địa chỉ nhận</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData>
+                                    <tr>
+                                        <td style="width: 40px">
+                                            <img title="Chờ kiểm"
+                                                *ngIf="rowData.inputUserCode && !rowData.outputUserCode" width="30"
+                                                src="../../../assets/images/icons/waiting.png" />
+                                            <img title="Kiểm lỗi" *ngIf="!rowData.inputUserCode" width="30"
+                                                src="../../../assets/images/icons/error.png" />
+                                            <img title="Kiểm thành công"
+                                                *ngIf="rowData.inputUserCode && rowData.outputUserCode" width="30"
+                                                src="../../../assets/images/icons/completed.png" />
+                                        </td>
+                                        <td class="p-col-shipmentNumber">{{rowData.shipmentNumber}}</td>
+                                        <td class="p-col-address">
+                                            {{rowData.inputUserCode}}-{{rowData.inputUserFullName}}</td>
+                                        <td class="p-col-note">{{rowData.inputWhen | dateFormat}}</td>
+                                        <td class="p-col-address">
+                                            {{rowData.outputUserCode}}-{{rowData.outputUserFullName}}</td>
+                                        <td class="p-col-note">{{rowData.outputWhen | dateFormat}}</td>
+                                        <td class="p-col-normal">{{rowData.serviceName}}</td>
+                                        <td class="p-col-numPick">{{rowData.weight | number}}</td>
+                                        <td class="p-col-normal">{{rowData.toHubName}}</td>
+                                        <td class="p-col-address">{{rowData.shippingAddress}}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Start Modal kiểm nhanh ds vận đơn của gói và hoàn tất kiểm gói -->
+    <ng-template #modalScanAllAndCompleteChecked>
+        <div class="modal-header" style="padding: 5px; text-align:left;">
+            <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+                (click)="noneCheckPackage()">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span>
+            </button>
+            <h6 class="modal-title" style="font-size:20px">Kiểm nhanh và hoàn tất kiểm {{pack}}</h6>
+        </div>
+        <div class="modal-body" style="overflow:hidden;">
+            <div class="row" style="margin-top: 10px;">
+                <div class="row">
+                    <div class="col-sm-12" style="padding-left: 30px;">
+                        <label class="label-control">Kiểm nhanh và hoàn tất kiểm {{pack}} cho: {{listAllShipCheckComplete.length}} vận đơn.</label>
+                    </div>
+                    <div *ngIf="isCheckScanAllShip" class="col-sm-12" style="margin-bottom: 15px">
+                        <p-progressBar [value]="percentScanAllShip"></p-progressBar>
+                    </div>
+
+                    <div class="col-sm-6" *ngIf="isCheckScanAllShip"><label class="label-control isDanger">Thất bại:
+                        {{totalScanAllShipFail}}</label></div>
+                    <div class="col-sm-6" *ngIf="isCheckScanAllShip"><label class="label-control isPickupFail">Thành công:
+                        {{totalScanAllShipSuccess}}</label></div>
+                    <div class="col-sm-12" style="text-align: center;margin-top: 10px" *ngIf="listAllShipCheckComplete.length > 0 && totalScanAllShipSuccess>=listAllShipCheckComplete.length">
+                        <button class="btn btn-success" (click)="bsModalRef.hide()" type="button"><i class="fa fa-check"></i>
+                            Hoàn tất</button>
+                    </div>                                 
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button *ngIf="listAllShipCheckComplete.length > 0" [disabled]="isCheckScanAllShip" type="button" class="btn btn-danger" (click)="scanAllAndCompleteCheckedPackage()">Xác nhận</button>        
+            <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+        </div>
+    </ng-template>
+<!-- End Model -->
+
+<!-- Xác nhận hoàn tất kiểm gói -->
+<ng-template #modalComfirmCheckedPackage>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+            (click)="noneCheckPackage()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+    </div>
+    <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 no-padding">
+            <h4>Xác nhận HOÀN TẤT KIỂM {{pack}}?</h4>
+            <p *ngIf="totalRecords - countScanSuccess > 0">Có {{(totalRecords - countScanSuccess) | number}} vận đơn chưa kiểm, Bạn có muốn tiếp tục xác nhận không?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="completeCheckedPackage()">Xác nhận</button>
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Không</button>
+    </div>
+</ng-template>

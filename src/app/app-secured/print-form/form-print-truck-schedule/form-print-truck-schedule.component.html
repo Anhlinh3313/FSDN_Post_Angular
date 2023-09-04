@@ -1,0 +1,220 @@
+<div [id]="formId">
+  <div style="padding: 0 20px; font-size: 10px;">
+    <div class="row" style="font-size: 14px">
+      <div class="col-xs-4 text-center" style="padding:10px">
+        <img [src]="envir.urlLogo" style="width: 100%; height: auto" />
+      </div>
+      <div class="col-xs-4 text-center no-padding">LỆNH ĐIỀU XE</div>
+      <div class="col-xs-4 barcode text-right no-padding">
+        <img [id]="selectData.fakeId" />
+        <div style="margin-right: 25px;">{{selectData.code}}</div>
+      </div>
+    </div>
+    <div class="row mt-2">
+
+      <div class="col-xs-12 mt-1 text-center" style="font-size: 14px;font-weight: bold;text-transform: uppercase;">
+        Lộ trình: {{selectData.fromHub?.name}} - {{selectData.toHub?.name}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="pull-right">Ngày....tháng....năm 2018</div>
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-xs-6 mt-1" *ngFor="let rider of selectData.riders; let i = index">
+        <span>Họ & tên tài xế {{i + 1}}: {{rider.fullName}}</span> - Mã NV: {{rider.code}}
+      </div>
+    </div>
+    <div class="row mt-1" style="white-space: nowrap">
+      <div class="col-xs-2">
+        <label style="font-weight: bold;">Loại xe</label>: {{selectData.truck?.truckTypeName}}
+      </div>
+      <div class="col-xs-2">
+        <label style="font-weight: bold;">Biển số xe</label>: {{selectData.truck?.truckNumber}}
+      </div>
+      <div class="col-xs-3">
+        <label style="font-weight: bold;">Nơi quản lý xe</label>: {{selectData.truck?.truckRentalName}}
+      </div>
+      <div class="col-xs-3">
+        <label style="font-weight: bold;">Tình trạng kỹ thuật</label>: {{selectData.truck?.truckOwnershipName}}
+      </div>
+      <div class="col-xs-2">
+        <label style="font-weight: bold;">Nhiên liệu</label>: {{selectData.truck?.payLoad}}
+      </div>
+    </div>
+    <div class="row mt-1" style="white-space: nowrap">
+      <div class="col-xs-3">
+        <label style="font-weight: bold;">Ngày xuất kho giao</label>: {{selectData.startDatetime | dateFormat}}
+      </div>
+      <div class="col-xs-2">
+        <label style="font-weight: bold;">Số Km</label>: {{selectData.startKM}}
+      </div>
+      <div class="col-xs-2">
+        <label style="font-weight: bold;">Số seal</label>: {{selectData.sealNumber}}
+      </div>
+      <div class="col-xs-3">
+        <label style="font-weight: bold;">Tổng trọng lượng vận đơn</label>: {{selectData.totalWeight}}
+      </div>
+      <div class="col-xs-2">
+        <label style="font-weight: bold;">Số kiện</label>: {{selectData.totalBox}}
+      </div>
+    </div>
+    <div class="row mt-1 mb-1 text-center">
+      <div class="col-xs-3" *ngFor="let rider of selectData.riders; let i = index">
+        <label style="font-weight: bold;">LÁI XE {{i + 1}}</label>
+        <div style="margin-top: 25px">
+            {{rider.fullName}}
+        </div>
+      </div>
+      <div class="col-xs-3" *ngIf="selectData.riders && selectData.riders.length == 1">
+        <label style="font-weight: bold;">LÁI XE 2</label>
+        <div style="margin-top: 25px">
+        </div>
+      </div>
+      <div class="col-xs-3" *ngIf="!selectData.riders">
+        <label style="font-weight: bold;">LÁI XE 1</label>
+        <div style="margin-top: 25px">
+        </div>
+      </div>
+      <div class="col-xs-3" *ngIf="!selectData.riders">
+        <label style="font-weight: bold;">LÁI XE 2</label>
+        <div style="margin-top: 25px">
+        </div>
+      </div>
+      <!-- <div class="col-xs-3">
+        <label style="font-weight: bold;">LÁI XE 2</label>
+      </div> -->
+      <div class="col-xs-3">
+        <label style="font-weight: bold;">TRƯỞNG CA</label>
+      </div>
+      <div class="col-xs-3">
+        <label style="font-weight: bold;">ĐIỀU VẬN NƠI ĐI</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <b>
+          <u>Lưu ý:</u>
+        </b>
+      </div>
+      <div class="col-xs-12">
+        * Tài xế phải nghi đầy đủ các thông tin trên lệnh điều xe, nếu thiếu thì công ty sẽ không thanh toán chi phí đường đi và
+        chế độ lương.
+      </div>
+      <div class="col-xs-12">
+        * Khi nhận lệnh điều động (nếu có) và trước khi ghé vào các chi nhánh,tài xế phải liên hệ trước các trưởng CN để chuẩn bị
+        trả và nhận hàng. Trong trường hợp không liên lạc được thì phải liên lạc ngược lại cho chi nhánh nhận lệnh điều động
+        hoặc người trực tiếp quản
+      </div>
+      <div class="col-xs-12">
+        * Khi trả hàng và nhận hàng thì tài xế trực tiếp giám sát công việc trả và nhận hàng tại các chi nhánh. Trên đường lưu thông,
+        tài xế không được chở thêm hàng bên ngoài(trừ hàng của Vietstar), hàng lậu và không dừng xe tại các điểm nóng trên
+        QL1A(Huế: H.Phong
+      </div>
+      <div class="col-xs-12">
+        * Yêu cầu các trưởng chi nhánh theo dõi và nhận xét thái độ của tài xế trước khi đóng dấu vào lệnh điều động.
+      </div>
+      <div class="col-xs-12">
+        * Trong trường hợp đến các CN mà hết số tiền tạm ứng thì báo về người điều vận tại HCM để giải quyết.
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-xs-12 text-center" style="font-size: 14px">
+        HÀNH TRÌNH VẬN CHUYỂN
+      </div>
+      <div class="col-xs-12 table-responsive" style="font-size: 10px">
+        <table class="tables-bordered">
+          <thead>
+            <tr>
+              <th>
+                CÁC CHI NHÁNH {{envir.namePrint}}
+              </th>
+              <th>
+                TỔNG SỐ LƯỢNG
+                <br />V.Đ TRẢ & KIỆN
+              </th>
+              <th>
+                TỔNG SỐ LƯỢNG
+                <br />V.Đ NHẬN & KIỆN
+              </th>
+              <th>
+                THỜI GIAN ĐẾN
+              </th>
+              <th>
+                THỜI GIAN ĐI
+              </th>
+              <!-- <th>
+                SỐ SEAL MỚI
+              </th>
+              <th>
+                SỐ KM ĐẾN
+              </th> -->
+              <th>
+                TRƯỞNG CN(kí tên
+                <br /> & đống dấu)
+              </th>
+              <th>
+                GHI CHÚ(tình trạng
+                <br /> hàng hóa trả & nhận)
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let listGood of selectData.listGood; let i = index" style="font-size: 10px">
+              <td>{{listGood.fromHub?.name}}</td>
+              <td>{{listGood.totalShipment}}</td>
+              <td></td>
+              <td>{{listGood.createdWhen | dateFormat}}</td>
+              <td></td>
+              <!-- <td></td>
+              <td></td> -->
+              <td></td>
+              <td></td>
+            </tr>
+             <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+           <!-- <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr> -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

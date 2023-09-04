@@ -1,0 +1,59 @@
+<div class="row">
+  <div class="col-lg-12">
+    <ol class="ibox-title breadcrumb">
+      <li>
+        <a>{{parentPage}}</a>
+      </li>
+      <li class="active">
+        <strong>{{currentPage}}</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <!-- <div class="ibox-title">
+        <div class="ibox-tools">
+          <p-header>
+            
+          </p-header>
+        </div>
+      </div> -->
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-md-6 mb-1">
+            <div class="form-group">
+              <label>Mã vận đơn:</label>
+              <input class="form-control" [(ngModel)]="shipmentNumbers" (keyup.enter)="search()" />
+            </div>
+          </div>
+          <div class="col-md-12 mb-1" *ngFor="let item of lstData">
+            <div class="row no-margin" style="padding: 5px; box-shadow: 0 0 3px">
+              <div class="col-md-3">
+                <div>Tên người nhận: {{item.receiverName}}</div>
+                <div>Thời gian: {{item.orderDate | date: 'dd/MM/yyyy hh:mm'}}</div>
+                <div>Ghi chú: {{item.note}}</div>
+              </div>
+              <div class="col-md-9">
+                <img *ngFor="let img of item.deliveryImages" [src]="'data:image/jpeg;base64,' + img.fileBase64String"
+                  height="50" class="mr-1" (click)="openModalImage(templateImages, item.deliveryImages)" style="cursor: pointer;"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #templateImages>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-12">
+        <ngx-image-viewer [src]="lstImages" [config]="configImageViewer"></ngx-image-viewer>
+      </div>
+    </div>
+  </div>
+</ng-template>

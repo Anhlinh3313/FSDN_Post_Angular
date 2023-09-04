@@ -1,0 +1,254 @@
+<div class="row border-bottom">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#">
+                <i class="fa fa-bars"></i>
+            </a>
+            <div role="search" class="navbar-form-custom">
+                <div *ngIf="selectedShipmentType === true; else requestSearch" class="form-group">
+                    <input #searchGBTemplate type="text" placeholder="Tra cứu vận đơn..." class="form-control"
+                        name="top-search" id="top-search" [(ngModel)]="searchShipmentNumberGB"
+                        (keyup.enter)="onEnterSearchGB(searchGBTemplate)" />
+                </div>
+                <ng-template #requestSearch>
+                    <div class="form-group">
+                        <input #searchGBTemplate type="text" placeholder="Tra cứu yêu cầu..." class="form-control"
+                            name="top-search" id="top-search" [(ngModel)]="searchShipmentNumberGB"
+                            (keyup.enter)="onEnterSearchGB(searchGBTemplate)" />
+                    </div>
+                </ng-template>
+            </div>
+            <div class="navbar-form-custom header-inputSwitch" style="width: 100px;">
+                <div class="form-group" style="float:left;margin-top:5px;">
+                    <p-inputSwitch onLabel="Vận đơn" offLabel="Yêu cầu" [(ngModel)]="selectedShipmentType">
+                    </p-inputSwitch>
+                </div>
+            </div>
+        </div>
+        <ul class="nav navbar-top-links navbar-left">
+            <!-- <li>
+                    <p-dropdown styleClass="select-input form-control" [options]="shipmentTypes" [(ngModel)]="selectedType" [style]="{'width':'100%'}">
+                </p-dropdown>
+            </li> -->
+        </ul>
+        <ul class="nav navbar-top-links navbar-right">
+            <!-- <li>
+                <a [popover]="popTemplate" popoverTitle="Nhập số để gọi" placement="bottom">
+                    <i class="fa fa-phone"></i> Quay số nhanh
+                </a>
+            </li> -->
+            <li  > 
+                    <i class="fa fa-home"></i> Đơn vị làm việc: 
+                    <p-dropdown [options]="list_unit_hub" [(ngModel)]="selected_hub" [style]="{'width':'150px;'}" 
+                    (onChange)="openModelConfim(templateConfim,selected_hub)" filter="filter"></p-dropdown>                     
+            </li>
+            <li class="dropdown">
+                <a class="m-r-sm text-muted welcome-message dropdown-toggle" data-toggle="dropdown">
+                    <img class="m-profile-small" src="/assets/images/profile_small.jpg" />Xin chào, {{userFullName}}!
+                </a>
+                <ul class="dropdown-menu dropdown-account-info" style="white-space: nowrap;">
+                    <li>
+                        <i class="fa fa-user" aria-hidden="true"></i> {{account?.fullName}}
+                    </li>
+                    <li>
+                        <i class="fa fa-user" aria-hidden="true"></i> {{account?.userName}}
+                    </li>
+                    <li style="overflow: hidden; text-overflow: ellipsis; width: 185px;">
+                        <i class="fa fa-id-card-o" aria-hidden="true"></i> {{account?.roleName}}
+                    </li>
+                    <li>
+                        <i class="fa fa-building" aria-hidden="true"></i> {{account?.department?.name}}
+                    </li>
+                    <li>
+                        <i class="fa fa-university" aria-hidden="true"></i> {{account?.hub?.name}}
+                    </li>
+                    <li>
+                        <a href="/thay-doi-mat-khau" style="padding:0;margin:0;">
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                            <span class="nav-label">Thay đổi mật khẩu</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a (click)="openModel(popTemplatePort)" style="padding:0;margin:0;">
+                            <i class="fa fa-link" aria-hidden="true"></i>
+                            <span class="nav-label">Kết nối port</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="dropdown" style="display:none;">
+                <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                    <i class="fa fa-envelope"></i>
+                    <span class="label label-warning">16</span>
+                </a>
+                <ul class="dropdown-menu dropdown-messages">
+                    <li>
+                        <div class="dropdown-messages-box">
+                            <a href="profile.html" class="pull-left">
+                                <img alt="image" class="img-circle" src="/assets/images/a7.jpg">
+                            </a>
+                            <div class="media-body">
+                                <small class="pull-right">46h ago</small>
+                                <strong>Mike Loreipsum</strong> started following
+                                <strong>Monica Smith</strong>.
+                                <br>
+                                <small class="text-muted">3 days ago at 7:58 pm - 10.06.2014</small>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <div class="dropdown-messages-box">
+                            <a href="profile.html" class="pull-left">
+                                <img alt="image" class="img-circle" src="/assets/images/a4.jpg">
+                            </a>
+                            <div class="media-body ">
+                                <small class="pull-right text-navy">5h ago</small>
+                                <strong>Chris Johnatan Overtunk</strong> started following
+                                <strong>Monica Smith</strong>.
+                                <br>
+                                <small class="text-muted">Yesterday 1:21 pm - 11.06.2014</small>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <div class="dropdown-messages-box">
+                            <a href="profile.html" class="pull-left">
+                                <img alt="image" class="img-circle" src="/assets/images/profile.jpg">
+                            </a>
+                            <div class="media-body ">
+                                <small class="pull-right">23h ago</small>
+                                <strong>Monica Smith</strong> love
+                                <strong>Kim Smith</strong>.
+                                <br>
+                                <small class="text-muted">2 days ago at 2:30 am - 11.06.2014</small>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <div class="text-center link-block">
+                            <a href="mailbox.html">
+                                <i class="fa fa-envelope"></i>
+                                <strong>Read All Messages</strong>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            <!-- <li class="dropdown">
+                <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                    <i class="fa fa-bell"></i>
+                    <span class="label label-primary">8</span>
+                </a>
+                <ul class="dropdown-menu dropdown-alerts">
+                    <li>
+                        <a href="mailbox.html">
+                            <div>
+                                <i class="fa fa-envelope fa-fw"></i> You have 16 messages
+                                <span class="pull-right text-muted small">4 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="profile.html">
+                            <div>
+                                <i class="fa fa-twitter fa-fw"></i> 3 New Followers
+                                <span class="pull-right text-muted small">12 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="grid_options.html">
+                            <div>
+                                <i class="fa fa-upload fa-fw"></i> Server Rebooted
+                                <span class="pull-right text-muted small">4 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <div class="text-center link-block">
+                            <a href="notifications.html">
+                                <strong>See All Alerts</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </li> -->
+            <li>
+                <a href="http://dsc.vn/flashship/post/userguide.html" title="Hướng dẫn sử dụng phần mềm"
+                    target="_blank">
+                    <i class="fa fa-info-circle text-blue" style="font-size: 16px;"></i>
+                </a>
+            </li>
+            <li>
+                <a (click)="logOut()">
+                    <i class="fa fa-sign-out"></i> Đăng xuất
+                </a>
+            </li>
+            <li style="margin-right: 25px;">
+                <a style="padding:0" title="Clear Messages" (click)="clickClearMessage()">
+                    <i class="fa fa-hand-paper-o text-red" style="font-size: 16px;"></i>
+                </a>
+            </li>
+            <!-- <li>
+                <a class="right-sidebar-toggle">
+                    <i class="fa fa-tasks"></i>
+                </a>
+            </li> -->
+        </ul>
+
+    </nav>
+</div>
+
+<ng-template #popTemplate>
+    <div class="input-group">
+        <input class="form-control input-sm" [(ngModel)]="phoneNumber" type="text" style="width:200px;">
+        <span class="input-group-btn">
+            <button type="button" class="btn btn-primary">Gọi
+            </button>
+        </span>
+    </div>
+</ng-template>
+ 
+<ng-template #popTemplatePort>
+    <div class="modal-header" style="padding: 5px; text-align:left">
+        <button type="button" class="close" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <input type="text" placeholder="Nhập số seri" class="input-sm form-control" [(ngModel)]="seriNumber">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="save()" type="button">Lưu</button>
+        <button class="btn btn-white" (click)="bsModalRef.hide()" type="button">Đóng</button>
+    </div>
+</ng-template>
+
+<ng-template #templateConfim>
+    <div class="modal-header" style="padding: 5px; text-align:left">
+        <button type="button" class="close" style="margin:3px 10px 0 0;" (click)="closeModel()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <h5 class="modal-title" style="font-size:20px">Xác nhận thay đổi đơn vị làm việc sang: {{selected_data?.name}}</h5> 
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="updateCurrenthub(selected_data)" type="button">Xác nhận</button>
+        <button class="btn btn-white" (click)="closeModel()" type="button">Đóng</button>
+    </div>
+</ng-template>

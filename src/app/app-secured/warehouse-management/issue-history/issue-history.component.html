@@ -1,0 +1,1447 @@
+<app-card>
+  <a class="parentPage">{{parentPage}}</a>
+  <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+
+<tabset>
+  <tab name="createlist" [active]="isActiveTabOne"
+    (select)="isActiveTabOne = true;isActiveTab4 = false; isActiveTabTwo = false; isActiveTabThree = false;isActiveTabAll=false;loadData();">
+    <ng-template tabHeading>
+      <i class="fa fa-edit"></i>Danh sách xuất kho giao hàng
+    </ng-template>
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+          <div class="ibox-title">
+            <!-- <h5>{{currentPage}}</h5> -->
+            <div style="margin:0 auto;margin-bottom:5px; text-align: right">
+              <button class="btn btn-success" (click)="exportExcelTPL()">
+                Export excel ĐT
+              </button>
+              <button class="btn btn-success" (click)="exportExcelFormat()">
+                Export báo cáo giao hàng
+              </button>
+              <button class="btn btn-success" (click)="PrintFormat(selected_lstData)">
+                In báo cáo giao hàng
+              </button>
+              <button class="btn btn-success" (click)="exportTabOneDetail()">
+                <i class="fa fa-file-excel-o"></i>
+              </button>
+              <button class="btn btn-success" (click)="refresh()">
+                <i class="fa fa-refresh"></i>
+              </button>
+            </div>
+          </div>
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Từ ngày</label>
+                  <p-calendar [(ngModel)]="filterModel.dateFrom" [showIcon]="false" hourFormat="24"
+                    dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                    [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Đến ngày</label>
+                  <p-calendar [(ngModel)]="filterModel.dateTo" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                    (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                    [style]="{'width': '100%'}"></p-calendar>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Nhân viên giao hàng</label>
+                  <p-autoComplete [(ngModel)]="employee" [suggestions]="filteredEmployees" [minLength]="1"
+                    (completeMethod)="filterEmployee($event)" (onSelect)="onSelectedEmployee()"
+                    styleClass="select-input form-control none-padding" [dropdown]="true">
+                  </p-autoComplete>
+                </div>
+              </div>
+
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Mã bảng kê</label>
+                  <input class="input-sm form-control" [(ngModel)]="filterModel.listGoodsCode"
+                    (keyup.enter)="loadData()" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-sm-12">
+                <p-table #dt [value]="lstData" [responsive]="true" [paginator]="true" rows="20" dataKey="code" [(selection)]="selected_lstData"
+                  (onLazyLoad)="loadLazy($event)" [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true"
+                  [totalRecords]="totalCount" [columns]="columns" paginatorPosition="both">
+                  <ng-template pTemplate="header" let-columns>
+                    <tr>
+                      <th style="width:2.2em">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th>
+                      <th class="p-col-stt">STT</th>
+                      <th style="width: 340px; vertical-align: top">Thao tác
+                      </th>
+                      <th pSortableColumn="code" Class="p-col-shipmentNumber">Mã xuất kho
+                        <p-sortIcon field="code"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="createdWhen" Class="p-col-normal">Ngày tạo
+                        <p-sortIcon field="createdWhen"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="modifiedWhen" Class="p-col-normal">Ngày chỉnh sửa
+                        <p-sortIcon field="modifiedWhen"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="fromHubName" Class="p-col-normal">Kho xuất
+                        <p-sortIcon field="fromHubName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="createByFullName" Class="p-col-normal">NV xuất kho
+                        <p-sortIcon field="createByFullName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="fullName" Class="p-col-normal">Nhân viên giao nhận
+                        <p-sortIcon field="fullName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalShipment" Class="p-col-normal">Tổng vận đơn
+                        <p-sortIcon field="totalShipment"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="realWeight" Class="p-col-normal">Trọng lượng bàn giao
+                        <p-sortIcon field="realWeight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalWeight" Class="p-col-normal">Trọng lượng thực tế
+                        <p-sortIcon field="totalWeight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalCalWeight" Class="p-col-normal">Trọng lượng quy đổi
+                        <p-sortIcon field="totalCalWeight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalNotReceive" Class="p-col-normal">Vận đơn chưa xác nhận
+                        <p-sortIcon field="totalNotReceive"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="delivering" Class="p-col-normal">Đang giao
+                        <p-sortIcon field="delivering"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="deliveryComplete" Class="p-col-normal">Giao TC
+                        <p-sortIcon field="deliveryComplete"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="deliveryFail" Class="p-col-normal">Giao không TC
+                        <p-sortIcon field="deliveryFail"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalBox" Class="p-col-normal">Tổng số {{infoGeneral.pack}}
+                        <p-sortIcon field="totalBox"></p-sortIcon>
+                      </th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-data let-columns="columns" let-i="rowIndex">
+                    <tr [pSelectableRow]="data">
+                      <td>
+                        <p-tableCheckbox [value]="data"></p-tableCheckbox>
+                      </td>
+                      <td class="p-col-stt">{{i + 1}}</td>
+                      <td style="width: 340px">
+                        <button type="button" class="btn btn-success" (click)="printLAD(data, true, false)">
+                          <i class="fa fa-print"></i> In C.</button>
+                        <button type="button" class="btn btn-success" (click)="printLAD(data, false, false)">
+                          <i class="fa fa-print"></i> In</button>
+                        <button type="button" class="btn btn-success" (click)="printSignature(data, true, false)">
+                          <i class="fa fa-print"></i> In KN</button>
+                        <button type="button" class="btn btn-primary"
+                          (click)="viewShipment(templateViewShipment, data)">
+                          <i class="fa fa-eye"></i> Xem</button>
+                        <button *ngIf="data.isBlock" type="button" class="btn btn-danger" (click)="unBlock(data)">
+                          <i class="fa fa-unlock"></i> Mở khóa</button>
+                        <!--<div style="display: flex; justify-content: space-between">
+                        </div>-->
+                      </td>
+                      <td class="p-col-shipmentNumber">
+                        {{data.code}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.createdWhen | dateFormat}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.modifiedWhen | dateFormat}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.fromHubName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.createByFullName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.fullName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalShipment || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.realWeight || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalWeight || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalCalWeight || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.assignEmployeeDelivery || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.delivering || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.deliveryComplete || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.deliveryFail || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalBox || 0}}
+                      </td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="summary">
+                    <span class="ui-column-title" style="font-weight: bold;">Tổng : {{ (totalCount) || 0}} bảng
+                      kê</span>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </tab>
+  <tab name="createlist" [active]="isActiveTab4"
+    (select)="isActiveTab4 = true;isActiveTabOne = false; isActiveTabTwo = false; isActiveTabThree = false;isActiveTabAll=false;loadData();">
+    <ng-template tabHeading>
+      <i class="fa fa-edit"></i>Danh sách xuất kho trả hàng
+    </ng-template>
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+          <div class="ibox-title">
+            <!-- <h5>{{currentPage}}</h5> -->
+            <div style="margin:0 auto;margin-bottom:5px; text-align: right">
+              <button class="btn btn-success" (click)="exportExcelTPL()">
+                Export excel ĐT
+              </button>
+              <button class="btn btn-success" (click)="exportExcelFormat()">
+                Export báo cáo giao hàng
+              </button>
+              <button class="btn btn-success" (click)="PrintFormat(selected_lstDataReturn)">
+                In báo cáo giao hàng
+              </button>
+              <button class="btn btn-success" (click)="exportExcelReturn()">
+                <i class="fa fa-file-excel-o"></i>
+              </button>
+              <button class="btn btn-success" (click)="refresh()">
+                <i class="fa fa-refresh"></i>
+              </button>
+            </div>
+          </div>
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Từ ngày</label>
+                  <p-calendar [(ngModel)]="filterModel.dateFrom" [showIcon]="false" hourFormat="24"
+                    dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                    [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Đến ngày</label>
+                  <p-calendar [(ngModel)]="filterModel.dateTo" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                    (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                    [style]="{'width': '100%'}"></p-calendar>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Nhân viên giao hàng</label>
+                  <p-autoComplete [(ngModel)]="employee" [suggestions]="filteredEmployees" [minLength]="1"
+                    (completeMethod)="filterEmployee($event)" (onSelect)="onSelectedEmployee()"
+                    styleClass="select-input form-control none-padding" [dropdown]="true">
+                  </p-autoComplete>
+                </div>
+              </div>
+
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Mã bảng kê</label>
+                  <input class="input-sm form-control" [(ngModel)]="filterModel.listGoodsCode"
+                    (keyup.enter)="loadData()" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-sm-12">
+                <p-table #dt [value]="lstDataReturn" [responsive]="true" [paginator]="true" rows="20" dataKey="code" [(selection)]="selected_lstDataReturn"
+                  (onLazyLoad)="loadLazy($event)" [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true"
+                  [totalRecords]="totalCount" [columns]="columns" paginatorPosition="both">
+                  <ng-template pTemplate="header" let-columns>
+                    <tr>
+                      <th style="width: 3em">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th>
+                      <th class="p-col-stt">STT</th>
+                      <th style="width: 340px; vertical-align: top">Thao tác
+                      </th>
+                      <th pSortableColumn="code" Class="p-col-shipmentNumber">Mã xuất kho
+                        <p-sortIcon field="code"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="createdWhen" Class="p-col-normal">Ngày tạo
+                        <p-sortIcon field="createdWhen"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="modifiedWhen" Class="p-col-normal">Ngày chỉnh sửa
+                        <p-sortIcon field="modifiedWhen"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="fromHubName" Class="p-col-normal">Kho xuất
+                        <p-sortIcon field="fromHubName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="fullName" Class="p-col-normal">Nhân viên giao nhận
+                        <p-sortIcon field="fullName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalShipment" Class="p-col-normal">Tổng vận đơn
+                        <p-sortIcon field="totalShipment"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="realWeight" Class="p-col-normal">Trọng lượng bàn giao
+                        <p-sortIcon field="realWeight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalWeight" Class="p-col-normal">Trọng lượng thực tế
+                        <p-sortIcon field="totalWeight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalCalWeight" Class="p-col-normal">Trọng lượng quy đổi
+                        <p-sortIcon field="totalCalWeight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalNotReceive" Class="p-col-normal">Vận đơn chưa xác nhận
+                        <p-sortIcon field="totalNotReceive"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="delivering" Class="p-col-normal">Đang giao
+                        <p-sortIcon field="delivering"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="deliveryComplete" Class="p-col-normal">Giao TC
+                        <p-sortIcon field="deliveryComplete"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="deliveryFail" Class="p-col-normal">Giao không TC
+                        <p-sortIcon field="deliveryFail"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalBox" Class="p-col-normal">Tổng số {{infoGeneral.pack}}
+                        <p-sortIcon field="totalBox"></p-sortIcon>
+                      </th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-data let-columns="columns" let-i="rowIndex">
+                    <tr [pSelectableRow]="data">
+                      <td>
+                        <p-tableCheckbox [value]="data"></p-tableCheckbox>
+                      </td>
+                      <td class="p-col-stt">{{i + 1}}</td>
+                      <td style="width: 340px">
+                        <div style="display: flex; justify-content: space-between">
+                          <button type="button" class="btn btn-success" (click)="printLAD(data, true, false)">
+                            <i class="fa fa-print"></i> In C.</button>
+                          <button type="button" class="btn btn-success" (click)="printLAD(data, false, false)">
+                            <i class="fa fa-print"></i> In</button>
+                          <button type="button" class="btn btn-success" (click)="printSignature(data, true, false)">
+                            <i class="fa fa-print"></i> In KN</button>
+                          <button type="button" class="btn btn-primary"
+                            (click)="viewShipment(templateViewShipment, data)">
+                            <i class="fa fa-eye"></i> Xem</button>
+                          <button *ngIf="data.isBlock" type="button" class="btn btn-danger" (click)="unBlock(data)">
+                            <i class="fa fa-unlock"></i> Mở khóa</button>
+                        </div>
+                      </td>
+                      <td class="p-col-shipmentNumber">
+                        {{data.code}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.createdWhen | dateFormat}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.modifiedWhen | dateFormat}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.fromHubName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.fullName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalShipment || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.realWeight || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalWeight || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalCalWeight || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.assignEmployeeDelivery || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.delivering || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.deliveryComplete || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.deliveryFail || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalBox || 0}}
+                      </td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="summary">
+                    <span class="ui-column-title" style="font-weight: bold;">Tổng : {{ (totalCount) || 0}} bảng
+                      kê</span>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </tab>
+  <tab name="createlist" [active]="isActiveTabTwo"
+    (select)="isActiveTabOne = false;isActiveTab4 = false; isActiveTabTwo = true; isActiveTabThree = false;isActiveTabAll=false; loadData_2();">
+    <ng-template tabHeading>
+      <i class="fa fa-edit"></i>Danh sách xuất kho trung chuyển đi
+    </ng-template>
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+          <div class="ibox-title">
+            <!-- <h5>{{currentPage}}</h5> -->
+            <div style="margin:0 auto;margin-bottom:5px; text-align: right">
+              <button class="btn btn-success" (click)="exportExcelTPL()">
+                Export excel ĐT
+              </button>
+              <button class="btn btn-success" (click)="exportExcelFormat()">
+                Export báo cáo giao hàng
+              </button>
+              <button class="btn btn-success" (click)="PrintFormat(selected_lstData2)">
+                In báo cáo giao hàng
+              </button>
+              <button class="btn btn-success" (click)="exportExcelTransfer()">
+                <i class="fa fa-file-excel-o"></i>
+              </button>
+              <button class="btn btn-success" (click)="loadData_2()">
+                <i class="fa fa-refresh"></i>
+              </button>
+            </div>
+          </div>
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Từ ngày</label>
+                  <p-calendar [(ngModel)]="filterModel_2.dateFrom" [showIcon]="false" hourFormat="24"
+                    dateFormat="yy/mm/dd" (onSelect)="selectedDate_2()" [showTime]="false"
+                    [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Đến ngày</label>
+                  <p-calendar [(ngModel)]="filterModel_2.dateTo" [showIcon]="false" hourFormat="24"
+                    dateFormat="yy/mm/dd" (onSelect)="selectedDate_2()" [showTime]="false"
+                    [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Nhân viên trung chuyển</label>
+                  <p-autoComplete [(ngModel)]="employee_2" [suggestions]="filteredEmployees_2" [minLength]="1"
+                    (completeMethod)="filterEmployee_2($event)" (onSelect)="onSelectedEmployee_2()"
+                    styleClass="select-input form-control none-padding" [dropdown]="true">
+                  </p-autoComplete>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Kho/Bưu cục nhận</label>
+                  <p-autoComplete [(ngModel)]="hub" [suggestions]="filteredHubs" [minLength]="1"
+                    (completeMethod)="filterHub($event)" (onSelect)="onSelectedHub()"
+                    styleClass="select-input form-control none-padding" [dropdown]="true">
+                  </p-autoComplete>
+                </div>
+              </div>
+
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Mã bảng kê</label>
+                  <input class="input-sm form-control" [(ngModel)]="filterModel_2.listGoodsCode"
+                    (keyup.enter)="loadData_2()" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-sm-12 tab2">
+                <p-table #dt2 [value]="lstData_2" [responsive]="true" [paginator]="true" rows="20" dataKey="code" [(selection)]="selected_lstData2"
+                  (onLazyLoad)="loadLazy_2($event)" [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true"
+                  [totalRecords]="totalCount_2" [columns]="columns" paginatorPosition="both">
+                  <ng-template pTemplate="header" let-columns>
+                    <tr>
+                      <th style="width: 3em">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th>
+                      <th class="p-col-stt">STT</th>
+                      <th style="width: 280px; vertical-align: top">Thao tác
+                      </th>
+                      <th pSortableColumn="code" Class="p-col-shipmentNumber">Mã xuất kho
+                        <p-sortIcon field="code"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="createdWhen" Class="p-col-normal">Ngày tạo
+                        <p-sortIcon field="createdWhen"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="modifiedWhen" Class="p-col-normal">Ngày chỉnh sửa
+                        <p-sortIcon field="modifiedWhen"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="fromHubName" Class="p-col-normal">Kho xuất
+                        <p-sortIcon field="fromHubName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="createByFullName" Class="p-col-normal">NV xuất kho
+                        <p-sortIcon field="createByFullName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="fullName" Class="p-col-normal">Nhân viên trung chuyển
+                        <p-sortIcon field="fullName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="toHubName" Class="p-col-normal">Kho/Bưu cục nhận
+                        <p-sortIcon field="toHubName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalShipment" Class="p-col-normal">Tổng vận đơn
+                        <p-sortIcon field="totalShipment"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="realWeight" Class="p-col-normal">Trọng lượng bàn giao
+                        <p-sortIcon field="realWeight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalWeight" Class="p-col-normal">Trọng lượng thực tế
+                        <p-sortIcon field="totalWeight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalCalWeight" Class="p-col-normal">Trọng lượng quy đổi
+                        <p-sortIcon field="totalWeight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="waitingAcceptTransfer" Class="p-col-normal">VĐ chờ xác nhận
+                        <p-sortIcon field="waitingAcceptTransfer"></p-sortIcon>
+                      </th>
+                      <th Class="p-col-normal">VĐ đã xác nhận + khác
+                        <p-sortIcon></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalBox" Class="p-col-normal">Tổng số ({{infoGeneral.pack}})
+                        <p-sortIcon field="totalBox"></p-sortIcon>
+                      </th>
+                      <th style="width: 80px; vertical-align: top">Khóa
+                      </th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-data let-columns="columns" let-i="rowIndex">
+                    <tr [pSelectableRow]="data">
+                      <td>
+                        <p-tableCheckbox [value]="data"></p-tableCheckbox>
+                      </td>
+                      <td class="p-col-stt">{{i + 1}}</td>
+                      <td style="width: 280px">
+                        <!--<div style="display: flex; justify-content: space-between">
+                        </div>-->
+                        <button type="button" class="btn btn-success" (click)="printLAT(data,false)">
+                          <i class="fa fa-print"></i> In</button>
+                        <!-- <button type="button" class="btn btn-danger" (click)="exportCSVShipment(data)">
+                            <i class="fa fa-file-excel-o"></i> CSV</button> -->
+                        <button type="button" class="btn btn-success" (click)="printLAT(data,true)">
+                          <i class="fa fa-print"></i> In BKC</button>
+                        <button type="button" class="btn btn-primary"
+                          (click)="viewShipment(templateViewShipment, data)">
+                          <i class="fa fa-eye"></i> Xem</button>
+                        <button *ngIf="data.isBlock" type="button" class="btn btn-danger" (click)="unBlock(data)">
+                          <i class="fa fa-unlock"></i> Mở khóa</button>
+                      </td>
+                      <td class="p-col-shipmentNumber">
+                        {{data.code}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.createdWhen | dateFormat}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.modifiedWhen | dateFormat}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.fromHubName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.createByFullName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.fullName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.toHubName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalShipment || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.realWeight || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalWeight || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalCalWeight || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.waitingAcceptTransfer || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{(data.totalShipment - data.waitingAcceptTransfer) || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalBox || 0}}
+                      </td>
+                      <td style="width: 80px">
+                        <p-checkbox [(ngModel)]="data.isBlock" [disabled]="true" [binary]="true"></p-checkbox>
+                      </td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="summary">
+                    <span class="ui-column-title" style="font-weight: bold;">Tổng : {{ (totalCount_2) || 0}} bảng
+                      kê</span>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </tab>
+  <tab name="createlist" [active]="isActiveTabThree"
+    (select)="isActiveTabOne = false;isActiveTab4 = false; isActiveTabTwo = false; isActiveTabThree = true;isActiveTabAll=false; loadData_3(); ">
+    <ng-template tabHeading>
+      <i class="fa fa-edit"></i>Danh sách xuất kho trung chuyển đến
+    </ng-template>
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+          <div class="ibox-title">
+            <!-- <h5>{{currentPage}}</h5> -->
+            <div style="margin:0 auto;margin-bottom:5px; text-align: right">
+              <button class="btn btn-success" (click)="exportExcelTPL()">
+                Export excel ĐT
+              </button>
+              <button class="btn btn-success" (click)="exportExcelFormat()">
+                Export báo cáo giao hàng
+              </button>
+              <button class="btn btn-success" (click)="PrintFormat(selected_lstData3)">
+                In báo cáo giao hàng
+              </button>
+              <button class="btn btn-success" (click)="loadData_3()">
+                <i class="fa fa-refresh"></i>
+              </button>
+            </div>
+          </div>
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Từ ngày</label>
+                  <p-calendar [(ngModel)]="filterModel_3.dateFrom" [showIcon]="false" hourFormat="24"
+                    dateFormat="yy/mm/dd" (onSelect)="selectedDate_3()" [showTime]="false"
+                    [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Đến ngày</label>
+                  <p-calendar [(ngModel)]="filterModel_3.dateTo" [showIcon]="false" hourFormat="24"
+                    dateFormat="yy/mm/dd" (onSelect)="selectedDate_3()" [showTime]="false"
+                    [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Nhân viên trung chuyển</label>
+                  <p-autoComplete [(ngModel)]="employee_2" [suggestions]="filteredEmployees_2" [minLength]="1"
+                    (completeMethod)="filterEmployee_2($event)" (onSelect)="onSelectedEmployee_3()"
+                    styleClass="select-input form-control none-padding" [dropdown]="true">
+                  </p-autoComplete>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Kho/Bưu cục xuất</label>
+                  <p-autoComplete [(ngModel)]="hub" [suggestions]="filteredHubs" [minLength]="1"
+                    (completeMethod)="filterHub($event)" (onSelect)="onSelectedHub_3()"
+                    styleClass="select-input form-control none-padding" [dropdown]="true">
+                  </p-autoComplete>
+                </div>
+              </div>
+
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Mã bảng kê</label>
+                  <input class="input-sm form-control" [(ngModel)]="filterModel_3.listGoodsCode"
+                    (keyup.enter)="loadData_3()" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-sm-12 tab2">
+                <p-table #dt2 [value]="lstData_3" [responsive]="true" [paginator]="true" rows="20" [(selection)]="selected_lstData3" dataKey="code"
+                  (onLazyLoad)="loadLazy_3($event)" [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true"
+                  [totalRecords]="totalCount_3" [columns]="columns" paginatorPosition="both">
+                  <ng-template pTemplate="header" let-columns>
+                    <tr>
+                      <th style="width: 3em">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th>
+                      <th class="p-col-stt">STT</th>
+                      <th style="width: 180px; vertical-align: top">Thao tác
+                      </th>
+                      <th pSortableColumn="code" Class="p-col-shipmentNumber">Mã xuất kho
+                        <p-sortIcon field="code"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="createdWhen" Class="p-col-normal">Ngày tạo
+                        <p-sortIcon field="createdWhen"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="modifiedWhen" Class="p-col-shipmentNumber">Ngày chỉnh sửa
+                        <p-sortIcon field="modifiedWhen"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="fromHubName" Class="p-col-normal">Kho xuất
+                        <p-sortIcon field="fromHubName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="createByFullName" Class="p-col-normal">NV xuất kho
+                        <p-sortIcon field="createByFullName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="fullName" Class="p-col-normal">Nhân viên trung chuyển
+                        <p-sortIcon field="fullName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="toHubName" Class="p-col-normal">Kho/Bưu cục nhận
+                        <p-sortIcon field="toHubName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalShipment" Class="p-col-normal">Tổng vận đơn
+                        <p-sortIcon field="totalShipment"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="realWeight" Class="p-col-normal">Trọng lượng bàn giao
+                        <p-sortIcon field="realWeight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalWeight" Class="p-col-normal">Trọng lượng thực tế
+                        <p-sortIcon field="totalWeight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalCalWeight" Class="p-col-normal">Trọng lượng quy đổi
+                        <p-sortIcon field="totalCalWeight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="waitingAcceptTransfer" Class="p-col-normal">VĐ chờ xác nhận
+                        <p-sortIcon field="waitingAcceptTransfer"></p-sortIcon>
+                      </th>
+                      <th Class="p-col-normal">VĐ đã xác nhận + khác
+                        <p-sortIcon></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalBox" Class="p-col-normal">Tổng số ({{infoGeneral.pack}})
+                        <p-sortIcon field="totalBox"></p-sortIcon>
+                      </th>
+                      <th style="width: 80px; vertical-align: top">Khóa
+                      </th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-data let-columns="columns" let-i="rowIndex">
+                    <tr [pSelectableRow]="data">
+                      <td>
+                        <p-tableCheckbox [value]="data"></p-tableCheckbox>
+                      </td>
+                      <td class="p-col-stt">{{i + 1}}</td>
+                      <td style="width: 100px">
+                        <div style="display: flex; justify-content: space-between">
+                          <!-- <button type="button" class="btn btn-success" (click)="printLAT(data,false)">
+                            <i class="fa fa-print"></i> In</button> -->
+                          <!-- <button type="button" class="btn btn-danger" (click)="exportCSVShipment(data)">
+                            <i class="fa fa-file-excel-o"></i> CSV</button> -->
+                          <!-- <button type="button" class="btn btn-success" (click)="printLAT(data,true)">
+                            <i class="fa fa-print"></i> In BKC</button> -->
+                          <button type="button" class="btn btn-primary"
+                            (click)="viewShipment(templateViewShipment, data)">
+                            <i class="fa fa-eye"></i> Xem</button>
+                        </div>
+                      </td>
+                      <td class="p-col-shipmentNumber">
+                        {{data.code}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.createdWhen | dateFormat}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.modifiedWhen | dateFormat}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.fromHubName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.createByFullName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.fullName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.toHubName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalShipment || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.realWeight || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalWeight || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalCalWeight || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.waitingAcceptTransfer || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{(data.totalShipment - data.waitingAcceptTransfer) || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalBox || 0}}
+                      </td>
+                      <td style="width: 80px">
+                        <p-checkbox [(ngModel)]="data.isBlock" [disabled]="true" [binary]="true"></p-checkbox>
+                      </td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="summary">
+                    <span class="ui-column-title" style="font-weight: bold;">Tổng : {{ (totalCount_3) || 0}} bảng
+                      kê</span>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </tab>
+
+  <tab name="createlist" [active]="isActiveTabAll"
+    (select)="isActiveTabOne = false;isActiveTab4 = false; isActiveTabTwo = false; isActiveTabThree = false;isActiveTabAll=true; loadData_All();">
+    <ng-template tabHeading>
+      <i class="fa fa-edit"></i>Tất cả
+    </ng-template>
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+          <div class="ibox-title">
+            <!-- <h5>{{currentPage}}</h5> -->
+            <div style="margin:0 auto;margin-bottom:5px; text-align: right">
+              <button class="btn btn-success" (click)="exportExcelTPL()">
+                Export excel ĐT
+              </button>
+              <button class="btn btn-success" (click)="exportExcelFormat()">
+                Export báo cáo giao hàng
+              </button>
+              <button class="btn btn-success" (click)="PrintFormat(selectedListGoods)">
+                In báo cáo giao hàng
+              </button>
+              <button class="btn btn-success" (click)="exportExcelAll()">
+                <i class="fa fa-file-excel-o"></i>
+              </button>
+              <button class="btn btn-success" (click)="loadData_All()">
+                <i class="fa fa-refresh"></i>
+              </button>
+            </div>
+          </div>
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Từ ngày</label>
+                  <p-calendar [(ngModel)]="filterModel_All.dateFrom" [showIcon]="false" hourFormat="24"
+                    dateFormat="yy/mm/dd" (onSelect)="selectedDate_All()" [showTime]="false"
+                    [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Đến ngày</label>
+                  <p-calendar [(ngModel)]="filterModel_All.dateTo" [showIcon]="false" hourFormat="24"
+                    dateFormat="yy/mm/dd" (onSelect)="selectedDate_All()" [showTime]="false"
+                    [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Loại xuất kho</label>
+                  <p-dropdown [options]="listTypeIssues" [(ngModel)]="filterModel_All.typeId" styleClass="select-input"
+                    [style]="{'width':'100%'}" (onChange)="loadData_All()" filter="true">
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <!-- <div class="col-md-3">
+                <div class="form-group">
+                  <label>Kho/Bưu cục nhận</label>
+                  <p-autoComplete [(ngModel)]="hub" [suggestions]="filteredHubs" [minLength]="1"
+                    (completeMethod)="filterHub($event)" (onSelect)="onSelectedHub_All()"
+                    styleClass="select-input form-control none-padding" [dropdown]="true">
+                  </p-autoComplete>
+                </div>
+              </div> -->
+
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Mã bảng kê</label>
+                  <input class="input-sm form-control" [(ngModel)]="filterModel_All.listGoodsCode"
+                    (keyup.enter)="loadData_All()" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-sm-12 tab2">
+                <p-table #dt2 [value]="lstData_All" [responsive]="true" [paginator]="true" rows="20"
+                  (onLazyLoad)="loadLazy_All($event)" [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true"
+                  [totalRecords]="totalCount_All" [columns]="columns" paginatorPosition="both"
+                  [(selection)]="selectedListGoods">
+                  <ng-template pTemplate="header" let-columns>
+                    <tr>
+                      <th style="width:2.2em">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th>
+                      <th class="p-col-stt">STT</th>
+                      <th style="width: 280px; vertical-align: top">Thao tác
+                      </th>
+                      <th pSortableColumn="code" Class="p-col-shipmentNumber">Mã xuất kho
+                        <p-sortIcon field="code"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="createdWhen" Class="p-col-normal">Ngày tạo
+                        <p-sortIcon field="createdWhen"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="modifiedWhen" Class="p-col-normal">Ngày chỉnh sửa
+                        <p-sortIcon field="modifiedWhen"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="fromHubName" Class="p-col-normal">Kho xuất
+                        <p-sortIcon field="fromHubName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="createByFullName" Class="p-col-normal">NV xuất kho
+                        <p-sortIcon field="createByFullName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="fullName" Class="p-col-normal">Nhân viên trung chuyển
+                        <p-sortIcon field="fullName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="toHubName" Class="p-col-normal">Kho/Bưu cục nhận
+                        <p-sortIcon field="toHubName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalShipment" Class="p-col-normal">Tổng vận đơn
+                        <p-sortIcon field="totalShipment"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="realWeight" Class="p-col-normal">Trọng lượng bàn giao
+                        <p-sortIcon field="realWeight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalWeight" Class="p-col-normal">Trọng lượng thực tế
+                        <p-sortIcon field="totalWeight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalCalWeight" Class="p-col-normal">Trọng lượng quy đổi
+                        <p-sortIcon field="totalWeight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="waitingAcceptTransfer" Class="p-col-normal">VĐ chờ xác nhận
+                        <p-sortIcon field="waitingAcceptTransfer"></p-sortIcon>
+                      </th>
+                      <th Class="p-col-normal">VĐ đã xác nhận + khác
+                        <p-sortIcon></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalBox" Class="p-col-normal">Tổng số ({{infoGeneral.pack}})
+                        <p-sortIcon field="totalBox"></p-sortIcon>
+                      </th>
+                      <th style="width: 80px; vertical-align: top">Khóa
+                      </th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-data let-columns="columns" let-i="rowIndex">
+                    <tr [pSelectableRow]="data">
+                      <td style="width:2.2em">
+                        <p-tableCheckbox [value]="data"></p-tableCheckbox>
+                      </td>
+                      <td class="p-col-stt">{{i + 1}}</td>
+                      <td style="width: 280px">
+                        <!--<div style="display: flex; justify-content: space-between">
+                        </div>-->
+                        <button type="button" class="btn btn-success" (click)="printLAT(data,false)">
+                          <i class="fa fa-print"></i> In</button>
+                        <!-- <button type="button" class="btn btn-danger" (click)="exportCSVShipment(data)">
+                            <i class="fa fa-file-excel-o"></i> CSV</button> -->
+                        <button type="button" class="btn btn-success" (click)="printLAT(data,true)">
+                          <i class="fa fa-print"></i> In BKC</button>
+                        <button type="button" class="btn btn-primary"
+                          (click)="viewShipment(templateViewShipment, data)">
+                          <i class="fa fa-eye"></i> Xem</button>
+                        <button *ngIf="data.isBlock" type="button" class="btn btn-danger" (click)="unBlock(data)">
+                          <i class="fa fa-unlock"></i> Mở khóa</button>
+                      </td>
+                      <td class="p-col-shipmentNumber">
+                        {{data.code}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.createdWhen | dateFormat}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.modifiedWhen | dateFormat}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.fromHubName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.createByFullName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.fullName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.toHubName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalShipment || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.realWeight || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalWeight || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalCalWeight || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.waitingAcceptTransfer || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{(data.totalShipment - data.waitingAcceptTransfer) || 0}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalBox || 0}}
+                      </td>
+                      <td style="width: 80px">
+                        <p-checkbox [(ngModel)]="data.isBlock" [disabled]="true" [binary]="true"></p-checkbox>
+                      </td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="summary">
+                    <span class="ui-column-title" style="font-weight: bold;">Tổng : {{ (totalCount_All) || 0}} bảng
+                      kê</span>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </tab>
+</tabset>
+
+<ng-template #templateViewShipment>
+  <div class="modal-header" style="padding: 5px; text-align:left;">
+    <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+      <span class="sr-only">Close</span>
+    </button>
+    <h5 class="modal-title" style="font-size:20px">Danh sách vận đơn</h5>
+  </div>
+  <div class="modal-body" style="overflow: visible">
+    <div class="row">
+      <div class="col-md-12 text-right">
+        <button class="btn btn-primary" (click)="exportExcelDetail()"><i class="fa fa-file-excel-o"></i>CSV</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="table-responsive">
+          <p-table #dtViewShipment [value]="listShipment" [responsive]="true" [paginator]="true" [rows]="10"
+            [rowsPerPageOptions]="[10, 20,50,100]" [columns]="columnShipment" [lazy]="true"
+            [totalRecords]="totalRecords">
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="width:100px;" pSortableColumn="stt">STT
+                  <p-sortIcon field="stt"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="shipmentNumber">Mã vận đơn
+                  <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="reShipmentNumber">Mã vận đơn tổng
+                  <p-sortIcon field="reShipmentNumber"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="orderDate">Ngày VĐ
+                  <p-sortIcon field="orderDate"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="inOutDate">Ngày Xuất/Nhập
+                  <p-sortIcon field="inOutDate"></p-sortIcon>
+                </th>
+                <th style="width:150px;">Trạng thái
+                  <p-sortIcon></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="senderCode">Mã KH gửi
+                  <p-sortIcon field="senderCode"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="senderName">Tên KH gửi
+                  <p-sortIcon field="senderName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="senderPhone">Điện thoại KH gửi
+                  <p-sortIcon field="senderPhone"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="addressNoteFrom">Ghi chú đia chỉ gửi
+                  <p-sortIcon field="addressNoteFrom"></p-sortIcon>
+                </th>
+                <th style="width:300px;" pSortableColumn="pickingAddress">Địa chỉ gửi
+                  <p-sortIcon field="pickingAddress"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="fromWardName">Phường/xã gửi
+                  <p-sortIcon field="fromWardName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="fromDistrictName">Quận/huyện gửi
+                  <p-sortIcon field="fromDistrictName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="fromProvinceName">TỈnh/thành gửi
+                  <p-sortIcon field="fromProvinceName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="fromHubName">Trạm lấy hàng
+                  <p-sortIcon field="fromHubName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="fromHubRoutingName">Tuyến lấy hàng
+                  <p-sortIcon field="fromHubRoutingName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="receiverCode">Mã KH nhận
+                  <p-sortIcon field="receiverCode"></p-sortIcon>
+                </th>
+                <th style="width:250px;" pSortableColumn="receiverName">Tên KH nhận
+                  <p-sortIcon field="receiverName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="receiverPhone">Điện thoại KH nhận
+                  <p-sortIcon field="receiverPhone"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="addressNoteTo">Ghi chú địa chỉ nhận
+                  <p-sortIcon field="addressNoteTo"></p-sortIcon>
+                </th>
+                <th style="width:300px;" pSortableColumn="shippingAddress">Địa chỉ nhận
+                  <p-sortIcon field="shippingAddress"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="toWardName">Phường/xã nhận
+                  <p-sortIcon field="toWardName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="toProvinceName">Quận huyện nhận
+                  <p-sortIcon field="toProvinceName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="toHubRoutingName">Tuyến giao
+                  <p-sortIcon field="toHubRoutingName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="cOD">Thu hộ
+                  <p-sortIcon field="cOD"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="insured">Bảo hiểm
+                  <p-sortIcon field="insured"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="weight">Trọng lượng
+                  <p-sortIcon field="weight"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="calWeight">Trọng lượng QĐ
+                  <p-sortIcon field="calWeight"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="cusWeight">Trong lựng KH
+                  <p-sortIcon field="cusWeight"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="serviceName">Dịch vụ
+                  <p-sortIcon field="serviceName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="serviceDVGTCodes">Dịch vụ gia tăng
+                  <p-sortIcon field="serviceDVGTCodes"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="totalBox">Số kiện
+                  <p-sortIcon field="totalBox"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="totalItem">Số sản phẩm
+                  <p-sortIcon field="totalItem"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="structureName">Cơ cấu
+                  <p-sortIcon field="structureName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="defaultPrice">Cước chính
+                  <p-sortIcon field="defaultPrice"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="remoteAreasPrice">PPVX
+                  <p-sortIcon field="remoteAreasPrice"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="priceReturn">PPXD
+                  <p-sortIcon field="priceReturn"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="totalDVGT">Tông cước DVGT
+                  <p-sortIcon field="totalDVGT"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="totalPrice">Tổng cước KS
+                  <p-sortIcon field="totalPrice"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="totalPriceSYS">Tổng cước
+                  <p-sortIcon field="totalPriceSYS"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="paymentTypeName">Hình thức thanh toán
+                  <p-sortIcon field="paymentTypeName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="priceCOD">Phí COD
+                  <p-sortIcon field="priceCOD"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="paymentCODTypeName">Hình thức thanh
+                  toán phí COD
+                  <p-sortIcon field="paymentCODTypeName"></p-sortIcon>
+                </th>
+                <th style="width:300px;" pSortableColumn="content">Nội dung hàng hóa
+                  <p-sortIcon field="content"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="cusNote">Khách hàng ghi chú
+                  <p-sortIcon field="cusNote"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="note">Ghi chú nội bộ
+                  <p-sortIcon field="note"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="isReturn">Chuyển hoàn
+                  <p-sortIcon field="isReturn"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="shipmentStatusName">Trang thái
+                  <p-sortIcon field="shipmentStatusName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="realRecipientName">Người ký nhận
+                  <p-sortIcon field="realRecipientName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="endDeliveryTime">Thời gian ký nhận
+                  <p-sortIcon field="endDeliveryTime"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="deliveryNote">Ghi chú giao hàng
+                  <p-sortIcon field="deliveryNote"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="iSPrioritize">Vận đơn ưu tiên
+                  <p-sortIcon field="iSPrioritize"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="isIncidents">Vận đơn sự cố
+                  <p-sortIcon field="isIncidents"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="cod">COD
+                  <p-sortIcon field="cod"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="totalPrice">Tổng cước vận chuyển
+                  <p-sortIcon field="totalPrice"></p-sortIcon>
+                </th>
+                <th style="width:150px;">Tổng thu khi giao hàng
+                </th>
+                <th style="width:150px;">Mã xuất kho
+                </th>
+                <th style="width:150px;">Kho xuất
+                </th>
+                <th style="width:150px;">NV bàn giao
+                </th>
+                <th style="width:150px;">NV nhận bàn giao
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+              <tr>
+                <td style="width:100px;">{{rowIndex + 1}}</td>
+                <td style="width:150px;">{{rowData.shipmentNumber}}</td>
+                <td style="width:150px;">{{rowData.reShipmentNumber}}</td>
+                <td style="width:150px;">{{rowData.orderDate | dateFormat}}</td>
+                <td style="width:150px;">{{rowData.inOutDate | dateFormat}}</td>
+                <td style="width:150px;">{{rowData.shipmentStatus?.name}}</td>
+                <td style="width:150px;">{{rowData.senderCode}}</td>
+                <td style="width:150px;">{{rowData.senderName}}</td>
+                <td style="width:150px;">{{rowData.senderPhone}}</td>
+                <td style="width:150px;">{{rowData.addressNoteFrom}}</td>
+                <td style="width:300px;">{{rowData.pickingAddress}}</td>
+                <td style="width:150px;">{{rowData.fromWardName}}</td>
+                <td style="width:150px;">{{rowData.fromDistrictName}}</td>
+                <td style="width:150px;">{{rowData.fromProvinceName}}</td>
+                <td style="width:150px;">{{rowData.fromHubName}}</td>
+                <td style="width:150px;">{{rowData.fromHubRoutingName}}</td>
+                <td style="width:150px;">{{rowData.receiverCode}}</td>
+                <td style="width:250px;">{{rowData.receiverName}}</td>
+                <td style="width:150px;">{{rowData.receiverPhone}}</td>
+                <td style="width:150px;">{{rowData.addressNoteTo}}</td>
+                <td style="width:300px;">{{rowData.shippingAddress}}</td>
+                <td style="width:150px;">{{rowData.toWardName}}</td>
+                <td style="width:150px;">{{rowData.toProvinceName}}</td>
+                <td style="width:150px;">{{rowData.toHubName}}</td>
+                <td style="width:150px;">{{rowData.toHubRoutingName}}</td>
+                <td style="width:150px;">{{rowData.insured | number}}</td>
+                <td style="width:150px;">{{rowData.weight | number}}</td>
+                <td style="width:150px;">{{rowData.calWeight | number}}</td>
+                <td style="width:150px;">{{rowData.cusWeight | number}}</td>
+                <td style="width:150px;">{{rowData.serviceName}}</td>
+                <td style="width:150px;">{{rowData.serviceDVGTCodes}}</td>
+                <td style="width:150px;">{{rowData.totalBox | number}}</td>
+                <td style="width:150px;">{{rowData.totalItem | number}}</td>
+                <td style="width:150px;">{{rowData.structureName}}</td>
+                <td style="width:150px;">{{rowData.defaultPrice | number}}</td>
+                <td style="width:150px;">{{rowData.remoteAreasPrice | number}}</td>
+                <td style="width:150px;">{{rowData.priceReturn | number}}</td>
+                <td style="width:150px;">{{rowData.totalDVGT | number}}</td>
+                <td style="width:150px;">{{rowData.totalPrice | number}}</td>
+                <td style="width:150px;">{{rowData.totalPriceSYS | number}}</td>
+                <td style="width:150px;">{{rowData.paymentTypeName}}</td>
+                <td style="width:150px;">{{rowData.priceCOD | number}}</td>
+                <td style="width:150px;">{{rowData.paymentCODTypeName}}</td>
+                <td style="width:300px;">{{rowData.content}}</td>
+                <td style="width:150px;">{{rowData.cusNote}}</td>
+                <td style="width:150px;">{{rowData.note}}</td>
+                <td style="width:150px;" class="text-center">
+                  <input type="checkbox" [(ngModel)]="rowData.isReturn" disabled />
+                </td>
+                <td style="width:150px;">{{rowData.shipmentStatusName}}</td>
+                <td style="width:150px;">{{rowData.realRecipientName}}</td>
+                <td style="width:150px;">{{rowData.endDeliveryTime | dateFormat}}</td>
+                <td style="width:150px;">{{rowData.deliveryNote}}</td>
+                <td style="width:150px;">{{rowData.iSPrioritize}}</td>
+                <td style="width:150px;" class="text-center">
+                  <input type="checkbox" [(ngModel)]="rowData.isIncidents" disabled />
+                </td>
+                <td style="width:150px;">{{rowData.cod | number}}</td>
+                <td style="width:150px;">{{rowData.totalPrice | number}}</td>
+                <td style="width:150px;">
+                  {{((rowData.paymentTypeId==1? rowData.totalPrice : 0) + ((rowData.cod && !rowData.isReturn && !rowData.isCreditTransfer && !rowData.isCreatedChild)?(rowData.cod+(rowData.paymentCODTypeId==2?rowData.priceCOD:0)):0)) | number}}
+                </td>
+                <td style="width:150px;">{{listgoodDataView.code}}</td>
+                <td style="width:150px;">{{listgoodDataView.fromHub.name}}</td>
+                <td style="width:150px;">{{listgoodDataView.createdByUser.fullName}}</td>
+                <td style="width:150px;">{{listgoodDataView.emp.fullName}}</td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+              <tr>
+                <td colspan="28">
+                  Không tìm thấy dữ liệu
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="listPackage.length">
+      <div class="col-sm-12">
+        <h5>Danh sách {{infoGeneral.pack}}</h5>
+      </div>
+      <div class="col-sm-12">
+        <div class="table-responsive">
+          <p-table #dtViewShipment [value]="listPackage" [responsive]="true" [paginator]="true" [rows]="50"
+            [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true" [totalRecords]="listPackage.totalCount">
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="width:100px;" pSortableColumn="stt">STT
+                  <p-sortIcon field="stt"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="packageCode">Mã {{infoGeneral.pack}}
+                  <p-sortIcon field="packageCode"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="createdWhen">Ngày tạo
+                  <p-sortIcon field="createdWhen"></p-sortIcon>
+                </th>
+                <th style="width:150px;">Trạng thái
+                  <p-sortIcon></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="fromHubName">Đóng {{infoGeneral.pack}} ở
+                  <p-sortIcon field="fromHubName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="createdUserFullName">NV đóng {{infoGeneral.pack}}
+                  <p-sortIcon field="createdUserFullName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="toHubName">Gửi đến
+                  <p-sortIcon field="toHubName"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="totalShipment">Tổng đơn
+                  <p-sortIcon field="totalShipment"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="totalBoxs">Tổng kiện
+                  <p-sortIcon field="totalBoxs"></p-sortIcon>
+                </th>
+                <th style="width:150px;" pSortableColumn="weight">TL ({{infoGeneral.unit}})
+                  <p-sortIcon field="weight"></p-sortIcon>
+                </th>
+                <th style="width:300px;" pSortableColumn="content">Nội dung
+                  <p-sortIcon field="content"></p-sortIcon>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+              <tr>
+                <td style="width:100px;">{{rowIndex + 1}}</td>
+                <td style="width:150px;">{{rowData.packageCode}}</td>
+                <td style="width:150px;">{{rowData.createdWhen | dateFormat}}</td>
+                <td style="width:150px;">{{rowData.statusName}}</td>
+                <td style="width:150px;">{{rowData.fromHubName}}</td>
+                <td style="width:150px;">{{rowData.createdUserFullName}}</td>
+                <td style="width:150px;">{{rowData.toHubName}}</td>
+                <td style="width:150px;">{{rowData.totalShipment}}</td>
+                <td style="width:300px;">{{rowData.totalBoxs}}</td>
+                <td style="width:150px;">{{rowData.weight}}</td>
+                <td style="width:150px;">{{rowData.content}}</td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+              <tr>
+                <td colspan="12">
+                  Không tìm thấy dữ liệu
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+  </div>
+</ng-template>
+
+<!-- print -->
+<div id="print-section" [hidden]="true">
+  <div *ngIf="idPrint === 'print-detail-delivery'">
+    <form-detail-delivery id="print-detail-delivery"></form-detail-delivery>
+  </div>
+  <iframe class="hidden-iframe" name="print-detail-delivery"></iframe>
+
+  <div *ngIf="idPrint === 'print-signature'">
+    <form-signature id="print-signature"></form-signature>
+  </div>
+  <iframe class="hidden-iframe" name="print-signature"></iframe>
+
+  <div *ngIf="idPrint === 'print-detail-transfer'">
+    <form-detail-transfer></form-detail-transfer>
+  </div>
+  <iframe class="hidden-iframe" name="print-detail-transfer"></iframe>
+
+  <div *ngIf="idPrint === 'print-report-delivery'">
+    <app-form-report-delivery></app-form-report-delivery>
+  </div>
+  <iframe class="hidden-iframe" name="print-report-delivery"></iframe>
+</div>
+<!-- End -->

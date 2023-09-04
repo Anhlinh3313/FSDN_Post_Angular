@@ -1,0 +1,123 @@
+<div class="row">
+  <div class="col-lg-12">
+    <ol class="ibox-title breadcrumb">
+      <li>
+        <a>{{parentPage}}</a>
+      </li>
+      <li class="active">
+        <strong>{{currentPage}}</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-title">
+        <div class="ibox-tools">
+          <a class="collapse-link">
+            <button class="btn btn-success" (click)="refresh()">
+              <i class="fa fa-refresh"></i>&nbsp;refresh
+            </button>
+          </a>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>Mã chuyến</label>
+              <input type="text" class="form-control" [(ngModel)]="truckScheduleCode" (keyup.enter)="scanTruckScheduleCode()" />
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>Số seal</label>
+              <input type="text" class="form-control" [(ngModel)]="sealNumber" (keyup.enter)="scanSealNumber()" />
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="data.id">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="col-md-12 formTitle">
+                Thông tin chuyến xe
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Trạm đi</label>
+                <label class="form-control">{{data.fromHub?.name}}</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Trạm đến</label>
+                <label class="form-control">{{data.toHub?.name}}</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Trạng thái</label>
+                <label class="form-control">{{data.truckScheduleStatus?.name}}</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Ngày xuất phát</label>
+                <label class="form-control">{{data.startDatetime}}</label>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Số km xuất phát</label>
+                <label class="form-control">{{data.startKM}}</label>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group">
+                <label>Số kiện</label>
+                <label class="form-control">{{data.totalBox}}</label>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Tổng trọng lượng vận đơn</label>
+                <label class="form-control">{{data.totalWeight}}</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Xe</label>
+                <label class="form-control">{{data.truck?.name}}</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Số seal</label>
+                <label class="form-control">{{data.sealNumber}}</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Nhân viên lái xe</label>
+                <label class="form-control" style="height: auto; min-height: 34px">{{showRiders(data.riders)}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

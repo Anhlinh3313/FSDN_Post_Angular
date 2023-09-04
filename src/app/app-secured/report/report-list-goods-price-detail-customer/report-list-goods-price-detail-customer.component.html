@@ -1,0 +1,184 @@
+<app-card>
+  <a class="parentPage">{{parentPage}}</a>
+  <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-tools">
+        <p-header>
+          <div>
+            <button type="button" class="btn btn-primary" (click)="exportExcelSummary()">
+              <i class="fa fa-file-excel-o"></i>&nbsp;Excel</button>
+            <button type="button" class="btn btn-success" (click)="refresh()">
+              <i class="fa fa-refresh"></i>&nbsp;refresh</button>
+          </div>
+        </p-header>
+      </div>
+    </div>
+    <div class="ibox-content">
+      <div class="row">
+        <div class="col-md-2">
+          <label>Từ ngày</label>
+          <div class="form-group">
+            <p-calendar [(ngModel)]="selectedDateFrom" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+              (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <label>Đến ngày</label>
+          <div class="form-group">
+            <p-calendar [(ngModel)]="selectedDateTo" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+              (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+          </div>
+        </div>
+
+        <div class="col-sm-3">
+          <label>Khách hàng</label>
+          <p-dropdown styleClass="select-input form-control" [options]="customers" [(ngModel)]="selectedCustomer"
+            [style]="{'width':'100%'}" filter="filter" (onChange)="changeCustomer()">
+          </p-dropdown>
+        </div>
+        <div class="col-sm-3">
+          <label>Loại khách hàng</label>
+          <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}" [options]="customerTypes"
+            [(ngModel)]="selectedCustomerType" filter="filter" (onChange)="changeCustomerType()">
+          </p-dropdown>
+        </div>
+      </div>
+
+    </div>
+    <div class="ibox-content" (scroll)="onScrollPTable($event)">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="table-responsive">
+            <p-table #dt [value]="datasource" [paginator]="true" [rows]="rowPerPage" [responsive]="true"
+              [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="loadLazy($event)"
+              [scrollable]="true" scrollHeight="600px" [columns]="columnsExport" (onPage)="onPageChange($event)">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width:55px;" pSortableColumn="id">STT
+                    <p-sortIcon field="id"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="orderDate">Ngày
+                    <p-sortIcon field="orderDate"></p-sortIcon>
+                  </th>
+                  <th style="width:150px;" pSortableColumn="shipmentNumber">Mã vận đơn
+                    <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="fromProvinceCode">Lộ trình
+                    <p-sortIcon field="fromProvinceCode"></p-sortIcon>
+                  </th>
+                  <th style="width:80px;" pSortableColumn="weight">T.lượng (kg)
+                    <p-sortIcon field="weight"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="structureName">Loại
+                    <p-sortIcon field="structureName"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="defaultPrice">Giá (VND)
+                    <p-sortIcon field="defaultPrice"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="fuelPrice">PXD (VND)
+                    <p-sortIcon field="fuelPrice"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="remoteAreasPrice">Phí VSVX (VND)
+                    <p-sortIcon field="remoteAreasPrice"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="vatPrice">VAT (VND)
+                    <p-sortIcon field="vatPrice"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="totalDVGT">DVGT (VND)
+                    <p-sortIcon field="totalDVGT"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="otherPrice">Phí khác (VND)
+                    <p-sortIcon field="otherPrice"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="totalPrice">Cộng (VND)
+                    <p-sortIcon field="totalPrice"></p-sortIcon>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr>
+                  <td style="width:55px; height: 50px">{{rowIndex + 1}}</td>
+                  <td style="width:120px;">{{rowData.orderDate | dateFormat}}</td>
+                  <td style="width:150px;">{{rowData.shipmentNumber}}</td>
+                  <td style="width:120px;">{{rowData.fromProvinceCode}} - {{rowData.toProvinceCode}}</td>
+                  <td style="width:80px; text-align: right;">{{rowData.weight | number}}</td>
+                  <td style="width:120px;">{{rowData.structureName}}</td>
+                  <td style="width:120px; text-align: right;">{{rowData.defaultPrice | number}}</td>
+                  <td style="width:120px; text-align: right;">{{rowData.fuelPrice | number}}</td>
+                  <td style="width:120px; text-align: right;">{{rowData.remoteAreasPrice | number}}</td>
+                  <td style="width:120px; text-align: right;">{{rowData.vatPrice | number}}</td>
+                  <td style="width:120px; text-align: right;">{{rowData.totalDVGT | number}}</td>
+                  <td style="width:120px; text-align: right;">{{rowData.otherPrice | number}}</td>
+                  <td style="width:120px; text-align: right;">{{rowData.totalPrice | number}}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                  <td colspan="12">
+                    Không tìm thấy dữ liệu
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="footer" let-columns>
+                <tr style="font-weight: 700;">
+                  <td colspan="12">CỘNG : </td>
+                  <td style="text-align: right;">{{sumOfTotalPrice | number:0}}</td>
+                </tr>
+              </ng-template>
+              <!-- <ng-template pTemplate="footer" let-columns>
+                <tr>
+                  <th style="width:50px;" pSortableColumn="id">STT
+                    <p-sortIcon field="id"></p-sortIcon>
+                  </th>
+                  <th style="width:150px;" pSortableColumn="orderDate">Ngày
+                    <p-sortIcon field="orderDate"></p-sortIcon>
+                  </th>
+                  <th style="width:250px;" pSortableColumn="shipmentNumber">Mã vận đơn
+                    <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="fromProvinceCode">Lộ trình
+                    <p-sortIcon field="fromProvinceCode"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="weight">T.lượng (kg)
+                    <p-sortIcon field="weight"></p-sortIcon>
+                  </th>
+                  <th style="width:220px;" pSortableColumn="structureName">Loại
+                    <p-sortIcon field="structureName"></p-sortIcon>
+                  </th>
+                  <th style="width:220px;" pSortableColumn="defaultPrice">Giá (VND)
+                    <p-sortIcon field="defaultPrice"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="fuelPrice">PXD (VND)
+                    <p-sortIcon field="fuelPrice"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="remoteAreasPrice">Phí VSVX (VND)
+                    <p-sortIcon field="remoteAreasPrice"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="vatPrice">VAT (VND)
+                    <p-sortIcon field="vatPrice"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="totalDVGT">DVGT (VND)
+                    <p-sortIcon field="totalDVGT"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="otherPrice">Phí khác (VND)
+                    <p-sortIcon field="otherPrice"></p-sortIcon>
+                  </th>
+                  <th style="width:120px;" pSortableColumn="totalPrice">Cộng (VND)
+                    <p-sortIcon field="totalPrice"></p-sortIcon>
+                  </th>
+                </tr>
+              </ng-template> -->
+              <ng-template pTemplate="summary">
+                <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecords}} vận đơn</span>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

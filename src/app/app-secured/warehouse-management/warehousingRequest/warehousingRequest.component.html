@@ -1,0 +1,188 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <!-- <h5>{{currentPage}}</h5> -->
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>Scan nhập kho
+                                    </label>
+                                    <input #txtAssignRequest autofocus (change)="scaneShipmentNumber(txtAssignRequest)" placeholder="Scan mã bill tổng ..." class="input-sm form-control"
+                                        [style]="{'width':'100%'}" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" *ngIf="data">
+                    <div class="col-sm-12">
+                        <div class="">
+                            <label class="label-primary" style="display:block;padding:3px 15px">Thông tin khách hàng</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Khách hàng gửi</label>
+                                    <input class="input-sm form-control" [(ngModel)]="data.senderName" placeholder="Khách hàng" type="text" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Số ĐT gửi</label>
+                                    <!-- <input class="input-sm form-control" placeholder="Nhập điện thoại" type="number" min=0 [(ngModel)]="data.senderPhone" tabindex="1"> -->
+                                    <input class="input-sm form-control" [(ngModel)]="data.senderPhone" placeholder="Điện thoại" type="text" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Cty gửi</label>
+                                    <!-- <input class="input-sm form-control" placeholder="Nhập cty gửi" type="text" [(ngModel)]="data.companyFrom" tabindex="1"> -->
+                                    <input class="input-sm form-control" [(ngModel)]="data.companyFrom" placeholder="Cty gửi" type="text" readonly>
+
+                                </div> 
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>Trạng thái bill tổng
+                                    </label>
+                                    <input class="input-sm form-control" [(ngModel)]="data.shipmentStatus.name" placeholder="Trạng thái bill tổng" type="text" readonly>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Địa chỉ chi tiết</label>
+                                    <input class="input-sm form-control" [(ngModel)]="data.addressNoteFrom" placeholder="Phòng ban, toà nhà..." type="text" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Địa chỉ lấy hàng</label>
+                                    <div class="form-group">
+                                        <input placeholder="Nhập địa chỉ" [(ngModel)]="data.shippingAddress" type="text" class="input-sm form-control" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Trạm</label>
+                                    <input *ngIf="data.fromHub" class="input-sm form-control" [(ngModel)]="data.fromHub.name" placeholder="Trậm nhận..." type="text"
+                                        readonly>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>NV lấy hàng</label>
+                                    <input *ngIf="data.pickUser" [(ngModel)]="data.pickUser.fullName" class="input-sm form-control" placeholder="NV lấy hàng..."
+                                        type="text" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" *ngIf="data">
+                    <div class="col-sm-12">
+                        <div class="">
+                            <label class="label-primary" style="display:block;padding:3px 15px">Thông tin yêu cầu</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Số vận đơn</label>
+                                    <input class="input-sm form-control" [(ngModel)]="data.countShipment" placeholder="Số vận đơn" type="number" min=0 appOnlyNumber
+                                        readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>TL {{unit}}</label>
+                                    <input class="input-sm form-control" [(ngModel)]="data.weight" placeholder="Trọng lượng" type="number" min=0 readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>TL QĐ {{unit}}</label>
+                                    <input class="input-sm form-control" [(ngModel)]="data.calWeight" placeholder="Trọng lượng quy đổi" type="number" min=0 readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label style="display:block">
+                                        Số kiện
+                                    </label>
+                                    <input class="input-sm form-control" [(ngModel)]="data.totalBox" placeholder="..." type="number" min=0 appOnlyNumber readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="isWarning">Số vận đơn - xác nhận</label>
+                                    <input class="input-sm form-control" [(ngModel)]="data.countShipmentAccept" placeholder="Số vận đơn" type="number" min=0
+                                        appOnlyNumber>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="isWarning">TL {{unit}} - xác nhận</label>
+                                    <input class="input-sm form-control" [(ngModel)]="data.weightAccept" placeholder="Trọng lượng" type="number" min=0 >
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="isWarning">TL QĐ {{unit}} - xác nhận</label>
+                                    <input class="input-sm form-control" [(ngModel)]="data.calWeightAccept" placeholder="Trọng lượng quy đổi" type="number" min=0 >
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="isWarning" style="display:block">
+                                        Số kiện - xác nhận
+                                    </label>
+                                    <input class="input-sm form-control" [(ngModel)]="data.totalBoxAccept" placeholder="..." type="number" min=0 appOnlyNumber>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>
+                                        Ghi chú
+                                    </label>
+                                    <input class="input-sm form-control" [(ngModel)]="data.note" placeholder="Nhập ghi chú" type="text">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <button class="btn btn-primary" tabindex="1" (click)="clickSaveChange()">Xác nhận</button>
+                                <button class="btn btn-white" (click)="refresh()">Hủy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End Modal-->

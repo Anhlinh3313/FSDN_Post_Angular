@@ -1,0 +1,104 @@
+<div class="row blue-bg p-md">
+    <div class="wrapper" style="padding:0 10px;">
+        <div class="gray-bg" style="color:#676a6c;">
+            <div class="wrapper wrapper-content">
+                <div class="row">
+                    <!-- Begin Left Table -->
+                    <div class="col-md-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-content">
+                                <h3 style="text-transform: uppercase;">Chi tiết vận đơn theo nhân viên tháng {{currentDate.getMonth() + 1}}: {{user.code}} - {{user.fullName}}</h3>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="tabs-container">
+                                            <ul class="nav nav-tabs">
+                                                <li class="active">
+                                                    <a data-toggle="tab" (click)="clickLoadShipment(2)">
+                                                        Đang lấy hàng
+                                                        <span class="label label-danger">{{reportEmp.picking}}</span>
+                                                    </a>
+                                                </li>
+                                                <li class="">
+                                                    <a data-toggle="tab" (click)="clickLoadShipment(3)">
+                                                        Đã lấy hàng
+                                                        <span class="label label-danger">{{reportEmp.pickupComplete}}</span>
+                                                    </a>
+                                                </li>
+                                                <li class="">
+                                                    <a data-toggle="tab" (click)="clickLoadShipment(8)">
+                                                        Đang trung chuyển
+                                                        <span class="label label-danger">{{reportEmp.transferring}}</span>
+                                                    </a>
+                                                </li>
+                                                <li class="">
+                                                    <a data-toggle="tab" (click)="clickLoadShipment(11)">
+                                                        Đang giao hàng
+                                                        <span class="label label-danger">{{reportEmp.delivering}}</span>
+                                                    </a>
+                                                </li>
+                                                <li class="">
+                                                    <a data-toggle="tab" (click)="clickLoadShipment(12)">
+                                                        Giao hàng thành công
+                                                        <span class="label label-danger">{{reportEmp.deliveryComplete}}</span>
+                                                    </a>
+                                                </li>
+                                                <li class="">
+                                                    <a data-toggle="tab" (click)="clickLoadShipment(31)">
+                                                        Đang trả hàng
+                                                        <span class="label label-danger">{{reportEmp.returning}}</span>
+                                                    </a>
+                                                </li>
+                                                <li class="">
+                                                    <a data-toggle="tab" (click)="clickLoadShipment(32)">
+                                                        Trả hàng
+                                                        <span class="label label-danger">{{reportEmp.returnComplete}}</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                            <div class="tab-content">
+                                                <div id="tab-1" class="tab-pane active">
+                                                    <div class="panel-body">
+                                                        <div class="row">
+                                                            <div class="col-sm-8">&nbsp;</div>
+                                                            <div class="col-sm-4">
+                                                                <div class="form-group">
+                                                                    <input #filter type="text" placeholder="Tìm kiếm ..." class="input-sm form-control" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <p-dataTable [value]="shipments" [globalFilter]="filter" [rows]="20" [paginator]="true" [rowsPerPageOptions]="[5, 10, 20, 50, 100]"
+                                                                    scrollHeight="550px">
+                                                                    <p-column field="shipmentNumber" header="Mã vận đơn"></p-column>
+                                                                    <p-column field="orderDate" header="Ngày vận đơn"></p-column>
+                                                                    <p-column field="service.name" header="Dịch vụ"></p-column>
+                                                                    <p-column field="weight" header="Trọng lượng {{unit}}"></p-column>
+                                                                    <p-column field="totalBox" header="Số kiện"></p-column>
+                                                                    <p-column field="senderName" header="Người gửi"></p-column>
+                                                                    <p-column field="pickingAddress" header="Địa chỉ gửi"></p-column>
+                                                                    <p-column field="receiverName" header="Người nhận"></p-column>
+                                                                    <p-column field="shippingAddress" header="Địa chỉ nhận"></p-column>
+                                                                    <p-column field="totalPrice" header="Tổng tiền"></p-column>
+                                                                </p-dataTable>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- End Tab Content -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Ibox content -->
+                        </div>
+                    </div>
+                    <!-- End Left Table -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

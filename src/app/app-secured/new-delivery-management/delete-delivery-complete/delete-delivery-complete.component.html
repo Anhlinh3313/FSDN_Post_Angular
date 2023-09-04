@@ -1,0 +1,236 @@
+<app-card>
+  <a class="parentPage">{{parentPage}}</a>
+  <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-content">
+        <!-- <h5>{{currentPage}}</h5> -->
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="row">
+              <div class="col-sm-3">
+                <label>Mã vận đơn</label>
+                <div class="form-group">
+                    <input #txtShipmentNumber autofocus [(ngModel)]="shipmentNumber" placeholder="Scan mã vận đơn ..." (change)="scanShipmentNumber(txtShipmentNumber)"
+                        class="input-sm form-control" [style]="{'width':'100%'}" />
+                </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="shipmentData">
+              <div class="col-sm-12">
+                  <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông tin chung</h4>
+              </div>
+              <div>
+                  <div class="row" style="margin-left: 0px;">
+                      <div class="col-sm-3">
+                          <label>Mã vận đơn:</label>
+                          <div class="form-group">
+                              <b>{{shipmentData.shipmentNumber}}</b>
+                          </div>
+                      </div>
+                      <div class="col-sm-3"></div>
+                      <div class="col-sm-3">
+                          <label>Tên đối tác:</label>
+                          <div class="form-group">
+                              <b>{{(shipmentData.tpl) != null? shipmentData.shipmentNumber : ""}}</b>
+                          </div>
+                      </div>
+                      <div class="col-sm-3">
+                          <label>Mã đối tác:</label>
+                          <div class="form-group">
+                              <b>{{(shipmentData.tplNumber) ? shipmentData.tplNumber : ""}}</b>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row" style="margin-left: 0px;">
+                      <div class="col-sm-3">
+                          <label>Tình trạng:</label>
+                          <br/>
+                          <b>{{(shipmentData.shipmentStatus) ? shipmentData.shipmentStatus.name : ""}}</b>
+                      </div>
+                      <div class="col-sm-3">
+                          <label>TG đặt hàng:</label>
+                          <div class="form-group">
+                              <b>{{shipmentData.orderDate | date:'dd/M/y H:mm:ss'}}</b>
+                          </div>
+                      </div>
+                      <div class="col-sm-3">
+                          <label>Người nhận thực tế:</label>
+                          <div class="form-group">
+                              <b>{{shipmentData.realRecipientName}}</b>
+                          </div>
+                      </div>
+                      <div class="col-sm-3">
+                          <label>TG giao hàng:</label>
+                          <div class="form-group">
+                              <b>{{shipmentData.endDeliveryTime | date:'dd/M/y H:mm:ss'}}</b>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="shipmentData">
+                <div class="col-sm-4">
+                    <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông tin hàng</h4>
+                    <div>
+                        <b>Trọng lượng: </b>
+                        <span>{{shipmentData.weight}} g</span>
+                    </div>
+                    <div>
+                        <b>Số kiện: </b>
+                        <span>{{shipmentData.totalBox}}</span>
+                    </div>
+                    <div>
+                        <b>Trọng lượng quy đổi: </b>
+                        <span>{{shipmentData.calWeight}} g</span>
+                    </div>
+                    <div>
+                        <b>Trọng lượng tính cước: </b>
+                        <span *ngIf="!shipmentData.calWeight; else existCalWeight">{{shipmentData.weight}} g</span>
+                        <ng-template #existCalWeight>
+                            <span>{{shipmentData.weight >= shipmentData.calWeight ? shipmentData.weight : shipmentData.calWeight}} g</span>
+                        </ng-template>
+                    </div>
+                    <div>
+                        <b>HTTT: </b>
+                        <span *ngIf="shipmentData.paymentType">{{shipmentData.paymentType?.name}}</span>
+                    </div>
+                    <div>
+                        <b>Dịch vụ: </b>
+                        <span *ngIf="shipmentData.service">{{shipmentData.service?.name}}</span>
+                    </div>
+                    <div>
+                        <b>DVGT: </b>
+                        <span *ngIf="shipmentData.serviceDVGT">{{shipmentData.serviceDVGT?.name}}</span>
+                    </div>
+                    <div>
+                        <b>COD: </b>
+                        <span>{{(shipmentData.cod) ? shipmentData.cod.toLocaleString('vi-VN') : 0}}</span>
+                    </div>
+                    <div>
+                        <b>Tổng cước phí: </b>
+                        <span>{{(shipmentData.totalPrice) ? shipmentData.totalPrice.toLocaleString('vi-VN')
+                            : 0}}</span>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông tin bên gửi</h4>
+                    <div>
+                        <b>Tên: </b>
+                        <span>{{shipmentData.senderName}}</span>
+                    </div>
+                    <div>
+                        <b>Số ĐT: </b>
+                        <span>{{shipmentData.senderPhone}}</span>
+                    </div>
+                    <div>
+                        <b>Tỉnh thành: </b>
+                        <span>{{(shipmentData.fromWard && shipmentData.fromWard?.district && shipmentData.fromWard?.district?.province)
+                            ? shipmentData.fromWard?.district?.province?.name : ""}}</span>
+                    </div>
+                    <div>
+                        <b>Quận huyện: </b>
+                        <span>{{(shipmentData.fromWard && shipmentData.fromWard?.district) ? shipmentData.fromWard?.district?.name
+                            : ""}}</span>
+                    </div>
+                    <div>
+                        <b>Phường xã: </b>
+                        <span>{{(shipmentData.fromWard) ? shipmentData.fromWard?.name : ""}}</span>
+                    </div>
+                    <div>
+                        <b>Địa chỉ: </b>
+                        <span *ngIf="shipmentData.addressNoteFrom; else noAddressNoteFrom" >{{shipmentData.addressNoteFrom}}, {{shipmentData.pickingAddress}}</span>
+                        <ng-template #noAddressNoteFrom>
+                            <span>{{shipmentData.pickingAddress}}</span>
+                        </ng-template>                                            
+                    </div>
+                    <div>
+                        <b>{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}}: </b>
+                        <span>{{(shipmentData.fromHub) ? shipmentData.fromHub?.name : ""}}</span>
+                    </div>
+                    <div>
+                        <b>Tuyến: </b>
+                        <span>{{(shipmentData.fromHubRouting) ? shipmentData.fromHubRouting?.name : ""}}</span>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông tin bên nhận</h4>
+                    <div>
+                        <b>Tên: </b>
+                        <span>{{shipmentData.receiverName}}</span>
+                    </div>
+                    <div>
+                        <b>Số ĐT: </b>
+                        <span>{{shipmentData.receiverPhone}}</span>
+                    </div>
+                    <div>
+                        <b>Tỉnh thành: </b>
+                        <span>{{(shipmentData.toWard && shipmentData.toWard?.district && shipmentData.toWard?.district?.province)
+                            ? shipmentData.toWard?.district?.province?.name : ""}}</span>
+                    </div>
+                    <div>
+                        <b>Quận huyện: </b>
+                        <span>{{(shipmentData.toWard && shipmentData.toWard?.district) ? shipmentData.toWard?.district?.name
+                            : ""}}</span>
+                    </div>
+                    <div>
+                        <b>Phường xã: </b>
+                        <span>{{(shipmentData.toWard) ? shipmentData.toWard?.name : ""}}</span>
+                    </div>
+                    <div>
+                        <b>Địa chỉ: </b>
+                        <span *ngIf="shipmentData.addressNoteTo; else noAddressNoteTo" >{{shipmentData.addressNoteTo}}, {{shipmentData.shippingAddress}}</span>
+                        <ng-template #noAddressNoteTo>
+                            <span>{{shipmentData.shippingAddress}}</span>
+                        </ng-template>                                            
+                    </div>
+                    <div>
+                        <b>{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}}: </b>
+                        <span>{{(shipmentData.toHub) ? shipmentData.toHub?.name : ""}}</span>
+                    </div>
+                    <div>
+                        <b>Tuyến: </b>
+                        <span>{{(shipmentData.toHubRouting) ? shipmentData.toHubRouting?.name : ""}}</span>
+                    </div>
+                    <div>
+                        <b>Hình ảnh:</b>
+                        <span>
+                            <a class="btn btn-primary" (click)="openModel(template)">
+                                <i class="fa fa-eye"></i> Xem
+                            </a>
+                        </span>
+                    </div>
+                    <ng-template #requestIMG>
+                        <b></b>
+                        <span></span>
+                    </ng-template>
+                </div>
+            </div>  
+            <div class="row" *ngIf="shipmentData">
+              <div class="col-md-6 text-right" *ngIf="shipmentData.shipmentStatusId === deliveryCompleteStatus || shipmentData.shipmentStatusId === returnCompleteStatus">
+                <button class="btn btn-primary" (click)="clickSaveChange()" tabindex="1">Hủy giao thành công</button>
+              </div>
+            </div>          
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #template>
+  <div class="modal-header" style="padding: 5px; text-align:left;">
+      <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+      </button>
+      <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5>
+  </div>
+  <div class="modal-body" *ngIf="shipmentData" style="position: absolute;width: 100%">
+      <div class="col-md-12 no-padding" style="text-align: center">
+          <img src="data:image/png;base64,{{updateImagePath.data.fileBase64String}}" class="imgBase64String" height="450" width="300" alt="">
+      </div>
+  </div>
+</ng-template>

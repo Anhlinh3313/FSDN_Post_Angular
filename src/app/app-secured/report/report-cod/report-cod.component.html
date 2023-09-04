@@ -1,0 +1,153 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Begin Left Table -->
+    <div class="col-md-6 none-padding-right col-md-6-small">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Báo cáo COD</h5>
+                <div style="margin:0 auto;margin-bottom:5px; text-align: right">
+                    <button class="btn btn-success" (click)="clickRefresh(templateConfirmRefresh)">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label>Ngày</label>
+                        <p-calendar [(ngModel)]="rangeDates" selectionMode="range" readonlyInput="true">
+                        </p-calendar>
+                    </div>
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-3">
+                        <label style="color:#fff;">Thao tác</label>
+                        <div class="input-group">
+                            <input #filterGbLeft type="text" placeholder="Tìm kiếm ..." [(ngModel)]="txtFilterGbLeft" class="input-sm form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <p-dataTable [value]="listData" rows="20" [responsive]="true" [globalFilter]="filterGbLeft" [lazy]="true" [totalRecords]="totalRecords"
+                                (onLazyLoad)="loadLazy($event)" scrollable="true" [(selection)]="selectedData" dataKey="id" scrollable="true"
+                                scrollHeight="550px" virtualScroll="virtualScroll">
+                                <p-column styleClass="p-col-checkbox" selectionMode="multiple">
+                                    <ng-template pTemplate="header">
+                                        <!-- <div style="margin:0 auto;margin-bottom:5px;">
+                                            <a class="btn btn-info" (click)="clickRefresh(templateConfirmRefresh)">
+                                                <i class="fa fa-refresh"></i>
+                                            </a>
+                                        </div> -->
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="p-col-normal" field="fromHubRouting.name" header="Tên Tuyến" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="" header="Bưu tá giữ" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="" header="Tuyến giữ" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="" header="Đang chuyển KT" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="" header="Đã chuyển KT" [sortable]="true"></p-column>
+                            </p-dataTable>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Left Table -->
+    <!-- Begin Middle Button -->
+    <div class="col-md-1 col-md-1-small">
+        <div>
+            <button class="btn btn-block btn-info btn-sm waves-effect waves-light btnAssign" (click)="assign()">
+                <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div style="margin-top:20px">
+            <button class="btn btn-block btn-danger btn-sm waves-effect waves-light btnUnAssign" (click)="unAssign()">
+                <i class="fa fa-arrow-left" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+    <!-- End Middle Button -->
+    <!-- Begin Left Table -->
+    <div class="col-lg-6 none-padding-left col-md-6-small">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Báo cáo COD</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label>&nbsp;</label>
+                        <div>
+                            <button type="button" class="btn btn-danger">In báo cáo</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-3">
+                        <label style="color:#fff;">Thao tác</label>
+                        <div class="input-group">
+                            <input #filterGbRight type="text" placeholder="Tìm kiếm ..." class="input-sm form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <p-dataTable [value]="listDataRight" [responsive]="true" [globalFilter]="filterGbRight" scrollable="true" [(selection)]="selectedDataRight"
+                                dataKey="id" scrollable="true" scrollHeight="550px">
+                                <p-column styleClass="p-col-checkbox" selectionMode="multiple"></p-column>
+                                <p-column styleClass="p-col-normal" field="" header="Tên Nhân Viên" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="" header="Đã thu COD" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="" header="Đã chuyển Tuyến" [sortable]="true"></p-column>
+                            </p-dataTable>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Left Table -->
+</div>
+
+<!-- Begin Model -->
+<ng-template #templateConfirmRefresh>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+    </div>
+    <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 no-padding">
+            <h4>Danh sách thao tác sẽ bị làm mới! Bạn có chắc chắn muốn làm mới dữ liệu không?</h4>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+        <button type="button" class="btn btn-danger" (click)="refresh()">Đồng ý</button>
+    </div>
+</ng-template>
+<!-- End Model -->

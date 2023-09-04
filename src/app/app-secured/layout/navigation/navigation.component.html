@@ -1,0 +1,147 @@
+<nav class="navbar-default navbar-static-side" role="navigation" id="left-sidebar">
+    <div class="sidebar-collapse">
+        <ul class="nav metismenu" id="side-menu">
+            <li class="nav-header m-nav-header" [style.background]="styleBackGround" style="padding: 0px;">
+                <div class="dropdown profile-elemen m-profile-elemen">
+                    <span>
+                        <img alt="image" [routerLink]="'/'" class="img-circle" [src]="logo" style="cursor: pointer;" />
+                    </span>
+                </div>
+
+                <div class="logo-element">
+                    IN+
+                </div>
+            </li>
+            <!-- <li style="padding: 20px">
+                <img [routerLink]="'/'" [src]="logo" class="img-responsive" style="cursor: pointer" />
+            </li> -->
+            <li id="daddy" *ngFor="let page of pages" [class]="page.active" (click)="selectNav(page)">
+                <a routerLink="{{page.aliasPath}}" *ngIf="!page.parentPageId && page.children.length === 0 && page.aliasPath != '/thay-doi-mat-khau'">
+                    <i class="{{page.icon ? page.icon : 'fa fa-th-large'}}"></i>
+                    <span class="nav-label">{{page.name}}</span>
+                </a>
+                <a *ngIf="!page.parentPageId && page.children.length > 0" (click)="showItems($event,page)">
+                    <i class="{{page.icon ? page.icon : 'fa fa-circle-o'}}" aria-expanded="true"></i>
+                    <span *ngIf="!page.notification" class="nav-label">{{page.name}}</span>
+                    <span *ngIf="page.notification" class="nav-label menu-with-number">{{page.name}}
+                        <span class="number" style="color:#fff">{{page.notification}}</span>
+                    </span>
+                    <span class="fa arrow"></span>
+                </a>
+                <ul [style.display]="page.display" class="nav nav-second-level collapse in" aria-expanded="true">
+                    <li *ngFor="let child of page.children">
+                        <a routerLink="{{child.aliasPath}}">
+                            <i class="{{child.icon ? child.icon : 'fa fa-square'}}"></i>
+                            <span *ngIf="!child.notification" class="nav-label">{{child.name}}</span>
+                            <span *ngIf="child.notification" class="nav-label menu-with-number">{{child.name}}
+                                <span class="number" style="color:#fff">{{child.notification}}</span>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <!-- <li class="active" style="display: block;">
+                <a>
+                    <i class="fa fa-handshake-o"></i>
+                    <span class="nav-label">Quản lý giá cước</span>
+                    <span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level collapse">
+                    <li>
+                        <a routerLink="/quan-ly-gia-cuoc/uoc-tinh-gia">
+                            <i class="fa fa-circle-o"></i>
+                            <span class="nav-label">Ước tính giá</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="active" style="display: block;">
+                <a>
+                    <i class="fa fa-handshake-o"></i>
+                    <span class="nav-label">Quản lý vận đơn</span>
+                    <span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level collapse">
+                    <li>
+                        <a routerLink="/quan-ly-van-don/van-don-ch-xu-ly">
+                            <i class="fa fa-circle-o"></i>
+                            <span class="nav-label">Vận đơn chờ xử lý</span>
+                        </a>
+                    </li>
+                </ul>
+            </li> -->
+            <!-- <li class="active">
+                <a>
+                    <i class="fa fa-handshake-o"></i>
+                    <span class="nav-label">Báo cáo</span>
+                    <span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level collapse">
+                    <li>
+                        <a routerLink="/bao-cao/bao-cao-van-don-chuyen-hoan">
+                            <i class="fa fa-circle-o"></i>
+                            <span class="nav-label">Báo cáo vận đơn chuyển hoàn</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a routerLink="/bao-cao/bao-cao-cod-phai-thu">
+                            <i class="fa fa-circle-o"></i>
+                            <span class="nav-label">Báo cáo COD phải thu</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a routerLink="/bao-cao/bao-cao-cod-phai-tra">
+                            <i class="fa fa-circle-o"></i>
+                            <span class="nav-label">Báo cáo COD phải trả</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="active" style="display: block;">
+                <a>
+                    <i class="fa fa-handshake-o"></i>
+                    <span class="nav-label">Quản lý giao hàng</span>
+                    <span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level collapse">
+                    <li>
+                        <a routerLink="/quan-ly-giao-hang/xoa-giao-hang-thanh-cong">
+                            <i class="fa fa-circle-o"></i>
+                            <span class="nav-label">Xóa giao hàng thành công</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="active" style="display: block;">
+                <a>
+                    <i class="fa fa-handshake-o"></i>
+                    <span class="nav-label">Báo cáo</span>
+                    <span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level collapse">
+                    <li>
+                        <a routerLink="/bao-cao/bao-cao-cuoc-phai-thu">
+                            <i class="fa fa-circle-o"></i>
+                            <span class="nav-label">Báo cáo cước phải thu</span>
+                        </a>
+                    </li>
+                </ul>
+            </li> -->
+            <!-- <li class="active">
+                <a>
+                    <i class="fa fa-handshake-o"></i>
+                    <span class="nav-label">Quản lý vận đơn</span>
+                    <span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level collapse">
+                    <li>
+                        <a routerLink="/quan-ly-van-don/van-don-da-huy">
+                            <i class="fa fa-circle-o"></i>
+                            <span class="nav-label">Vận đơn đã hủy</span>
+                        </a>
+                    </li>
+                </ul>
+            </li> -->
+        </ul>
+    </div>
+</nav>

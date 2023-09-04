@@ -1,0 +1,853 @@
+<app-card>
+    <a class="parentPage">{{parentPage}}</a>
+    <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="row">
+                    <!-- <div class="col-md-2">
+                        <div class="form-group">
+                            <label style="display: block;">&nbsp;</label>
+                            <div class="pull-left text-uppercase label-success chxbox-info" style="padding: 3px;">
+                                <p-checkbox [(ngModel)]="isNoteWarehouse" binary="true" (onChange)="onNoteWarehouse()">
+                                </p-checkbox>
+                                <span>Ghi chú nhập kho</span>
+                            </div>
+                        </div>
+                    </div> -->
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Ghi chú nhập kho </label>
+                            <input class="input-sm form-control" placeholder="Ghi chú nhập kho"
+                                [(ngModel)]="inputNote" />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Loại nhập </label>
+                            <p-dropdown [options]="typeWareHousing" [(ngModel)]="filterModel.warehousingType"
+                                styleClass="select-input" [style]="{'width':'100%'}" (onChange)="changeFilter()"
+                                filter="true">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="pull-left">Bưu cục gửi </label>
+                            <p-autoComplete class="pull-left" [(ngModel)]="hub" [suggestions]="filteredHubs"
+                                [minLength]="1" (completeMethod)="filterHub($event)" (onSelect)="onSelectedHub()"
+                                styleClass="select-input" [style]="{'width':'100%'}" [dropdown]="false"
+                                (keydown.Tab)="keyTabSender($event)">
+                            </p-autoComplete>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="pull-left">NV giữ </label>
+                            <p-autoComplete class="pull-left" [(ngModel)]="employee" [suggestions]="filteredEmployees"
+                                [minLength]="1" (completeMethod)="filterEmployee($event)"
+                                (onSelect)="onSelectedEmployee()" styleClass="select-input" [style]="{'width':'100%'}"
+                                [dropdown]="false" (keydown.Tab)="keyTabEmployee($event)">
+                            </p-autoComplete>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Từ ngày</label>
+                            <p-calendar [(ngModel)]="filterModel.dateFrom" [showIcon]="false" hourFormat="24"
+                                dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                                [inputStyleClass]="'form-control input-sm'" (onBlur)="selectedDate()"
+                                [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Đến ngày</label>
+                            <p-calendar [(ngModel)]="filterModel.dateTo" [showIcon]="false" hourFormat="24"
+                                dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                                [inputStyleClass]="'form-control input-sm'" (onBlur)="selectedDate()"
+                                [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="row" style="margin-bottom: 5px;">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Bảng kê</label>
+                                    <p-multiSelect [options]="lstListGoodsReceive" defaultLabel="0 đã chọn"
+                                        selectedItemsLabel="{0} đã chọn" [(ngModel)]="filterModel.listGoodsList"
+                                        [styleClass]="'form-control input-sm'" [style]="{'width':'100%'}" filter="true"
+                                        (onChange)="changeFilter()">
+                                    </p-multiSelect>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Bưu cục giao </label>
+                                    <p-autoComplete [(ngModel)]="toHub" [suggestions]="filteredToHubs" [minLength]="1"
+                                        (completeMethod)="filterToHub($event)" (onSelect)="onSelectedToHub()"
+                                        styleClass="select-input form-control none-padding" [dropdown]="false"
+                                        (keydown.Tab)="keyTabSenderToHub($event)">
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label class="pull-left">Nhân viên giao </label>
+                                    <p-dropdown [options]="toUsers" [(ngModel)]="filterModel.toUserId"
+                                        [styleClass]="'form-control input-sm'" [style]="{'width':'100%'}" filter="true"
+                                        (onChange)="changeFilter()">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Khách hàng</label>
+                                    <p-autoComplete #atcSenderCode [(ngModel)]="customerChange"
+                                        [suggestions]="filteredCustomers" [minLength]="1" [forceSelection]="true"
+                                        (completeMethod)="filterCustomers($event)" (onSelect)="changeSender()"
+                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                                        [dropdown]="true" showIcon="true" (keydown.Tab)="changeSender()">
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>VĐ ưu tiên</label>
+                                    <p-dropdown [options]="listPrioritize" [(ngModel)]="filterModel.isPrioritize"
+                                        [styleClass]="'form-control input-sm'" (onChange)="changeFilter()"
+                                        [style]="{'width':'100%'}" filter="true"></p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Lọc đơn</label>
+                                    <p-dropdown [options]="listIsNullHubRouting"
+                                        [(ngModel)]="filterModel.isNullHubRouting"
+                                        [styleClass]="'form-control input-sm'" (onChange)="changeFilter()"
+                                        [style]="{'width':'100%'}" filter="true"></p-dropdown>
+                                    <!-- <p-dropdown [options]="listTypeShipment" [(ngModel)]="filterModel.isAllShipment"
+                                        [styleClass]="'form-control input-sm'" (onChange)="changeFilter()"
+                                        [style]="{'width':'100%'}" filter="true"></p-dropdown> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="table-responsive">
+                                    <p-table #dtShipmentKeeping [value]="listShipment" [paginator]="true"
+                                        [rowsPerPageOptions]="[20,50,100,200,500]" [lazy]="true"
+                                        [totalRecords]="totalRecords_ShipmentKeeping" [(selection)]="selectedData"
+                                        [columns]="columnsExport_ShipmentKeeping" [rows]="rowPerPage"
+                                        (onPage)="onPageChange($event)">
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <!-- <label>Scan nhập kho</label> -->
+                                                    <input #txtAssignShipmentBillTong
+                                                        [(ngModel)]="txtScanShipmentBillTong" autofocus
+                                                        (keyup.enter)="scaneShipmentNumber(txtAssignShipmentBillTong, templateNote)"
+                                                        placeholder="Scan mã vận đơn ..." class="input-sm form-control"
+                                                        [style]="{'width':'100%'}" />
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <button *ngIf="filterModel.warehousingType == 2" type="button"
+                                                        class="btn btn-success pull-right"
+                                                        (click)="onClickScanPackage(modalScanPackage)">
+                                                        Quét {{envir.pack}}
+                                                    </button>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <span class="ui-column-title"
+                                                        style="font-weight: bold; color: #26a51a">Chọn:
+                                                        {{(selectedData) ? (selectedData.length) : 0}}
+                                                        vđ</span>
+                                                </div>
+                                                <div class="col-sm-1">
+                                                    <button type="button" style="padding: 1px 10px;margin-top: -5px"
+                                                        class="btn btn-primary pull-right" title="Export Excel" (click)="exportExcel()"><span
+                                                            class="fa fa-file-excel-o"></span></button>
+                                                </div>
+                                                <div class="col-sm-1">
+                                                    <button type="button" style="padding: 1px 10px;margin-top: -5px"
+                                                        class="btn btn-warning pull-right" (click)="warehousingFast()"
+                                                        title="Nhập kho nhanh">>></button>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-left: -30px; margin-top: 10px;">
+                                                <div class="col-sm-3" style="padding-left: 0px;">
+                                                    <span class="ui-column-title"
+                                                        style="font-weight: bold; color: #ff8f00">Tổng
+                                                        :
+                                                        {{
+                                                        (totalRecords_ShipmentKeeping) ? totalRecords_ShipmentKeeping : 0 }}
+                                                        vđ</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <span class="ui-column-title"
+                                                        style="font-weight: bold; color: #ff8f00">Tổng
+                                                        : {{
+                                                        (totalBoxsLeft) ? totalBoxsLeft : 0 }} kiện</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <span class="ui-column-title"
+                                                        style="font-weight: bold; color: #ff8f00">Tổng
+                                                        : {{
+                                                        (totalPackageLeft) ? totalPackageLeft : 0 }}
+                                                        {{envir.pack}}</span>
+                                                </div>
+                                                <div class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">
+                                                    <span class="ui-column-title"
+                                                        style="font-weight: bold; color: #ff8f00">{{envir.pack}}
+                                                        :
+                                                        {{
+                                                        (totalShipmentInPackageLeft) ? totalShipmentInPackageLeft : 0 }}
+                                                        vđ</span>
+                                                </div>
+                                            </div>
+
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width: 28px">
+                                                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                                </th>
+                                                <th pSortableColumn="shipmentNumber" class="p-col-shipmentNumber">
+                                                    Mã vận đơn
+                                                </th>
+                                                <th pSortableColumn="orderDate" style="width: 120px">
+                                                    Ngày VĐ
+                                                </th>
+                                                <th pSortableColumn="totalBox" style="width: 40px">
+                                                    SK
+                                                </th>
+                                                <th pSortableColumn="weight" style="width: 50px">
+                                                    TL
+                                                </th>
+                                                <th pSortableColumn="receiverName" class="p-col-shipmentNumber">
+                                                    Tên người nhận
+                                                </th>
+                                                <th pSortableColumn="shippingAddress" style="width: 180px">
+                                                    Địa chỉ nhận
+                                                </th>
+                                                <th *ngIf="envir && (envir.namePrint=='gsdp' || envir.namePrint=='dsc')"
+                                                    pSortableColumn="toHubRoutingName" style="width: 90px">
+                                                    Tuyến giao
+                                                </th>
+                                                <th pSortableColumn="toProvinceName" class="p-col-shipmentNumber">
+                                                    Tỉnh/thành giao
+                                                </th>
+                                                <th pSortableColumn="toDistrictName" class="p-col-shipmentNumber">
+                                                    Quận/hyện giao
+                                                </th>
+                                                <th pSortableColumn="toHubName" class="p-col-shipmentNumber">
+                                                    Bưu cục giao
+                                                </th>
+                                                <th pSortableColumn="serviceName" style="width: 90px">
+                                                    Dịch vụ
+                                                </th>
+                                                <th pSortableColumn="packageCode" class="p-col-shipmentNumber">
+                                                    Mã {{envir.pack}}
+                                                </th>
+                                                <th pSortableColumn="calWeight" style="width: 90px">
+                                                    TL QĐ
+                                                </th>
+                                                <th pSortableColumn="inOutDate" class="p-col-shipmentNumber">
+                                                    Ngày xuất/nhập
+                                                </th>
+                                                <th pSortableColumn="shipmentStatusName" class="p-col-shipmentNumber">
+                                                    Trạng thái
+                                                </th>
+                                                <th pSortableColumn="senderCode" class="p-col-shipmentNumber">
+                                                    Mã KH gửi
+                                                </th>
+                                                <th pSortableColumn="receiverPhone" class="p-col-shipmentNumber">
+                                                    Điện thoại KH nhận
+                                                </th>
+                                                <th pSortableColumn="cod" class="p-col-shipmentNumber">
+                                                    Thu hộ
+                                                </th>
+                                                <th pSortableColumn="insured" class="p-col-shipmentNumber">
+                                                    Gia trị hàng hóa
+                                                </th>
+                                                <th pSortableColumn="isIncidents" class="p-col-shipmentNumber">
+                                                    Vận đơn sự cố
+                                                </th>
+                                                <th pSortableColumn="isPrioritize" class="p-col-shipmentNumber">
+                                                    Vận đơn ưu tiên
+                                                </th>
+                                                <th pSortableColumn="listGoodsCode" class="p-col-shipmentNumber">
+                                                    Mã bảng kê
+                                                </th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-rowData>
+                                            <!-- <tr [ngStyle]="{'color': rowData.isBillTong ? 'blue' : 'none'}"> -->
+                                            <tr [ngStyle]="{'color': colorRow(rowData)}">
+                                                <td style="width: 28px">
+                                                    <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                                                </td>
+                                                <td>{{rowData.shipmentNumber}}</td>
+                                                <td>{{rowData.orderDate | dateFormat}}</td>
+                                                <td>{{rowData.totalBox | number}}</td>
+                                                <td>{{rowData.weight | number}}</td>
+                                                <td>{{rowData.receiverName}}</td>
+                                                <td>{{rowData.shippingAddress}}</td>
+                                                <td
+                                                    *ngIf="envir && (envir.namePrint=='gsdp' || envir.namePrint=='dsc')">
+                                                    {{rowData.toHubRoutingName}}</td>
+                                                <td>{{rowData.toProvinceName}}</td>
+                                                <td>{{rowData.toDistrictName}}</td>
+                                                <td>{{rowData.toHubName}}</td>
+                                                <td>{{rowData.serviceName}}</td>
+                                                <td>{{rowData.packageCode}}</td>
+                                                <td>{{rowData.calWeight | number}}</td>
+                                                <td>{{rowData.inOutDate | dateFormat}}</td>
+                                                <td>{{rowData.shipmentStatusName}}</td>
+                                                <td>{{rowData.senderCode}}</td>
+                                                <td>{{rowData.receiverPhone}}</td>
+                                                <td>{{rowData.cod | number}}</td>
+                                                <td>{{rowData.insured}}</td>
+                                                <td class="text-center">
+                                                    <input type="checkbox" [(ngModel)]="rowData.isIncidents" disabled />
+                                                </td>
+                                                <td class="text-center">
+                                                    <input type="checkbox" [(ngModel)]="rowData.isPrioritize"
+                                                        disabled />
+                                                </td>
+                                                <td>{{rowData.listGoodsCode}}</td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="emptymessage">
+                                            <tr>
+                                                <td *ngIf="envir && (envir.namePrint=='gsdp' || envir.namePrint=='dsc')"
+                                                    [attr.colspan]="15">
+                                                    Không có vận đơn
+                                                </td>
+                                                <td *ngIf="!envir || (envir.namePrint!='gsdp' && envir.namePrint!='dsc')"
+                                                    [attr.colspan]="14">
+                                                    Không có vận đơn
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="row" style="margin-bottom: 10px">
+                                    <div class="col-sm-8">
+                                        <input type="text" class="input-sm"
+                                            ngModel="{{listGoodsWPCreated ? listGoodsWPCreated.code : ''}}" disabled />
+                                        <button style="height: 18px; padding: 0px 3px 18px 3px;" type="button"
+                                            class="btn btn-success" (click)="refreshSessionListGoodsWP()">
+                                            <i class="fa fa-refresh"></i></button>
+                                    </div>
+                                    <div class="col-sm-4">
+
+                                    </div>
+                                </div>
+                                <p-table #dtShipmentScane [value]="listShipmentWarehousedOnTabOne" [responsive]="true"
+                                    scrollHeight="300px" paginatorPosition="both" [paginator]="false" [rows]="100"
+                                    [lazy]="true">
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <span class="ui-column-title"
+                                                    style="font-weight: bold; color: #26a51a">Tổng:
+                                                    {{countWarehousing_Success}}
+                                                    vđ</span>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <span class="ui-column-title"
+                                                    style="font-weight: bold; color: #26a51a">Tổng
+                                                    : {{
+                                                    (totalBoxsRight) ? totalBoxsRight : 0 }} kiện</span>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <span class="ui-column-title"
+                                                    style="font-weight: bold; color: #26a51a">Tổng
+                                                    : {{
+                                                    (totalPackageRight) ? totalPackageRight : 0 }}
+                                                    {{envir.pack}}</span>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <span class="ui-column-title"
+                                                    style="font-weight: bold; color: #26a51a">{{envir.pack}}
+                                                    : {{
+                                                    (totalShipmentInPackageRight) ? totalShipmentInPackageRight : 0 }}
+                                                    vđ</span>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th pSortableColumn="shipmentNumber" class="p-col-shipmentNumber">
+                                                Mã vận đơn
+                                            </th>
+                                            <th pSortableColumn="totalBox" style="width: 40px">
+                                                SK
+                                            </th>
+                                            <th pSortableColumn="weight" style="width: 50px">
+                                                TL
+                                            </th>
+                                            <th pSortableColumn="shippingAddress" style="width: 260px">
+                                                Địa chỉ nhận
+                                            </th>
+                                            <th pSortableColumn="packageCode" class="p-col-shipmentNumber">
+                                                Mã {{envir.pack}}
+                                            </th>
+                                            <th pSortableColumn="cod" class="p-col-shipmentNumber">
+                                                Thu hộ
+                                            </th>
+                                            <th pSortableColumn="insured" class="p-col-shipmentNumber">
+                                                Giá trị hàng hóa
+                                            </th>
+                                            <th pSortableColumn="calWeight" class="p-col-shipmentNumber">
+                                                Trọng lượng QĐ
+                                            </th>
+                                            <th pSortableColumn="receiverName" class="p-col-shipmentNumber">
+                                                Tên người nhận
+                                            </th>
+                                            <th pSortableColumn="receiverPhone" class="p-col-shipmentNumber">
+                                                Điện thoại KH nhận
+                                            </th>
+                                            <th pSortableColumn="isIncidents" class="p-col-shipmentNumber">
+                                                Vận đơn sự cố
+                                            </th>
+                                            <th pSortableColumn="isPrioritize" class="p-col-shipmentNumber">
+                                                Vận đơn ưu tiên
+                                            </th>
+                                            <th pSortableColumn="listGoodsCode" class="p-col-shipmentNumber">
+                                                Mã bảng kê
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-data>
+                                        <tr>
+                                            <td class="p-col-shipmentNumber">{{data.shipmentNumber}}</td>
+                                            <td class="p-col-shipmentNumber">{{data.totalBox | number}}</td>
+                                            <td class="p-col-shipmentNumber">{{data.weight | number}}</td>
+                                            <td class="p-col-shipmentNumber">{{data.shippingAddress}}</td>
+                                            <td class="p-col-shipmentNumber">{{data.packageCode}}</td>
+                                            <td class="p-col-shipmentNumber">{{data.cod | number}}</td>
+                                            <td class="p-col-shipmentNumber">{{data.insured}}</td>
+                                            <td class="p-col-shipmentNumber">{{data.calWeight | number}}</td>
+                                            <td class="p-col-shipmentNumber">{{data.receiverName}}</td>
+                                            <td class="p-col-shipmentNumber">{{data.receiverPhone}}</td>
+                                            <td class="text-center">
+                                                <input type="checkbox" [(ngModel)]="data.isIncidents" disabled />
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="checkbox" [(ngModel)]="data.isPrioritize" disabled />
+                                            </td>
+                                            <td class="p-col-shipmentNumber">{{data.listGoodsCode}}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End Modal-->
+
+<ng-template #templateBillTong>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <h5 class="modal-title pull-left">Nhập kho bill tổng</h5>
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+            (click)="bsModalRef_BillTong.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+    </div>
+    <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 no-padding">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <h5>Nhập kho bill tổng</h5>
+                    <!-- <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label>Scan nhập kho
+                                        </label>
+                                        <input #txtAssignRequest autofocus (change)="scaneShipmentNumber_BillTong(txtAssignRequest)" placeholder="Scan mã bill tổng ..." class="input-sm form-control"
+                                            [style]="{'width':'100%'}" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <div class="row" *ngIf="data">
+                        <div class="col-sm-12">
+                            <div class="">
+                                <label class="label-primary" style="display:block;padding:3px 15px">Thông tin khách
+                                    hàng</label>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Khách hàng gửi</label>
+                                        <input class="input-sm form-control" [ngModel]="data.senderName"
+                                            placeholder="Khách hàng" type="text" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Số ĐT gửi</label>
+                                        <!-- <input class="input-sm form-control" placeholder="Nhập điện thoại" type="number" min=0 [(ngModel)]="data.senderPhone" tabindex="1"> -->
+                                        <input class="input-sm form-control" [ngModel]="data.senderPhone"
+                                            placeholder="Điện thoại" type="text" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Cty gửi</label>
+                                        <!-- <input class="input-sm form-control" placeholder="Nhập cty gửi" type="text" [(ngModel)]="data.companyFrom" tabindex="1"> -->
+                                        <input class="input-sm form-control" [ngModel]="data.companyFrom"
+                                            placeholder="Cty gửi" type="text" readonly>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label>Trạng thái bill tổng
+                                        </label>
+                                        <input class="input-sm form-control" [ngModel]="data.shipmentStatus?.name"
+                                            placeholder="Trạng thái bill tổng" type="text" readonly>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Địa chỉ chi tiết</label>
+                                        <input class="input-sm form-control" [ngModel]="data.addressNoteFrom"
+                                            placeholder="Phòng ban, toà nhà..." type="text" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Địa chỉ lấy hàng</label>
+                                        <div class="form-group">
+                                            <input placeholder="Nhập địa chỉ" [ngModel]="data.pickingAddress"
+                                                type="text" class="input-sm form-control" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{hub.stationHubLongName}}</label>
+                                        <input class="input-sm form-control" [ngModel]="data.fromHub?.name"
+                                            placeholder="{{hub?.stationHubLongName}} nhận..." type="text" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>NV lấy hàng</label>
+                                        <input [ngModel]="data.pickUser?.fullName" class="input-sm form-control"
+                                            placeholder="NV lấy hàng..." type="text" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="data">
+                        <div class="col-sm-12">
+                            <div class="">
+                                <label class="label-primary" style="display:block;padding:3px 15px">Thông tin yêu
+                                    cầu</label>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Số vận đơn</label>
+                                        <input class="input-sm form-control" [(ngModel)]="data.totalChildShipment"
+                                            placeholder="Số vận đơn" type="number" min=0 appOnlyNumber readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>TL {{unit}}</label>
+                                        <input class="input-sm form-control" [(ngModel)]="data.weight"
+                                            placeholder="Trọng lượng" type="number" min=0 readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>TL QĐ {{unit}}</label>
+                                        <input class="input-sm form-control" [(ngModel)]="data.calWeight"
+                                            placeholder="Trọng lượng quy đổi" type="number" min=0 readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label style="display:block">
+                                            Số kiện
+                                        </label>
+                                        <input class="input-sm form-control" [(ngModel)]="data.totalBox"
+                                            placeholder="..." type="number" min=0 appOnlyNumber readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="isWarning">Số vận đơn - xác nhận</label>
+                                        <input class="input-sm form-control" [(ngModel)]="data.countShipmentAccept"
+                                            placeholder="Số vận đơn" type="number" min=0 appOnlyNumber>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="isWarning">TL {{unit}} - xác nhận</label>
+                                        <input class="input-sm form-control" [(ngModel)]="data.weightAccept"
+                                            placeholder="Trọng lượng" type="number" min=0>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="isWarning">TL QĐ {{unit}} - xác nhận</label>
+                                        <input class="input-sm form-control" [(ngModel)]="data.calWeightAccept"
+                                            placeholder="Trọng lượng quy đổi" type="number" min=0>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="isWarning" style="display:block">
+                                            Số kiện - xác nhận
+                                        </label>
+                                        <input class="input-sm form-control" [(ngModel)]="data.totalBoxAccept"
+                                            placeholder="..." type="number" min=0 appOnlyNumber>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>
+                                            Ghi chú
+                                        </label>
+                                        <input class="input-sm form-control" [(ngModel)]="data.note"
+                                            placeholder="Nhập ghi chú" type="text">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <button class="btn btn-primary" tabindex="1" (click)="clickSaveChange()">Xác
+                                        nhận</button>
+                                    <button class="btn btn-white" (click)="bsModalRef_BillTong.hide()">Hủy</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal"
+            (click)="bsModalRef_BillTong.hide()">Đóng</button>
+    </div>
+</ng-template>
+
+<!--Start Modal Note WareHouse-->
+<ng-template #templateNote>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button"
+            (click)="bsModalRefNote.hide()">
+            <span aria-hidden="true">×</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5>
+    </div>
+    <div class="modal-body" style="padding-top: 10px;">
+        <div class="row">
+            <label class="label-control">Ghi chú nhập kho</label>
+            <div class="input-group" style="width: 100%;">
+                <textarea placeholder="Nhập ghi chú ..." [(ngModel)]="txtNote" class="input-sm form-control" cols="50"
+                    rows="3"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" (click)="confirmScan(txtShipmentNumber)">Lưu</button>
+        <button class="btn btn-white" data-dismiss="modal" (click)="bsModalRefNote.hide()" type="button">Đóng</button>
+    </div>
+</ng-template>
+<!--End Modal-->
+
+<!-- xem ds bill đã nhập kho -->
+<ng-template #template>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+            (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">Chi tiết bảng kê nhập kho</h5>
+    </div>
+    <div class="modal-body" style="overflow:hidden;">
+        <div class="row">
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <p-table [value]="listShipmentByListGoodsId" [responsive]="true"
+                                [globalFilterFields]="columns" scrollHeight="300px" paginatorPosition="both"
+                                [paginator]="true" [rows]="rowPerPageRight" [rowsPerPageOptions]="[20,50,100,200,500]">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th pSortableColumn="shipmentNumber" style="width: 220px">Mã vận đơn
+                                            <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="orderDate" class="p-col-orderdate">Ngày gửi
+                                            <p-sortIcon field="orderDate"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="deliveryNote" class="p-col-note">Ghi chú giao hàng
+                                        </th>
+                                        <th pSortableColumn="senderName" class="p-col-sender">Tên người gửi
+                                        </th>
+                                        <th pSortableColumn="cusDepartment.name" class="p-col-normal">Phòng ban
+                                        </th>
+                                        <th pSortableColumn="senderPhone" class="p-col-normal">SĐT người gửi
+                                        </th>
+                                        <th pSortableColumn="pickingAddress" class="p-col-address">Địa chỉ gửi
+                                        </th>
+                                        <th pSortableColumn="receiverName" class="p-col-receive">Tên người nhận
+                                        </th>
+                                        <th pSortableColumn="receiverPhone" class="p-col-normal">SĐt nhận
+                                        </th>
+                                        <th pSortableColumn="shippingAddress" class="p-col-address">Địa chỉ nhận
+                                        </th>
+                                        <th pSortableColumn="cusNote" class="p-col-note">Ghi chú khách hàng
+                                        </th>
+                                        <th pSortableColumn="weight" class="p-col-numer">Trọng lượng {{unit}}
+                                        </th>
+                                        <th pSortableColumn="calWeight" class="p-col-numer">TLQĐ {{unit}}
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-data>
+                                    <tr>
+                                        <td style="width: 220px">
+                                            {{data.shipmentNumber}}
+                                        </td>
+                                        <td class="p-col-orderdate">
+                                            {{data.orderDate | dateFormat}}
+                                        </td>
+                                        <td class="p-col-note">
+                                            {{data.deliveryNote}}
+                                        </td>
+                                        <td class="p-col-sender">
+                                            {{data.senderName}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.cusDepartment ? data.cusDepartment.Name: ""}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.senderPhone}}
+                                        </td>
+                                        <td class="p-col-address">
+                                            {{data.pickingAddress}}
+                                        </td>
+                                        <td class="p-col-receive">
+                                            {{data.receiverName}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.receiverPhone}}
+                                        </td>
+                                        <td class="p-col-address">
+                                            {{data.shippingAddress}}
+                                        </td>
+                                        <td class="p-col-note">
+                                            {{data.cusNote}}
+                                        </td>
+                                        <td class="p-col-numer">
+                                            {{data.weight}}
+                                        </td>
+                                        <td class="p-col-numer">
+                                            {{data.calWeight}}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="summary">
+                                    <span class="ui-column-title" style="font-weight: bold;">Tổng : {{
+                                        listShipmentByListGoodsId? listShipmentByListGoodsId.length : 0 }} vận
+                                        đơn</span>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+    </div>
+</ng-template>
+
+<!-- Start -->
+<ng-template #modalScanPackage>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+            (click)="noneScanPackage()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h6 class="modal-title" style="font-size:20px">Scan mã {{envir.pack}}/SEAL</h6>
+    </div>
+    <div class="modal-body" style="overflow:hidden;">
+        <div class="row">
+            <div class="col-md-6">
+                <input id="atcScanPackageCode" type="text" placeholder="Sacn mã Túi hoặc số Seal"
+                    [(ngModel)]="txtPackageCode" class="input-sm form-control" autofocus
+                    (keyup.enter)="evenScanePackageCode()" />
+            </div>
+        </div>
+
+        <div *ngIf="isSuccessScanPackge" class="row" style="margin-top: 10px;">
+            <div class="row">
+                <div class="col-sm-12" style="padding-left: 30px;">
+                    <label class="label-control">Nhập kho trung chuyển cho: {{totalCountLSByScanPackage}} vận
+                        đơn.</label>
+                </div>
+                <div *ngIf="isCheckScanPackage" class="col-sm-12" style="margin-bottom: 15px">
+                    <p-progressBar [value]="percentScanPackage"></p-progressBar>
+                </div>
+
+                <div class="col-sm-6" *ngIf="isCheckScanPackage"><label class="label-control isDanger">Thất bại:
+                        {{totalScanShipOfPackageFail}}</label></div>
+                <div class="col-sm-6" *ngIf="isCheckScanPackage"><label class="label-control isPickupFail">Thành công:
+                        {{totalScanShipOfPackageSuccess}}</label></div>
+                <div class="col-sm-12" style="text-align: center;margin-top: 10px"
+                    *ngIf="totalCountLSByScanPackage > 0 && totalScanShipOfPackageSuccess>=totalCountLSByScanPackage">
+                    <button class="btn btn-success" (click)="bsModalRef.hide()" type="button"><i
+                            class="fa fa-check"></i>
+                        Hoàn tất</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button *ngIf="isSuccessScanPackge" [disabled]="isCheckScanPackage" type="button" class="btn btn-danger"
+            (click)="comfirmScanPackage()">Xác nhận</button>
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+    </div>
+</ng-template>
+<!-- End Model -->

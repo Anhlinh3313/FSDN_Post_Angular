@@ -1,0 +1,112 @@
+<section [id]="formId" *ngIf="selectData" style="font-size: 12px;">
+  <div class="row">
+    <div class="col-xs-1"></div>
+    <div class="col-xs-3">
+      <div><b>Đơn vị: </b> ............................</div>
+      <div><b>Địa chỉ: </b> ............................</div>
+    </div>
+
+    <div class="col-xs-4"></div>
+
+    <div class="col-xs-3">
+      <div style="padding-left: 2px; border: 1px solid black">
+        <div><b>Mẫu số 6 - TT</b></div>
+        <div>(Ban hành theo Thông tư số 113/2016/TT-BTC ngày 26/8/2016 của Bộ Tài Chính)</div>
+      </div>
+    </div>
+
+    <!-- <div class="col-xs-1"></div> -->
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12 text-center">
+      <div style="text-transform: uppercase; font-size: 14px"><b>Biên lai thu tiền</b></div>
+      <div><i>Ngày...tháng...năm...</i></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-8"></div>
+    <div class="col-xs-3">
+      <div>Quyển số: ...............</div>
+      <div>Số: ..........................</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-1"></div>
+    <div class="col-xs-10">
+      <div>Họ và tên người nộp: {{selectData.paidFullName}}</div>
+      <div>Địa chỉ:</div>
+      <div>Nội dung thu: {{selectData.paidNote}}</div>
+      <div>Số tiền thu: {{selectData.paidTotal || 0| number}} &nbsp;&nbsp; (Viết bằng chữ)
+        {{convertNumberToText.DocTienBangChu(selectData.paidTotal || 0)}}</div>
+    </div>
+  </div>
+  <div *ngIf="selectData" class="row">
+    <div class="col-xs-12">
+
+      <div class="content-wrapper">
+        <div class="table-wrapper">
+          <table class="table table-content">
+            <thead>
+              <tr>
+                <th style="width:40px">STT</th>
+                <th style="width:120px">Mã vận đơn</th>
+                <th style="width:160px">Người gửi</th>
+                <th style="width:160px">Người nhận</th>
+                <th style="width:260px">Địa chỉ nhận</th>
+                <th style="width:100px">Cước đã thu</th>
+                <th style="width:100px">COD đã thu</th>
+                <th style="width:120px">Tổng</th>
+                <th style="width:100px">Ghi chú</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let x of selectData; let i = index">
+                <td style="width:40px" class="text-right">{{i+1}}</td>
+                <td style="padding-bottom: 0px !important; text-align: center !important; width:120px">
+                  <!-- <div class="barcode" style="margin-bottom: 0px">
+                                <img [id]="x.fakeId" />
+                            </div> -->
+                  <div>{{x.shipment.shipmentNumber}}</div>
+                </td>
+                <td style="width:160px">{{x.shipment.senderName}}</td>
+                <td style="width:160px">{{x.shipment.receiverName}}</td>
+                <td style="width:260px">{{x.shipment.shippingAddress}}</td>
+                <td style="width:100px">{{x.totalPrice|number}}</td>
+                <td style="width:100px">{{x.cod|number}}</td>
+                <td style="width:120px">{{(x.totalPrice+x.cod)|number}}</td>
+                <td style="width:100px"></td>
+                <!-- -->
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-xs-1"></div>
+    <div class="col-xs-5 text-center">
+      <b>Người nộp tiền</b>
+      <div><i>(Ký, họ tên)</i></div>
+      <br />
+      <br />
+      <br />
+      <br />
+      <div>{{selectData.paidFullName}}</div>
+    </div>
+
+    <div class="col-xs-5 text-center">
+      <b>Người thu tiền</b>
+      <div><i>(Ký, họ tên)</i></div>
+      <br />
+      <br />
+      <br />
+      <br />
+      <div>......................</div>
+    </div>
+  </div>
+</section>

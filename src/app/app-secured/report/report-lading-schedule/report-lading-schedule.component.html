@@ -1,0 +1,211 @@
+<div class="row">
+  <div class="col-lg-12">
+    <ol class="ibox-title breadcrumb">
+      <li>
+        <a>{{parentPage}}</a>
+      </li>
+      <li class="active">
+        <strong>{{currentPage}}</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-title">
+        <div class="ibox-tools">
+          <p-header>
+            <div>
+              <button type="button" class="btn btn-primary" (click)="dt.exportCSV()">
+                <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+              <button type="button" class="btn btn-success" (click)="loadData()">
+                <i class="fa fa-refresh"></i>&nbsp;Xem</button>
+            </div>
+          </p-header>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-md-2">
+            <label>Từ ngày</label>
+            <div class="form-group">
+              <p-calendar [(ngModel)]="filterModel.fromDate" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                [style]="{'width': '100%'}"></p-calendar>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <label>Đến ngày</label>
+            <div class="form-group">
+              <p-calendar [(ngModel)]="filterModel.toDate" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                [style]="{'width': '100%'}"></p-calendar>
+            </div>
+          </div>
+
+          <div class="col-sm-3">
+            <label>Từ tỉnh</label>
+            <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}" [options]="provinces"
+              [(ngModel)]="filterModel.fromProvinceId" filter="filter" (onChange)="changeFilter()">
+            </p-dropdown>
+          </div>
+
+          <div class="col-sm-3">
+            <label>Đến tỉnh</label>
+            <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}" [options]="provinces"
+              [(ngModel)]="filterModel.toProvinceId" filter="filter" (onChange)="changeFilter()">
+            </p-dropdown>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-2">
+            <label>Từ TT/CN/T</label>
+            <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}" [options]="hubs"
+              [(ngModel)]="filterModel.fromHubId" filter="filter" (onChange)="changeFilter()">
+            </p-dropdown>
+          </div>
+
+          <div class="col-sm-2">
+            <label>Đến TT/CN/T</label>
+            <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}" [options]="hubs"
+              [(ngModel)]="filterModel.toHubId" filter="filter" (onChange)="changeFilter()">
+            </p-dropdown>
+          </div>
+
+          <div class="col-sm-3">
+            <label>Nhân viên</label>
+            <p-autoComplete [(ngModel)]="employee_2" [suggestions]="filteredEmployees_2" [minLength]="1"
+              (completeMethod)="filterEmployee_2($event)" (onSelect)="onSelectedEmployee_2()"
+              styleClass="select-input form-control none-padding" [dropdown]="false"
+              (keydown.Tab)="keyTabEmployee_2($event)">
+            </p-autoComplete>
+          </div>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="table-responsive">
+              <p-table #dt [value]="lstData" [paginator]="true" [rows]="20" [rowsPerPageOptions]="[10,20,50,100]"
+                [lazy]="true" [totalRecords]="totalCount" [responsive]="true" [scrollable]="true" scrollHeight="500px"
+                [columns]="columns" (onPage)="onPageChange($event)">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th style="width: 150px">STT</th>
+                    <th style="width: 150px" pSortableColumn="fromProvinceName">Từ tỉnh
+                      <p-sortIcon field="fromProvinceName"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="toProvinceName">Đến tỉnh
+                      <p-sortIcon field="toProvinceName"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="customerTypeName">Loại khách hàng
+                      <p-sortIcon field="customerTypeName"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="shipmentNumber">Số vận đơn
+                      <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="orderDate">Ngày vận đơn
+                      <p-sortIcon field="orderDate"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="thoiGianNhapKho">Thời gian nhập kho(nhận)
+                      <p-sortIcon field="thoiGianNhapKho"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="thoiGianXuatKho">Thời gian xuất kho(giao)
+                      <p-sortIcon field="thoiGianXuatKho"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="deliverUserName">Nhân viên giao hàng
+                      <p-sortIcon field="deliverUserName"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="realRecipientName">Tên người nhận
+                      <p-sortIcon field="realRecipientName"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="endDeliveryTime">Thời gian giao hàng Hình ảnh
+                      <p-sortIcon field="endDeliveryTime"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="isReturn">Hoàn trả hàng
+                      <p-sortIcon field="isReturn"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="shipmentTypeName">Chuyển hoàn chứng từ
+                      <p-sortIcon field="shipmentTypeName"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="relativeShipmentNumber">Vận đơn liên quan
+                      <p-sortIcon field="relativeShipmentNumber"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="maBangKeTienCuocDaNop">Tiền cước đã nộp
+                      <p-sortIcon field="maBangKeTienCuocDaNop"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="maBangKeCODDaNop">COD đã nộp
+                      <p-sortIcon field="maBangKeCODDaNop"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="deliveryDate">Deadline giao hàng
+                      <p-sortIcon field="deliveryDate"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="kPI">KPI
+                      <p-sortIcon field="kPI"></p-sortIcon>
+                    </th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                  <tr>
+                    <td style="width: 150px">{{rowIndex + 1}}</td>
+                    <td style="width: 150px">{{rowData.fromProvinceName}}</td>
+                    <td style="width: 150px">{{rowData.toProvinceName}}</td>
+                    <td style="width: 150px">{{rowData.customerTypeName}}</td>
+                    <td style="width: 150px">{{rowData.shipmentNumber}}</td>
+                    <td style="width: 150px">{{rowData.orderDate | date:'dd/MM/yyyy'}}</td>
+                    <td style="width: 150px">{{rowData.thoiGianNhapKho | date:'dd/MM/yyyy'}}</td>
+                    <td style="width: 150px">{{rowData.thoiGianXuatKho | date:'dd/MM/yyyy'}}</td>
+                    <td style="width: 150px">{{rowData.deliverUserName}}</td>
+                    <td style="width: 150px">{{rowData.realRecipientName}}</td>
+                    <td style="width: 150px">{{rowData.endDeliveryTime | date:'dd/MM/yyyy'}}</td>
+                    <td style="width: 150px; text-align: center">
+                      <p-checkbox [(ngModel)]="rowData.isReturn" [disabled]="true"></p-checkbox>
+                    </td>
+                    <td style="width: 150px">{{rowData.shipmentTypeName}}</td>
+                    <td style="width: 150px">{{rowData.relativeShipmentNumber}}</td>
+                    <td style="width: 150px">{{rowData.maBangKeTienCuocDaNop}}</td>
+                    <td style="width: 150px">{{rowData.maBangKeCODDaNop}}</td>
+                    <td style="width: 150px">{{rowData.deliveryDate | date:'dd/MM/yyyy'}}</td>
+                    <td style="width: 150px">{{rowData.kPI}}</td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr>
+                    <td colspan="18">
+                      Không tìm thấy dữ liệu
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                  <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalCount}}</span>
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #templateConfirmRefresh>
+  <div class="modal-header" style="padding: 5px; text-align:left;">
+    <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+      <span class="sr-only">Close</span>
+    </button>
+  </div>
+  <div class="modal-body" style="overflow:hidden;">
+    <div class="col-md-12 no-padding">
+      <h4>Danh sách thao tác sẽ bị làm mới! Bạn có chắc chắn muốn làm mới dữ liệu không?</h4>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+    <button type="button" class="btn btn-danger" (click)="refresh()">Đồng ý</button>
+  </div>
+</ng-template>
+<!-- End Model -->

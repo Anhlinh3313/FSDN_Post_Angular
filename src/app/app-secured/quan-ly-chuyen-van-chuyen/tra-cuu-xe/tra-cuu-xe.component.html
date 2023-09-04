@@ -1,0 +1,293 @@
+<div class="row">
+  <div class="col-lg-12">
+    <ol class="ibox-title breadcrumb">
+      <li>
+        <a>{{parentPage}}</a>
+      </li>
+      <li class="active">
+        <strong>{{currentPage}}</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-title">
+        <div class="ibox-tools">
+          <a class="collapse-link">
+            <button class="btn btn-success" (click)="refresh()">
+              <i class="fa fa-refresh"></i>&nbsp;refresh
+            </button>
+          </a>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>Biển số</label>
+              <input type="text" class="form-control" [(ngModel)]="dataModel.truckNumber" (keyup.enter)="scanTruckNumber()" />
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>Từ ngày</label>
+              <div class="input-group" daterangepicker [options]="singlePickerOrderDate" (selected)="selectedFromDate($event)">
+                <span class="form-control uneditable-input" name="orderDate">
+                  <p style="margin-top: -3px">{{ fromDate | dateFormatNoTime }}</p>
+                </span>
+                <span class="input-group-btn">
+                  <a type="button" class="btn btn-primary" style="height: 34px; line-height: 27px">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>Đến ngày</label>
+              <div class="input-group" daterangepicker [options]="singlePickerOrderDate" (selected)="selectedToDate($event)">
+                <span class="form-control uneditable-input" name="orderDate">
+                  <p style="margin-top: -3px">{{ toDate | dateFormatNoTime }}</p>
+                </span>
+                <span class="input-group-btn">
+                  <a type="button" class="btn btn-primary" style="height: 34px; line-height: 27px">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <p-table #dt [value]="lstData" [columns]="columns" scrollable="true">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th pSortableColumn="id" style="width: 80px">
+                    STT
+                    <p-sortIcon field="id"></p-sortIcon>
+                  </th>
+                  <th>Thao tác</th>
+                  <th pSortableColumn="code" style="width: 115px">
+                    Mã
+                    <p-sortIcon field="code"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="fromHub.name" style="width: 200px">
+                    Trạm đi
+                    <p-sortIcon field="fromHub.name"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="toHub.name" style="width: 200px">
+                    Trạm đến
+                    <p-sortIcon field="toHub.name"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="truckScheduleStatus.name" style="width: 105px">
+                    Trạng thái
+                    <p-sortIcon field="truckScheduleStatus.name"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="truck.name" style="width: 120px">
+                    Xe
+                    <p-sortIcon field="truck.name"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="sealNumber.name" style="width: 120px">
+                    Số seal
+                    <p-sortIcon field="sealNumber.name"></p-sortIcon>
+                  </th>
+                  <th style="width: 300px">Nhân viên lái xe</th>
+                  <th pSortableColumn="startDatetime" style="width: 140px">
+                    Ngày xuất phát
+                    <p-sortIcon field="startDatetime"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="startKM" style="width: 60px">
+                    Số km xuất phát
+                    <p-sortIcon field="startKM"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="totalWeight" style="width: 60px">
+                    Tổng trọng lượng
+                    <p-sortIcon field="totalWeight"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="totalBox" style="width: 60px">
+                    Số kiện
+                    <p-sortIcon field="totalBox"></p-sortIcon>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr style="height: 50px">
+                  <td style="width: 80px">{{rowIndex + 1}}</td>
+                  <td>
+                    <button class="btn btn-primary" (click)="viewDetail(rowData, template)">Chi tiết</button>
+                  </td>
+                  <td style="width: 115px">{{rowData.code}}</td>
+                  <td style="width: 200px">{{rowData.fromHub?.name}}</td>
+                  <td style="width: 200px">{{rowData.toHub?.name}}</td>
+                  <td style="width: 105px">{{rowData.truckScheduleStatus?.name}}</td>
+                  <td style="width: 120px">{{rowData.truck?.name}}</td>
+                  <td style="width: 120px">{{rowData.sealNumber}}</td>
+                  <td style="width: 300px">{{showRiders(rowData.riders)}}</td>
+                  <td style="width: 140px">{{rowData.startDatetime | dateFormat}}</td>
+                  <td style="width: 60px">{{rowData.startKM}}</td>
+                  <td style="width: 60px">{{rowData.totalWeight}}</td>
+                  <td style="width: 60px">{{rowData.totalBox}}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                  <td colspan="12">
+                    Không tìm thấy dữ liệu
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Start Modal-->
+  <ng-template #template>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+      <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+        <span class="sr-only">Close</span>
+      </button>
+      <h5 class="modal-title" style="font-size:20px">Chi tiết chuyến xe</h5>
+    </div>
+    <div class="modal-body" style="overflow: hidden;">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label>Mã</label>
+          <label class="form-control">{{truckScheduleModal.code}}</label>
+        </div>
+      </div> 
+
+      <div class="col-md-4">
+        <div class="form-group">
+          <label>Trạm đi</label>
+          <label class="form-control">{{truckScheduleModal.fromHub?.name}}</label>
+        </div>
+      </div> 
+
+      <div class="col-md-4">
+        <div class="form-group">
+          <label>Trạm đến</label>
+          <label class="form-control">{{truckScheduleModal.toHub?.name}}</label>
+        </div>
+      </div> 
+
+      <div class="col-md-4">
+        <div class="form-group">
+          <label>Trạng thái</label>
+          <label class="form-control">{{truckScheduleModal.truckScheduleStatus?.name}}</label>
+        </div>
+      </div> 
+
+      <div class="col-md-4">
+        <div class="form-group">
+          <label>Xe</label>
+          <label class="form-control">{{truckScheduleModal.truck?.name}}</label>
+        </div>
+      </div> 
+
+      <div class="col-md-4">
+        <div class="form-group">
+          <label>Số Seal</label>
+          <label class="form-control">{{truckScheduleModal.sealNumber}}</label>
+        </div>
+      </div> 
+
+      <div class="col-md-4">
+        <div class="form-group">
+          <label>Ngày xuất phát</label>
+          <label class="form-control">{{truckScheduleModal.startDatetime}}</label>
+        </div>
+      </div> 
+
+      <div class="col-md-4">
+        <div class="form-group">
+          <label>Số km xuất phát</label>
+          <label class="form-control">{{truckScheduleModal.startKM}}</label>
+        </div>
+      </div> 
+
+      <div class="col-md-4">
+        <div class="form-group">
+          <label>Tổng trọng lượng</label>
+          <label class="form-control">{{truckScheduleModal.totalWeight}}</label>
+        </div>
+      </div> 
+
+      <div class="col-md-4">
+        <div class="form-group">
+          <label>Số kiện</label>
+          <label class="form-control">{{truckScheduleModal.totalBox}}</label>
+        </div>
+      </div> 
+
+      <div class="col-md-8">
+        <div class="form-group">
+          <label>Nhân viên lái xe</label>
+          <label class="form-control">{{showRiders(truckScheduleModal.riders)}}</label>
+        </div>
+      </div> 
+
+      <div class="col-md-12 mt-1">
+        <p-table [value]="lstTruckScheduleDetails" scrollable="true">
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="id" style="width: 50px">
+                ID
+                <p-sortIcon field="id"></p-sortIcon>
+              </th>
+              <th style="width: 110px">Ngày</th>
+              <th style="width: 80px">Giờ</th>
+              <th pSortableColumn="hub.name" style="width: 120px">
+                TT/CN/TRẠM
+                <p-sortIcon field="hub.name"></p-sortIcon>
+              </th>
+              <th pSortableColumn="truckScheduleStatus.name" style="width: 120px">
+                Tình trạng
+                <p-sortIcon field="truckScheduleStatus.name"></p-sortIcon>
+              </th>
+              <th pSortableColumn="location" style="width: 120px">
+                Vị trí
+                <p-sortIcon field="location"></p-sortIcon>
+              </th>
+              <th pSortableColumn="note" style="width: 120px">
+                Ghi chú
+                <p-sortIcon field="note"></p-sortIcon>
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr style="height: 50px">
+              <td style="width: 50px">{{rowIndex + 1}}</td>
+              <td style="width: 110px">{{rowData.createdWhen | dateFormatNoTime}}</td>
+              <td style="width: 80px">{{rowData.createdWhen | date:'HH:mm'}}</td>
+              <td style="width: 120px">{{rowData.hub?.name}}</td>
+              <td style="width: 120px">{{rowData.truckScheduleStatus?.name}}</td>
+              <td style="width: 120px">{{rowData.location}}</td>
+              <td style="width: 120px">{{rowData.note}}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+              <td colspan="7">
+                Không tìm thấy dữ liệu
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+    </div>
+  </ng-template>

@@ -1,0 +1,579 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <div class="ibox-tools">
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <!-- <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Chọn Bảng giá</label>
+                            <p-dropdown styleClass="select-input" [style]="{'width':'100%'}" [options]="priceLists" (onChange)="loadPriceService()" [(ngModel)]="selectedPriceList"
+                                placeholder="Chọn dữ liệu" filter="true"></p-dropdown>
+                        </div>
+                    </div> -->
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Chọn dịch vụ</label>
+                            <p-dropdown styleClass="select-input" [style]="{'width':'100%'}" [options]="services"
+                                (onChange)="loadPriceService()" [(ngModel)]="selectedService" placeholder="Chọn dữ liệu"
+                                filter="true"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Chọn bảng giá dịch vụ</label>
+                            <p-dropdown styleClass="select-input" [style]="{'width':'100%'}" [options]="priceServices"
+                                [(ngModel)]="selectedPriceService" placeholder="Chọn dữ liệu" filter="true"
+                                (onChange)="changePriceService()"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label style="width:100%">Mã bảng giá dịch vụ
+                                <button [disabled]="isAddPS" style="padding:0px 5px; font-size: 10px; line-height: 14px"
+                                    type="button" class="btn btn-success pull-right" (click)="AddNewPriceService()">
+                                    <i class="fa fa-add"></i> Tạo mới</button>
+                            </label>
+                            <p-autoComplete styleClass="select-input form-control none-padding"
+                                [suggestions]="resultPriceServices" [(ngModel)]="priceService.code"
+                                (completeMethod)="searchByCode($event)" (onSelect)="onSelectedByCode($event)"
+                                (onKeyUp)="keyUpEnter($event)"></p-autoComplete>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Ưu tiên (9-0)</label>
+                            <input class="input-sm form-control" type="text" currencyFormatter
+                                [(ngModel)]="priceService.numOrder" placeholder="(9-0)" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-success"
+                                (click)="openModelConfirm(templateConfirmViewPriceService)">Xem bảng giá
+                            </button>
+                            <button type="button" class="btn btn-warning" [disabled]="!isView"
+                                (click)="isSubmit=false; openModelConfirm(templateConfirmSavePriceServiceDetail)">
+                                <i class="fa fa-floppy-o"></i> Save bảng giá chi tiết</button>
+                            <button type="button" class="btn btn-success" [disabled]="!isView"
+                                (click)="openModelConfirm(templateConfirmAddColumn)">
+                                <i class="fa fa-add"></i> Thêm cột</button>
+                            <button type="button" class="btn btn-success" [disabled]="!isView"
+                                (click)="openModelConfirm(templateConfirmAddRow)">
+                                <i class="fa fa-add"></i> Thêm dòng</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 text-right" style="margin-bottom:0px;margin-top:0px;">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-warning" [disabled]="!isView"
+                                (click)="confirmCopyPriceService(templateConfirmCopyPriceService)">
+                                <i class="fa fa-floppy-o"></i> Copy bảng giá</button>
+                            <button type="button" class="btn btn-danger" [disabled]="!isView"
+                                (click)="confirmDeletePriceService(templateConfirmDeletePriceService)">
+                                <i class="fa fa-add"></i> Hủy bảng giá</button>
+                            <button type="button" class="btn btn-success"  [disabled]="!isView"
+                            (click)="SavePriceService()">
+                                <i class="fa fa-floppy-o"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <p-table [value]="dataPriceListDetail" [responsive]="true" [globalFilterFields]="columns"
+                                (onLazyLoad)="loadLazy($event)" [lazy]="true" [styleClass]="'tablePriceService'">
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                            <div class="div-flex">
+                                                <b style="line-height:  2.5; padding-right: 10px;">%VAT</b>
+                                                <input class="input-sm form-control" type="text" currencyFormatter
+                                                    [(ngModel)]="priceService.vatPercent" placeholder="%VAT" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="div-flex">
+                                                <b style="line-height:  2.5; padding-right: 10px;">%PPXD</b>
+                                                <input class="input-sm form-control" type="text" currencyFormatter
+                                                    [(ngModel)]="priceService.fuelPercent" placeholder="%PPXD" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="div-flex">
+                                                <b style="line-height:  2.5; padding-right: 10px;">%VSVX</b>
+                                                <input class="input-sm form-control" type="text" currencyFormatter
+                                                    [(ngModel)]="priceService.remoteAreasPricePercent"
+                                                    placeholder="%VSVX" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="div-flex">
+                                                <b style="line-height:  2.5; padding-right: 10px;">DIM</b>
+                                                <input class="input-sm form-control" type="text" currencyFormatter
+                                                    [(ngModel)]="priceService.dim" placeholder="DIM" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="div-flex">
+                                                <b style="line-height:  2.5; padding-right: 10px;">THEO</b>
+                                                <p-dropdown [options]="pricingType"
+                                                    [(ngModel)]="priceService.pricingTypeId" [style]="{'width':'100%'}">
+                                                </p-dropdown>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="div-flex">
+                                                <b style="line-height:  2.5; padding-right: 10px;">LHH</b>
+                                                <p-dropdown [options]="structure" [(ngModel)]="priceService.structureId"
+                                                    [style]="{'width':'100%'}"></p-dropdown>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width:80px" class="text-center">#</th>
+                                        <th style="width:150px; text-align: center">công thức</th>
+                                        <th style="width:100px" class="text-center">Từ</th>
+                                        <th style="width:100px" class="text-center">Đến</th>
+                                        <th *ngFor="let item of areaAndSelect" style="width: 180px;">
+                                            <div style="text-align: center">
+                                                <button type="button" class="btn btn-danger"
+                                                    (click)="openDeleteAreaModel(templateDeleteArea,item.id)">Xóa cột
+                                                </button>
+                                                <button *ngIf="item.showInfo==true" (click)="hideInfo(item)"
+                                                    type="button" class="btn btn-success">Ẩn tỉnh</button>
+                                                <button *ngIf="item.showInfo!=true" (click)="showInfo(item)"
+                                                    type="button" class="btn btn-success">Hiện tỉnh</button>
+                                            </div>
+                                            <div>
+                                                <input type="text" style="width: 100%" [(ngModel)]="item.code">
+                                            </div>
+                                            <div *ngIf="item.showInfo==true">
+                                                <div class="multiSelect">
+                                                    <p-multiSelect #multiFromProvince [options]="lstProvinces"
+                                                        filter="true" [(ngModel)]="item.multiSelectFromProvince"
+                                                        (keyup)="filterFromProvince($event, item, multiFromProvince)"
+                                                        defaultLabel="Chọn tỉnh thành đi"
+                                                        selectedItemsLabel="{0} Tỉnh thành đi đã chọn"
+                                                        [style]="{'width':'100%'}"
+                                                        (onChange)="changeFromProvince(item, multiFromProvince, $event)">
+                                                    </p-multiSelect>
+                                                </div>
+                                                <div class="multiSelect" style="padding-top: 10px;">
+                                                    <p-multiSelect #multiProvince [options]="lstProvinces"
+                                                        (keyup)="filterProvince($event, item, multiProvince, multiDistrict)"
+                                                        filter="true"
+                                                        (onChange)="changeProvince(item, multiProvince, multiDistrict)"
+                                                        [(ngModel)]="item.multiSelectProvinces"
+                                                        defaultLabel="Chọn tỉnh thành đến"
+                                                        selectedItemsLabel="{0} Tỉnh thành đến đã chọn"
+                                                        [style]="{'width':'100%'}">
+                                                    </p-multiSelect>
+                                                </div>
+                                                <div class="multiSelect" style="padding-top: 10px;">
+                                                    <p-multiSelect #multiDistrict [options]="item.districts"
+                                                        (keyup)="filterDistrict($event, item, multiDistrict)"
+                                                        [(ngModel)]="item.multiSelectDistrict"
+                                                        defaultLabel="Chọn quận huyện đến"
+                                                        selectedItemsLabel="{0} Quận huyện đến đã chọn"
+                                                        [style]="{'width':'100%'}">
+                                                    </p-multiSelect>
+                                                </div>
+                                                <div>
+                                                    <!-- <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">Giao hàng (h)</span>
+                                                        </div>
+                                                        <input type="text" class="form-control" [(ngModel)]="item.expectedTime" (keydown)="checkNumber($event)" placeholder="Dự kiến giao hàng (h)">
+                                                    </div> -->
+                                                    <div class="input-group m-b" style="margin-top: 5px;">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-addon">Giao hàng (h)</span>
+                                                        </div>
+                                                        <input type="text" [(ngModel)]="item.expectedTime" (keydown)="checkNumber($event)" placeholder="Dự kiến giao hàng (h)" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th style="width:100px" class="text-center">Giá trị từ</th>
+                                        <th style="width:100px" class="text-center">Giá trị đến</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData>
+                                    <tr>
+                                        <td style="width:80px">
+                                            <button type="button" class="btn btn-danger"
+                                                (click)="openDeleteWeightModel(templateDeleteWeight,rowData.weight.id)">Xóa
+                                                dòng
+                                            </button>
+                                        </td>
+                                        <td style="width:150px">
+                                            <div>
+                                                <p-dropdown styleClass="select-input form-control" [options]="formulas"
+                                                    [(ngModel)]="rowData.weight.formulaId" [style]="{'width':'100%'}"
+                                                    filter="filter">
+                                                </p-dropdown>
+                                            </div>
+                                            <div *ngIf="rowData.weight.formulaId==7">
+                                                <input type="text" style="width: 100%" currencyFormatter
+                                                    [(ngModel)]="rowData.weight.weightPlus">
+                                            </div>
+                                        </td>
+                                        <td style="width:100px">
+                                            <input class="input-sm form-control" type="text" placeholder="0"
+                                                currencyFormatter [(ngModel)]="rowData.weight.weightFrom" />
+                                            <!-- inputStyleClass="form-control"/> -->
+                                        </td>
+                                        <td style="width:100px">
+                                            <input class="input-sm form-control" type="text" placeholder="0"
+                                                currencyFormatter [(ngModel)]="rowData.weight.weightTo" />
+                                            <!-- inputStyleClass="form-control"/> -->
+                                        </td>
+                                        <td *ngFor="let item of rowData.areaAndPrices" style="width: 180px;">
+                                            <input class="input-sm form-control" type="text" placeholder="0"
+                                                currencyFormatter [(ngModel)]="item.priceBasic.price" />
+                                            <!-- inputStyleClass="form-control"/> -->
+                                        </td>
+                                        <td>
+                                            <input class="input-sm form-control" type="text" placeholder="0"
+                                                currencyFormatter [(ngModel)]="rowData.weight.valueFrom" />
+                                            <!-- inputStyleClass="form-control"/> -->
+                                        </td>
+                                        <td>
+                                            <input class="input-sm form-control" type="text" placeholder="0"
+                                                currencyFormatter [(ngModel)]="rowData.weight.valueTo" />
+                                            <!-- inputStyleClass="form-control"/> -->
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                    <tr>
+                                        <td colspan="2">
+
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2">
+                        <label>Từ ngày</label>
+                        <div class="form-group">
+                            <p-calendar #calendarDateFrom [(ngModel)]="dateFrom" [dateFormat]="dateFormat"
+                                showIcon="true"></p-calendar>
+                            <span class="fa fa-times clearCalendar" *ngIf="dateFrom"
+                                (click)="clearSelectedDateFrom()"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Đến ngày</label>
+                        <div class="form-group">
+                            <p-calendar #calendarDateTo [(ngModel)]="dateTo" [dateFormat]="dateFormat" showIcon="true">
+                            </p-calendar>
+                            <span class="fa fa-times clearCalendar" *ngIf="dateTo"
+                                (click)="clearSelectedDateTo()"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <label>{{priceService.isTwoWay?'Hai chiều':'Một chiều'}}</label>
+                        <div class="form-group">
+                            <p-inputSwitch [(ngModel)]="priceService.isTwoWay"></p-inputSwitch>
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <label>{{priceService.isPublic?'Public':'No Public'}}</label>
+                        <div class="form-group">
+                            <p-inputSwitch [(ngModel)]="priceService.isPublic"></p-inputSwitch>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>{{priceService.isKeepWeight?'Giữ nguyên cân':'Làm tròn cân'}}</label>
+                        <div class="form-group">
+                            <p-inputSwitch [(ngModel)]="priceService.isKeepWeight"></p-inputSwitch>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Khách hàng</label>
+                        <div class="form-group">
+                            <p-autoComplete [(ngModel)]="customerPriceServiceModel.customer" [suggestions]="customers"
+                                (completeMethod)="searchCustomer($event)" (onSelect)="selectCustomer($event)"
+                                (onClear)="clearCustomer($event)" field="code"></p-autoComplete>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>%VAT</label>
+                        <div class="form-group">
+                            <input class="input-sm form-control" type="text" currencyFormatter
+                                [(ngModel)]="customerPriceServiceModel.vatPercent" placeholder="%VAT" />
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>%PPXD</label>
+                        <div class="form-group">
+                            <input class="input-sm form-control" type="text" currencyFormatter
+                                [(ngModel)]="customerPriceServiceModel.fuelPercent" placeholder="%PPXD" />
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>%VSVX</label>
+                        <div class="form-group">
+                            <input class="input-sm form-control" type="text" currencyFormatter
+                                [(ngModel)]="customerPriceServiceModel.remoteAreasPricePercent" placeholder="%VSVX" />
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>DIM</label>
+                        <div class="form-group">
+                            <input class="input-sm form-control" type="text" currencyFormatter
+                                [(ngModel)]="customerPriceServiceModel.dim" placeholder="DIM" />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label></label>
+                        <div class="form-group">
+                            <button *ngIf="isAdd && isEdit" class="btn btn-primary" (click)="saveCustomerPriceService()"
+                                style="margin-top: 7px">Lưu</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col-md-3 pull-right">
+                        <label>Tìm kiếm</label>
+                        <div class="form-group">
+                            <input type="text" class="form-control"
+                                (input)="dtCustomerPriceService.filterGlobal($event.target.value, 'contains')" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <p-table #dtCustomerPriceService [value]="selectedCustomer" [responsive]="true"
+                            [columns]="colsCustomerPriceService">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th></th>
+                                    <th pSortableColumn="code">Mã áp giá
+                                        <p-sortIcon field='code'></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="customer.name">Mã khách hàng
+                                        <p-sortIcon field='customer.name'></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="vatPercent">%VAT
+                                        <p-sortIcon field='vatPercent'></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="fuelPercent">%PPXD
+                                        <p-sortIcon field='fuelPercent'></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="remoteAreasPricePercent">%VSVX
+                                        <p-sortIcon field='remoteAreasPricePercent'></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="dim">DIM
+                                        <p-sortIcon field='dim'></p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData>
+                                <tr>
+                                    <td>
+                                        <button *ngIf="isEdit" class="btn btn-warning"
+                                            (click)="editCustomerPriceService(rowData)">Sửa</button>
+                                        <button *ngIf="isDelete" class="btn btn-danger"
+                                            (click)="deleteCustomerPriceService(rowData)">Xóa</button>
+                                    </td>
+                                    <td>{{rowData.code}}</td>
+                                    <td>{{rowData.customer?.code}}</td>
+                                    <td>{{rowData.vatPercent}}</td>
+                                    <td>{{rowData.fuelPercent}}</td>
+                                    <td>{{rowData.remoteAreasPricePercent}}</td>
+                                    <td>{{rowData.dim}}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <ng-template #templateDeleteArea>
+            <div class="modal-header" style="padding: 5px; text-align:left;">
+                <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+                    (click)="bsModalRef.hide()">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;" *ngIf="selectedArea">
+                <div class="col-md-12 no-padding">
+                    <h4>Bạn có chắc chắn muốn xoá
+                        <b>&quot;{{selectedArea.code}}&quot;</b>?</h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)="confirmDeleteArea()">Xác nhận</button>
+                <button type="button" class="btn btn-white" data-dismiss="modal"
+                    (click)="bsModalRef.hide()">Hủy</button>
+            </div>
+        </ng-template>
+
+        <ng-template #templateDeleteWeight>
+            <div class="modal-header" style="padding: 5px; text-align:left;">
+                <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+                    (click)="bsModalRef.hide()">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;" *ngIf="selectedWeight">
+                <div class="col-md-12 no-padding">
+                    <h4>Bạn có chắc chắn muốn xoá
+                        <b>&quot;{{selectedWeight.code}}&quot;</b>?</h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)="confirmDeleteWeight()">Xác nhận</button>
+                <button type="button" class="btn btn-white" data-dismiss="modal"
+                    (click)="bsModalRef.hide()">Hủy</button>
+            </div>
+        </ng-template>
+
+        <ng-template #templateConfirmDeletePriceService>
+            <div class="modal-header" style="padding: 5px; text-align:left;">
+                <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+                    (click)="bsModalRef.hide()">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12 no-padding">
+                    <h4>Bạn có chắc chắn muốn HỦY BẢNG GIÁ hay không...!</h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)="deletePriceService()">Xác nhận</button>
+                <button type="button" class="btn btn-white" data-dismiss="modal"
+                    (click)="bsModalRef.hide()">Hủy</button>
+            </div>
+        </ng-template>
+        <ng-template #templateConfirmCopyPriceService>
+            <div class="modal-header" style="padding: 5px; text-align:left;">
+                <h5>Copy bảng giá</h5>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12 no-padding">
+                    <div class="form-group">
+                        <label>Mã bảng giá mới</label>
+                        <input type="text" placeholder="Nhập mã bảng giá" class="input-sm form-control" id="code"
+                            [(ngModel)]="newPriceServiceCode" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" [disabled]="isSubmit" class="btn btn-primary" (click)="isSubmit=true; copyPriceService()">Copy bảng giá</button>
+                <button type="button" [disabled]="isSubmit" class="btn btn-white" data-dismiss="modal"
+                    (click)="bsModalRef.hide()">Hủy</button>
+            </div>
+        </ng-template>
+
+
+        <ng-template #templateConfirmViewPriceService>
+            <div class="modal-header" style="padding: 5px; text-align:left;">
+                <h5 class="pull-left">Xem bảng giá</h5>
+                <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+                    (click)="bsModalRef.hide()">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12 no-padding">
+                    <p> 1. Bạn chắc chắn muốn xem bảng giá?</p>
+                    <p> 2. Khi xem bảng giá, hệ thống sẽ load thông tin bảng giá, nếu có nhập hoặc sửa thông tin bảng
+                        giá vui lòng <b>LƯU LẠI</b> để tránh bị mất thông tin.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)="onViewPriceListDetail()">Xem bảng giá</button>
+                <button type="button" class="btn btn-white" data-dismiss="modal"
+                    (click)="bsModalRef.hide()">Hủy</button>
+            </div>
+        </ng-template>
+
+        <ng-template #templateConfirmSavePriceServiceDetail>
+            <div class="modal-header" style="padding: 5px; text-align:left;">
+                <h5 class="pull-left">Lưu bảng giá chi tiết</h5>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12 no-padding">
+                    <p> 1. Bạn chắc chắn muốn lưu bảng giá?</p>
+                    <p> 2. Trong quá trình lưu bạn giá vui lòng chờ cho đến khi hệ thống thông báo hoàn tất.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" [disabled]="isSubmit" class="btn btn-primary" (click)="isSubmit=true; Save()">Lưu
+                    bảng giá</button>
+                <button type="button" [disabled]="isSubmit" class="btn btn-white" data-dismiss="modal"
+                    (click)="bsModalRef.hide()">Hủy</button>
+            </div>
+        </ng-template>
+
+        <ng-template #templateConfirmAddColumn>
+            <div class="modal-header" style="padding: 5px; text-align:left;">
+                <h5 class="pull-left">Thêm một cột cho bảng giá</h5>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12 no-padding">
+                    <p> 1. Thêm cột hệ thống sẽ làm mới lại dữ liệu, nhữngng thông tin đã nhập vui lòng <b>LƯU LẠI</b>
+                        trước khi thêm cột - tránh mất dữ liệu.</p>
+                    <p> 2. Bạn chắc chắn thêm một cột cho bảng giá?</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" [disabled]="isSubmit" (click)="isSubmit=true; AddArea()">Thêm 1 cột</button>
+                <button type="button" class="btn btn-white" [disabled]="isSubmit" data-dismiss="modal"
+                    (click)="bsModalRef.hide()">Hủy</button>
+            </div>
+        </ng-template>
+
+        <ng-template #templateConfirmAddRow>
+            <div class="modal-header" style="padding: 5px; text-align:left;">
+                <h5 class="pull-left">Thêm một dòng cho bảng giá</h5>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12 no-padding">
+                    <p> 1. Thêm dòng hệ thống sẽ làm mới lại dữ liệu, nhữngng thông tin đã nhập vui lòng <b>LƯU LẠI</b>
+                        trước khi thêm dòng - tránh mất dữ liệu.</p>
+                    <p> 2. Bạn chắc chắn thêm một dòng cho bảng giá?</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)="addWeight()">Thêm 1 dòng</button>
+                <button type="button" class="btn btn-white" data-dismiss="modal"
+                    (click)="bsModalRef.hide()">Hủy</button>
+            </div>
+        </ng-template>

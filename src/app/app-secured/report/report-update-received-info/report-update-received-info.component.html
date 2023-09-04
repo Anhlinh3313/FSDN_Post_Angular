@@ -1,0 +1,306 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<p-tabView (onChange)="onTabChange($event)">
+    <p-tabPanel header=" Báo cáo cập nhật thông tin nhận">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <div class="ibox-tools">
+                            <p-header>
+                                <div>
+                                    <button type="button" class="btn btn-primary" (click)="exportCSV(1)">
+                                        <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+                                    <button type="button" class="btn btn-success" (click)="loadReport(1)">
+                                        <i class="fa fa-refresh"></i>&nbsp;Xem</button>
+                                </div>
+                            </p-header>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label>Từ ngày</label>
+                                <div class="form-group">
+                                    <p-calendar [(ngModel)]="selectedDateFrom" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                                        (onSelect)="selectedDate(1)" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                                        [style]="{'width': '100%'}"></p-calendar>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label>Đến ngày</label>
+                                <div class="form-group">
+                                    <p-calendar [(ngModel)]="selectedDateTo" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                                        (onSelect)="selectedDate(1)" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                                        [style]="{'width': '100%'}"></p-calendar>
+                                </div>
+                            </div>
+        
+                            <div class="col-sm-3">
+                                <label>{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}}</label>
+                                <p-dropdown styleClass="select-input form-control" [(ngModel)]="selectedHub" [options]="hubs"
+                                    [style]="{'width':'100%'}" filter="filter" (onChange)="changeHub(1)">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-sm-2">
+                                <label>Nhân viên</label>
+                                <p-dropdown styleClass="select-input form-control" [(ngModel)]="selectedEmp" [options]="emps" [style]="{'width':'100%'}"
+                                    filter="filter" (onChange)="changeUser(1)">
+                                </p-dropdown>
+        
+                                <!-- <p-autoComplete [(ngModel)]="employee_2" [suggestions]="filteredEmployees_2" [minLength]="1"
+                                    (completeMethod)="filterEmployee_2($event)" (onSelect)="onSelectedEmployee_2()" styleClass="select-input form-control none-padding"
+                                    [dropdown]="false">
+                                </p-autoComplete> -->
+                            </div>
+                            <div class="col-sm-3">
+                                <label>Tìm kiếm</label>
+                                <div class="input-group">
+        
+                                    <input #filterGb type="text" placeholder="Nhập chuỗi cần tìm ..." class="input-sm form-control"
+                                        id="filter" (input)="dt.filterGlobal($event.target.value, 'contains')" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="">
+                                    <p-table #dt [value]="datasource" [paginator]="true" [rows]="10" [scrollable]="true"
+                                        scrollHeight="450px" [responsive]="true" [rowsPerPageOptions]="[10,20,50,100]"
+                                        [totalRecords]="totalRecords" [lazy]="true" (onLazyLoad)="loadLazy($event)"
+                                        [scrollable]="true">
+                                        <ng-template pTemplate="header">
+                                            <tr> 
+                                              <th rowspan="3" style="width:50px;">STT </th>
+                                              <th rowspan="3" style="width:150px;">  Nhân viên </th>
+                                              <th colspan="12" style="width:1200px;">Chi tiết giao TC</th>
+                                              <th rowspan="2" colspan="2" style="width:200px;">App TC</th>
+                                              <th rowspan="2" colspan="2" style="width:200px;">App treo</th>
+                                              <th rowspan="3" style="width:100px;">Tổng vận đơn</th>
+                                          </tr>
+                                          <tr>
+                                              <th colspan="2" style="width:200px;">Từ 1h trở xuống</th>
+                                              <th colspan="2" style="width:200px;">Trong vòng 12h</th>
+                                              <th colspan="2" style="width:200px;">Trong vòng 24h</th>
+                                              <th colspan="2" style="width:200px;">Trong vòng 36h</th>
+                                              <th colspan="2" style="width:200px;">Trong vòng 48h</th>
+                                              <th colspan="2" style="width:200px;">Trên 48h</th>
+                                          </tr>
+                                          <tr>
+                                              <th style="width:100px;">Tổng</th>
+                                              <th style="width:100px;">Tỷ lệ</th>
+                                              <th style="width:100px;">Tổng</th>
+                                              <th style="width:100px;">Tỷ lệ</th>
+                                              <th style="width:100px;">Tổng</th>
+                                              <th style="width:100px;">Tỷ lệ</th>
+                                              <th style="width:100px;">Tổng</th>
+                                              <th style="width:100px;">Tỷ lệ</th>
+                                              <th style="width:100px;">Tổng</th>
+                                              <th style="width:100px;">Tỷ lệ</th>
+                                              <th style="width:100px;">Tổng</th>
+                                              <th style="width:100px;">Tỷ lệ</th>
+                                              <th style="width:100px;">Tổng</th>
+                                              <th style="width:100px;">Tỷ lệ</th>
+                                              <th style="width:100px;">Tổng</th>
+                                              <th style="width:100px;">Tỷ lệ</th>
+                                          </tr> 
+                                          </ng-template>
+                                          <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                                              <tr>
+                                                  <td style="width:50px; height: 50px; text-align: center;">{{rowIndex + 1}}</td>
+                                                  <td style="width:150px;">{{rowData.currentEmpName}}</td>
+                                                  <td class="setAlign" >{{rowData.totalBillIn1Hour ? rowData.totalBillIn1Hour : "-"}}</td>
+                                                  <td class="setAlign" >{{rowData.totalPercentIn1Hour ? rowData.totalPercentIn1Hour : 0  }}%</td>
+                                                  <td class="setAlign" >{{rowData.totalBillIn12Hour ? rowData.totalBillIn12Hour : "-"}}</td>
+                                                  <td class="setAlign" >{{rowData.totalPercentIn12Hour ? rowData.totalPercentIn12Hour : 0  }}%</td>
+                                                  <td class="setAlign" >{{rowData.totalBillIn24Hour ? rowData.totalBillIn24Hour : "-"}}</td>
+                                                  <td class="setAlign" >{{rowData.totalPercentIn24Hour ? rowData.totalPercentIn24Hour : 0  }}%</td>
+                                                  <td class="setAlign" >{{rowData.totalBillIn36Hour ? rowData.totalBillIn36Hour : "-"}}</td>
+                                                  <td class="setAlign" >{{rowData.totalPercentIn36Hour ? rowData.totalPercentIn36Hour : 0  }}%</td>
+                                                  <td class="setAlign" >{{rowData.totalBillIn48Hour ? rowData.totalBillIn48Hour : "-"}}</td>
+                                                  <td class="setAlign" >{{rowData.totalPercentIn48Hour ? rowData.totalPercentIn48Hour : 0  }}%</td>
+                                                  <td class="setAlign" >{{rowData.totalBillIn48ThanHour ? rowData.totalBillIn48ThanHour : "-"}}
+                                                  <td class="setAlign" >{{rowData.totalPercentIn48ThanHour ? rowData.totalPercentIn48ThanHour : 0  }}%</td>
+                                                  <td class="setAlign" >{{rowData.totalBillAppTC ? rowData.totalBillAppTC : "-"}}
+                                                  <td class="setAlign" >{{rowData.totalPercentAppTC ? rowData.totalPercentAppTC : 0  }}%</td>
+                                                  <td class="setAlign" >{{rowData.totalBillAppTreo ? rowData.totalBillAppTreo : "-"}}
+                                                  <td class="setAlign" >{{rowData.totalPercentAppTreo ? rowData.totalPercentAppTreo : 0  }}%</td>
+                                                  <td class="setAlign" >{{rowData.totalBill ? rowData.totalBill : 0  }}</td>
+                                                  
+                                              </tr>
+                                          </ng-template>
+                                        <ng-template pTemplate="emptymessage">
+                                            <tr>
+                                                <td [attr.colspan]="'32'">
+                                                    Không tìm thấy dữ liệu
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="footer" let-columns>                                    
+                                        </ng-template>
+                                        <ng-template pTemplate="summary">
+                                            <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecords}} giao
+                                                nhận</span>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+            </div>
+        </div>
+        
+    </p-tabPanel>
+    <p-tabPanel header="Báo cáo nộp tiền nhân viên"    >
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <div class="ibox-tools">
+                            <p-header>
+                                <div>
+                                    <button type="button" class="btn btn-primary" (click)="exportCSV(2)">
+                                        <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+                                    <button type="button" class="btn btn-success" (click)="refresh(2)">
+                                        <i class="fa fa-refresh"></i>&nbsp;refresh</button>
+                                </div>
+                            </p-header>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label>Từ ngày</label>
+                                <div class="form-group">
+                                    <p-calendar [(ngModel)]="selectedDateFrom" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                                        (onSelect)="selectedDate(2)" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                                        [style]="{'width': '100%'}"></p-calendar>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label>Đến ngày</label>
+                                <div class="form-group">
+                                    <p-calendar [(ngModel)]="selectedDateTo" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                                        (onSelect)="selectedDate(2)" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                                        [style]="{'width': '100%'}"></p-calendar>
+                                </div>
+                            </div>
+        
+                            <div class="col-sm-3">
+                                <label>{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}}</label>
+                                <p-dropdown styleClass="select-input form-control" [(ngModel)]="selectedHub" [options]="hubs"
+                                    [style]="{'width':'100%'}" filter="filter" (onChange)="changeHub(2)">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-sm-2">
+                                <label>Nhân viên</label>
+                                <p-dropdown styleClass="select-input form-control" [(ngModel)]="selectedEmp" [options]="emps" [style]="{'width':'100%'}"
+                                    filter="filter" (onChange)="changeUser(2)">
+                                </p-dropdown>
+        
+                                <!-- <p-autoComplete [(ngModel)]="employee_2" [suggestions]="filteredEmployees_2" [minLength]="1"
+                                    (completeMethod)="filterEmployee_2($event)" (onSelect)="onSelectedEmployee_2()" styleClass="select-input form-control none-padding"
+                                    [dropdown]="false">
+                                </p-autoComplete> -->
+                            </div>
+                            <div class="col-sm-3">
+                                <label>Tìm kiếm</label>
+                                <div class="input-group">
+        
+                                    <input #filterGb type="text" placeholder="Nhập chuỗi cần tìm ..." class="input-sm form-control"
+                                        id="filter" (input)="dt.filterGlobal($event.target.value, 'contains')" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="">
+                                    <p-table #dt [value]="datasource" [paginator]="true" [rows]="10" [scrollable]="true"
+                                        scrollHeight="450px" [responsive]="true" [rowsPerPageOptions]="[10,20,50,100]"
+                                        [totalRecords]="totalRecords" [lazy]="true" (onLazyLoad)="loadLazy($event)"
+                                        [scrollable]="true">
+                                        <ng-template pTemplate="header">
+                                          <tr> 
+                                            <th rowspan="3" style="width:50px;">STT </th>
+                                            <th rowspan="3" style="width:150px;"> Nhân viên </th>
+                                            <th colspan="6" style="width: 600px;">Chi tiết giao TC</th>
+                                            <th rowspan="2" colspan="2" style="width: 200px;">App BK tiền</th>
+                                            <th rowspan="2" colspan="2" style="width: 200px;">treo App </th>
+                                            <th rowspan="3" style="width: 100px;">Tổng vận đơn</th>
+                                        </tr>
+                                        <tr> 
+                                            <th colspan="2" style="width: 200px;">Trong vòng 24h</th> 
+                                            <th colspan="2" style="width: 200px;">Trong vòng 48h</th>
+                                            <th colspan="2" style="width: 200px;">Trên 48h</th>
+                                        </tr>
+                                        <tr>
+                                            <th style="width:100px;">Tổng</th>
+                                            <th style="width:100px;">Tỷ lệ</th>
+                                            <th style="width:100px;">Tổng</th>
+                                            <th style="width:100px;">Tỷ lệ</th>
+                                            <th style="width:100px;">Tổng</th>
+                                            <th style="width:100px;">Tỷ lệ</th>
+                                            <th style="width:100px;">Tổng</th>
+                                            <th style="width:100px;">Tỷ lệ</th>
+                                            <th style="width:100px;">Tổng</th>
+                                            <th style="width:100px;">Tỷ lệ</th>
+                                        </tr> 
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                                            <tr>
+                                                <td style="width:50px; height: 50px">{{rowIndex + 1}}</td>
+                                                <td style="width:150px;">{{rowData.currentEmpName}}</td> 
+                                                <td class="setAlign" >{{rowData.totalBillIn24Hour ? rowData.totalBillIn24Hour : "-"}}</td>
+                                                <td class="setAlign" >{{rowData.totalPercentIn24Hour ? rowData.totalPercentIn24Hour : 0  }}%</td> 
+                                                <td class="setAlign" >{{rowData.totalBillIn48Hour ? rowData.totalBillIn48Hour : "-"}}</td>
+                                                <td class="setAlign" >{{rowData.totalPercentIn48Hour ? rowData.totalPercentIn48Hour : 0  }}%</td>
+                                                <td class="setAlign" >{{rowData.totalBillIn48ThanHour ? rowData.totalBillIn48ThanHour : "-"}}
+                                                <td class="setAlign" >{{rowData.totalPercentIn48ThanHour ? rowData.totalPercentIn48ThanHour : 0  }}%</td>
+                                                <td class="setAlign" >{{rowData.totalBillAppTC ? rowData.totalBillAppTC : "-"}}
+                                                <td class="setAlign" >{{rowData.totalPercentAppTC ? rowData.totalPercentAppTC : 0  }}%</td>
+                                                <td class="setAlign" >{{rowData.totalBillAppTreo ? rowData.totalBillAppTreo : "-"}}
+                                                <td class="setAlign" >{{rowData.totalPercentAppTreo ? rowData.totalPercentAppTreo : 0  }}%</td>
+                                                <td class="setAlign" >{{rowData.totalBill ? rowData.totalBill : 0  }}</td>
+                                                
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="emptymessage">
+                                            <tr>
+                                                <td [attr.colspan]="'32'">
+                                                    Không tìm thấy dữ liệu
+                                                </td>
+                                            </tr>
+                                        </ng-template> 
+                                        <ng-template pTemplate="summary">
+                                            <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecords}} giao
+                                                nhận</span>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+            </div>
+        </div>
+        
+    </p-tabPanel>
+</p-tabView>

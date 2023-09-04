@@ -1,0 +1,249 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <div class="ibox-tools">
+                    <p-header #dt>
+                        <div>
+                            <button type="button" class="btn btn-primary" (click)="exportCSV()">
+                                <i class="fa fa-file-excel-o"></i>&nbsp;Excel</button>
+                            <button type="button" class="btn btn-success" (click)="loadShipment()">
+                                <i class="fa fa-refresh"></i>&nbsp;Xem</button>
+                        </div>
+                    </p-header>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Từ ngày</label>
+                        <div class="form-group">
+                            <p-calendar [(ngModel)]="fromDate" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                                (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                                [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Đến ngày</label>
+                        <div class="form-group">
+                            <p-calendar [(ngModel)]="toDate" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                                (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                                [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Khách hàng</label>
+                            <p-autoComplete #atcSenderCode [(ngModel)]="customerChange" [suggestions]="filteredCustomers"
+                                [minLength]="1" [forceSelection]="true" (completeMethod)="filterCustomers($event)"
+                                (onSelect)="changeSender()" [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                                [dropdown]="false" showIcon="false" (keydown.Tab)="changeSender()">
+                            </p-autoComplete>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Dịch vụ</label>
+                            <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}" [options]="lstService"
+                                [(ngModel)]="selectedService" filter="filter" (onChange)="loadShipment()">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group ui-fluid">
+                            <label>Từ Tỉnh</label>
+                            <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}" [options]="fromHubs"
+                                [(ngModel)]="selectedFromHub" filter="filter" [group]="true" (onChange)="changeFromHub()">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group ui-fluid">
+                            <label>Đến tỉnh</label>
+                            <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}" [options]="fromHubs"
+                                [(ngModel)]="selectedFromHub" filter="filter" [group]="true" (onChange)="changeFromHub()">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group ui-fluid">
+                            <label>Từ {{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}}</label>
+                            <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}" [options]="fromHubs"
+                                [(ngModel)]="selectedFromHub" filter="filter" [group]="true" (onChange)="changeFromHub()">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group ui-fluid">
+                            <label>Đến {{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}}</label>
+                            <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}" [options]="toHubs"
+                                [(ngModel)]="selectedToHub" filter="filter" [group]="true" (onChange)="changeFromHub()">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <p-table #dt [value]="listDataLG" [paginator]="true" [rows]="20" (onLazyLoad)="loadLazyList($event)"
+                                [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true" [totalRecords]="totalRecordsLG"
+                                sortField="createdWhen" sortOrder="-1" [alwaysShowPaginator]="true" [responsive]="true"
+                                [columns]="columnsExp" [scrollable]="true" scrollHeight="450px">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="p-col-stt">STT</th>
+                                        <th pSortableColumn="" class="p-col-user">Mã KH
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">Tên KH
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">NVKD
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">BC Phụ Trách
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">Bảng Giá áp dụng
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">Xem chi tiết bảng giá (links xem file
+                                            bảng giá)
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% giảm giá hỏa tốc
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% giảm giá CPN
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% giảm giá 48h
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% giảm giá đường bộ
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% giảm giá dịch vụ giá rẻ
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% giảm giá tiết kiệm
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% chiết khấu trước khi xuất HĐ
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% hoa hồng khách hàng
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% hoa hồng kinh doanh
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                                    <tr>
+                                        <td class="p-col-stt">{{i + 1}}</td>
+                                        <td class="p-col-user">{{rowData.code}}</td>
+                                        <td class="p-col-user">{{rowData.salerName}}</td>
+                                        <td class="p-col-user">{{rowData.hubName}}</td>
+                                        <td class="p-col-user">{{rowData.discount}}</td>
+                                        <td class="p-col-user"></td>
+                                        <td class="p-col-user">{{rowData.discountHT}}</td>
+                                        <td class="p-col-user">{{rowData.discountCPN}}</td>
+                                        <td class="p-col-user">{{rowData.discount48h}}</td>
+                                        <td class="p-col-user">{{rowData.discountDB}}</td>
+                                        <td class="p-col-user">{{rowData.discountNC}}</td>
+                                        <td class="p-col-user">{{rowData.discountTK}}</td>
+                                        <td class="p-col-user"></td>
+                                        <td class="p-col-user">{{rowData.commissionCus}}</td>
+                                        <td class="p-col-user">{{rowData.commission}}</td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer" let-columns>
+                                    <tr>
+                                        <th class="p-col-stt">STT</th>
+                                        <th pSortableColumn="" class="p-col-user">Mã KH
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">Tên KH
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">NVKD
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">BC Phụ Trách
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">Bảng Giá áp dụng
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">Xem chi tiết bảng giá (links xem file
+                                            bảng giá)
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% giảm giá hỏa tốc
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% giảm giá CPN
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% giảm giá 48h
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% giảm giá đường bộ
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% giảm giá dịch vụ giá rẻ
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% giảm giá tiết kiệm
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% chiết khấu trước khi xuất HĐ
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% hoa hồng khách hàng
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="" class="p-col-user">% hoa hồng kinh doanh
+                                            <p-sortIcon field=""></p-sortIcon>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td [attr.colspan]="'32'">
+                                            Không tìm thấy dữ liệu
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="summary">
+                                    <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecordsLG}}
+                                        khách hàng</span>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

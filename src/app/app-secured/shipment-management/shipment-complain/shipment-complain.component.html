@@ -1,0 +1,270 @@
+<app-card>
+  <a class="parentPage">{{parentPage}}</a>
+  <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-title">
+        <!-- <h5>{{currentPage}}</h5> -->
+        <div style="margin:0 auto;margin-bottom:5px; text-align: right">
+          <button class="btn btn-success" (click)="refresh()">
+            <i class="fa fa-refresh"></i>
+          </button>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-md-2">
+            <label>Từ ngày</label>
+            <div class="form-group">
+              <p-calendar [(ngModel)]="shipmentComplainFilter.fromDate" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                [style]="{'width': '100%'}"></p-calendar>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <label>Đến ngày</label>
+            <div class="form-group">
+              <p-calendar [(ngModel)]="shipmentComplainFilter.toDate" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                [style]="{'width': '100%'}"></p-calendar>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-group ui-fluid">
+              <label>Khách hàng</label>
+              <p-autoComplete [(ngModel)]="selectedCustomer" [suggestions]="lstSuggestionsCustomer" [minLength]="1"
+                (completeMethod)="filterCustomer($event)" (onSelect)="onSelectedCustomer()" styleClass="wid100"
+                [dropdown]="false" (keydown.Tab)="keyTabEmployee($event)" (onUnselect)="removeCustomer($event)"
+                [multiple]="true">
+              </p-autoComplete>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-group ui-fluid">
+              <label>Trạng thái</label>
+              <p-multiSelect [options]="lstComplainStatuses" [(ngModel)]="shipmentComplainFilter.complainStatusIds"
+                defaultLabel="Chọn trạng thái" selectedItemsLabel="{0} đã chọn" maxSelectedLabels="2" (onChange)="changeFilter()"></p-multiSelect>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-sm-12">
+            <p-table #dt [value]="lstData" [responsive]="true" [paginator]="true" rows="20" [rowsPerPageOptions]="[10,20,50,100]"
+              [lazy]="true" [totalRecords]="totalRecords" [columns]="columns" scrollable="true" (onPage)="onPageChange($event)">
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <th class="p-col-stt">STT</th>
+                  <th style="width: 200px; vertical-align: top">Thao tác
+                  </th>
+                  <th pSortableColumn="createdWhen" Class="p-col-normal">Ngày tạo
+                    <p-sortIcon field="createdWhen"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="code" Class="p-col-shipmentNumber">Mã
+                    <p-sortIcon field="code"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="shipment.shipmentNumber" Class="p-col-shipmentNumber">Mã vận đơn
+                    <p-sortIcon field="shipment.shipmentNumber"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="customer.name" Class="p-col-normal">Khách hàng
+                    <p-sortIcon field="customer.name"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="phoneNumber" Class="p-col-normal">SĐT khách hàng
+                    <p-sortIcon field="phoneNumber"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="complainType.name" Class="p-col-normal">Nguyên nhân sự cố
+                    <p-sortIcon field="complainType.name"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="handlingHub.name" Class="p-col-normal">Bưu cục xử lý
+                    <p-sortIcon field="handlingHub.name"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="handlingUser.fullName" Class="p-col-normal">Nhân viên xử lý
+                    <p-sortIcon field="handlingUser.fullName"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="forwardToHub.name" Class="p-col-normal">Chuyển tiếp đến NV
+                    <p-sortIcon field="forwardToHub.name"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="complainStatus.name" Class="p-col-normal">Trạng thái
+                    <p-sortIcon field="complainStatus.name"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="endDate" Class="p-col-normal">Ngày hoàn tất
+                    <p-sortIcon field="endDate"></p-sortIcon>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-data let-columns="columns" let-i="rowIndex">
+                <tr [pSelectableRow]="data">
+                  <td class="p-col-stt">{{i + 1}}</td>
+                  <td style="width: 200px">
+                    <div style="display: flex; justify-content: space-between">
+                      <button *ngIf="(data.complainStatusId == 1 || data.complainStatusId == 4)" type="button" class="btn btn-danger"
+                        (click)="openModal(template, data, true)">Tiếp nhận</button>
+                      <button *ngIf="data.complainStatusId == 3" type="button" class="btn btn-success" (click)="openModal(template, data, false)">Xử
+                        lý</button>
+                      <button *ngIf="data.complainStatusId == 3" type="button" class="btn btn-success" (click)="openModalForward(templateForward, data)">Chuyển
+                        tiếp</button>
+                      <button type="button" class="btn btn-default" (click)="openModal(template, data, false, true)">Xem</button>
+                    </div>
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.createdWhen | dateFormat}}
+                  </td>
+                  <td class="p-col-shipmentNumber">
+                    {{data.code}}
+                  </td>
+                  <td class="p-col-shipmentNumber">
+                    {{data.shipment?.shipmentNumber}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.customer?.code}} - {{data.customer?.name}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.phoneNumber}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.complainType?.name}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.handlingHub?.name}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.handlingUser?.code}} - {{data.handlingUser?.fullName}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.forwardToHub?.name}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.complainStatus?.name}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.endDate | dateFormat}}
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Template -->
+<ng-template #template>
+  <div class="modal-header" style="padding: 5px; text-align:left;">
+    <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button" (click)="bsModalRef.hide()">
+      <span aria-hidden="true">×</span>
+      <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title" style="font-size:20px">Đang xử lý - {{dataModal.code}}</h6>
+  </div>
+  <div class="modal-body" style="overflow-y: scroll; height: 646px;">
+    <div class="row">
+      <div class="col-md-8" style="margin-bottom: 25px">
+        <div class="row">
+          <div class="col-md-12" style="border: 1px solid lightgrey; background-color: lightgrey; color: black; padding: 10px; line-height: 19px">
+            <div *ngIf="dataModal.complainImagePath"><img width="100" height="width" [src]="dataModal.complainImagePath"
+                (click)="openModalImage(templateImage, dataModal.complainImagePath)" style="cursor: pointer" /></div>
+            <div>Mã: {{dataModal.shipment?.shipmentNumber}}</div>
+            <div>Loại yêu cầu: {{dataModal.complainStatus?.name}}</div>
+            <div>Nội dung: {{dataModal.complainContent}}</div>
+          </div>
+          <div class="col-md-12" style="padding-left: 0; padding-right: 0">
+            <div class="pull-left">{{dataModal.createdWhen | date:'dd/MM/yyyy HH:mm'}}</div>
+            <div class="pull-right">Đã nhận</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-bottom: 25px" *ngFor="let item of lstComplainHandle">
+      <div class="col-md-8" [ngClass]="{'pull-left': item.customerId, 'pull-right': item.handleEmpId, 'text-left': item.customerId, 'text-right': item.handleEmpId}">
+        <div class="row">
+          <div class="col-md-12" style="padding-left: 0; padding-right: 0">
+            <div class="pull-right">{{item.handleEmp.code}}-{{item.handleEmp.fullName}}</div>
+          </div>
+          <div class="col-md-12" style="border: 1px solid lightgrey; background-color: lightgrey; color: black; padding: 10px; line-height: 19px">
+            <div *ngIf="item.imageBase64"><img width="100" height="100" [src]="item.imageBase64" (click)="openModalImage(templateImage, item.imageBase64)"
+                style="cursor: pointer" /></div>
+            <div>{{item.handleContent}}</div>
+          </div>
+          <div class="col-md-12" style="padding-left: 0; padding-right: 0">
+            <div class="pull-left">{{item.createdWhen | date:'dd/MM/yyyy HH:mm'}}</div>
+            <div class="pull-right">{{item.complainStatus?.name}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer" style="padding-top: 0;">
+    <div *ngIf="!isReview" class="row" style="margin-bottom: 10px;">
+      <input type="file" id="fileUploadImage" style="display: none" accept="image/*" (change)="changeImage($event)" />
+      <textarea type="text" class="form-control" rows="4" [(ngModel)]="addComplainHandle.handleContent" placeholder="nội dung"></textarea>
+      <div style="cursor: pointer; cursor: pointer; text-align: center; display: block; padding: 10px; border: 1px solid lightgrey; width: 32%; float: left"
+        (click)="loadFileUploadImage()">
+        {{titleUploadImage || 'Chọn hình'}}
+      </div>
+      <div style="float: left; margin-left: 15px; margin-top: 9px">
+        <p-checkbox label="Báo đền bù" [(ngModel)]="isCompensation" binary="true" id="isCompensation"></p-checkbox>
+      </div>
+      <div *ngIf="dataModal.complainType?.role.code=='ACCEPT_RETURN'" style="float: left; margin-left: 15px; margin-top: 9px">
+        <p-checkbox label="Xác nhận hoàn" [(ngModel)]="isAcceptReturn" binary="true" id="isAcceptReturn"></p-checkbox>
+      </div>
+    </div>
+    <button *ngIf="!isReview" class="btn btn-primary" type="button" (click)="handling()">Đã xử lý</button>
+    <button class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()" type="button">Đóng</button>
+  </div>
+</ng-template>
+<!-- End -->
+
+<!-- Template Forward -->
+<ng-template #templateForward>
+  <div class="modal-header" style="padding: 5px; text-align:left;">
+    <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button" (click)="bsModalRef.hide()">
+      <span aria-hidden="true">×</span>
+      <span class="sr-only">Close</span>
+    </button>
+    <h6 class="modal-title" style="font-size:20px">Chuyển tiếp</h6>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="form-group">
+        <label>Nhân viên</label>
+        <p-autoComplete [(ngModel)]="employee_2" [suggestions]="filteredEmployees_2" [minLength]="1" (completeMethod)="filterEmployee_2($event)"
+          (onSelect)="onSelectedEmployee_2()" styleClass="select-input form-control none-padding" [dropdown]="false"
+          (keydown.Tab)="keyTabEmployee_2($event)">
+        </p-autoComplete>
+      </div>
+
+      <div class="form-group">
+        <label>Nội dung</label>
+        <textarea type="text" class="form-control" rows="4" [(ngModel)]="addComplainHandle.handleContent"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer" style="padding-top: 0;">
+    <button class="btn btn-primary" type="button" (click)="forward()">Chuyển tiếp</button>
+    <button class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()" type="button">Đóng</button>
+  </div>
+</ng-template>
+<!-- End -->
+
+<!-- Template image -->
+<ng-template #templateImage>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- <img class="img-responsive" [src]="imageData" /> -->
+        <ngx-image-viewer [src]="imageData" [config]="configImageViewer"></ngx-image-viewer>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!-- End -->

@@ -1,0 +1,259 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <!-- <h5>{{currentPage}}</h5> -->
+                <!-- <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div> -->
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Bảng giá dịch vụ</label>
+                            <p-autoComplete styleClass="select-input form-control none-padding"
+                                [(ngModel)]="selectedPriceService" [suggestions]="priceServices"
+                                (completeMethod)="completePriceService($event)"
+                                (onSelect)="onSelectedPriceService($event)" (onKeyUp)="onKeyUpPriceServive($event)"
+                                field="code"></p-autoComplete>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Cơ cấu</label>
+                            <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}"
+                                [options]="structure" [(ngModel)]="selectedStructure" (onChange)="changeStructure()"
+                                filter="filter" autofocus tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Bảng giá áp dụng</label>
+                        <input type="text" class="input-sm form-control" readonly [(ngModel)]="usingPriceService" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Từ tỉnh</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="provinces"
+                                [(ngModel)]="selectedFromProvince" (onChange)="changeFromProvince()"
+                                [style]="{'width':'100%'}" filter="filter" autofocus tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Đến tỉnh</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="provinces"
+                                [(ngModel)]="selectedProvince" (onChange)="changeDistrictByProvince()"
+                                [style]="{'width':'100%'}" filter="filter" autofocus tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Đến quận</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="districts"
+                                [(ngModel)]="selectedDistrict" (onChange)="changeWardByDistrict()"
+                                [style]="{'width':'100%'}" filter="filter" autofocus tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>Đến phường</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="wards"
+                                [(ngModel)]="selectedWard" (onChange)="changeWard()" [style]="{'width':'100%'}"
+                                filter="filter" autofocus tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Dịch vụ</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="services"
+                                [(ngModel)]="selectedService" (onChange)="calculatePrice()" [style]="{'width':'100%'}"
+                                filter="filter" autofocus tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Trọng lượng</label>
+                            <input type="text" currencyFormatter class="input-sm form-control" (change)="changeWeight()"
+                                [(ngModel)]="weight" />
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Số lượng</label>
+                            <input type="text" currencyFormatter class="input-sm form-control" [(ngModel)]="quantity" />
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <!-- <div class="form-group">
+                            <label>Thu hộ (COD)</label>
+                            <input type="number" class="input-sm form-control" min="0" [(ngModel)]="cod" />
+                        </div> -->
+                    </div>
+                    <div class="col-sm-2">
+                        <!-- <div class="form-group">
+                            <label>Khai giá</label>
+                            <input type="number" class="input-sm form-control" min="0" [(ngModel)]="insured" />
+                        </div> -->
+                    </div>
+                    <div class="col-sm-2">
+                        <!-- <div class="form-group">
+                            <label>DVGT
+                            </label>
+                            <input id="txtServiceDVGT" class="input-sm form-control" type="text"
+                                placeholder="enter để mở" [ngModel]="servicePlus"
+                                (keydown.Enter)="openModalEditPriceDVGT(templateEditPriceDVGT)" />
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>
+                                Cước chính
+                            </label>
+                            <input class="input-sm form-control" type="text" placeholder="0" [(ngModel)]="defaultPrice" 
+                            disabled currencyFormatter [input]="defaultPrice"/>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>
+                                VAT
+                            </label>
+                            <input class="input-sm form-control" type="text"  placeholder="0" 
+                            [(ngModel)]="vatPrice" disabled currencyFormatter [input]="vatPrice"/>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>
+                                PXD
+                            </label>
+                            <input class="input-sm form-control" type="text" [(ngModel)]="fuelPrice" disabled
+                            currencyFormatter [input]="fuelPrice"/>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>
+                                VSVX
+                            </label>
+                            <input class="input-sm form-control" type="text" [(ngModel)]="remoteAreasPrice" disabled
+                            currencyFormatter [input]="remoteAreasPrice"/>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>
+                                Tổng phí DVGT
+                            </label>
+                            <input class="input-sm form-control" type="text" placeholder="0" [(ngModel)]="totalDVGT" disabled
+                            currencyFormatter [input]="totalDVGT"/>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>
+                                Tổng
+                            </label>
+                            <input class="input-sm form-control" type="text" placeholder="0" [(ngModel)]="totalPrice" disabled
+                            currencyFormatter [input]="totalPrice"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Start Modal Create Box-->
+<ng-template #templateEditPriceDVGT>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button"
+            (click)="bsModalRef.hide()">
+            <span aria-hidden="true">×</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h6 class="modal-title" style="font-size:20px">Dịch vụ gia tăng</h6>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-4">
+                <label style="width: 100%">Dịch vụ gia tăng (*)</label>
+                <p-autoComplete id="atcServiceDVGT" [minLength]="1" styleClass="select-input form-control none-padding"
+                    [dropdown]="false" (completeMethod)="filterServiceDVGT($event)" [suggestions]="filteredServiceDVGT"
+                    [(ngModel)]="selectedServiceDVGT" (keydown.Tab)="keyTabServiceDVGT($event)">
+                </p-autoComplete>
+            </div>
+            <div class="col-md-4">
+                <label style="width: 100%">&nbsp;</label>
+                <p-checkbox label="Sửa giá" (keydown.Tab)="keyTabChangePrice()" (keydown.Enter)="keyEnterSaveDVGT()"
+                    [(ngModel)]="priceDVGT.isAgree" binary="true"></p-checkbox>
+            </div>
+            <div class="col-md-4">
+                <label style="width: 100%">Cước/phí</label>
+                <input type="text" [(ngModel)]="priceDVGT.totalPrice" (keydown.Enter)="keyEnterSaveDVGT()"
+                    class="input-sm form-control" (keydown.Tab)="keyEnterSaveDVGT()" placeholder="0"
+                    [disabled]="!priceDVGT.isAgree" currencyFormatter />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p-table [value]="priceDVGTs">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Dịch vụ gia tăng</th>
+                            <th>Cước/phí</th>
+                            <th>#</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr *ngIf="item.code!='COD' && item.code!='cod'">
+                            <td>{{item.code}} - {{item.name}}</td>
+                            <!-- <td>{{item.totalPrice | currencyFormat}}</td> -->
+                            <td>{{item.totalPrice}}</td>
+                            <td><button class="btn btn-primary" type="button"
+                                    (click)="removeServiceDVGT(item.serviceDVGTId)">Xóa</button></td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <!-- <button class="btn btn-primary" type="button" (click)="savePriceDVGT()">Lưu</button> -->
+        <button class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()" type="button">Đóng</button>
+    </div>
+</ng-template>
+<!--End Modal-->

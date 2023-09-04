@@ -1,0 +1,535 @@
+<app-card>
+    <a class="parentPage">{{parentPage}}</a>
+    <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <!-- <h5>{{currentPage}}</h5> -->
+                <div style="margin:0 auto;margin-bottom:5px; text-align: right">
+                    <label>Time</label>
+                    <input [(ngModel)]="numberCount" style="width: 50px; margin-right: 5px; text-align: center"
+                        disabled />
+                    <label>Setup</label>
+                    <input [(ngModel)]="numberSetup" style="width: 50px; margin-right: 5px; text-align: center"
+                        (keyup.enter)="setTimeoutToRefresh()" />
+                    <button class="btn btn-success" (click)="refresh()">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row pb-1">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Từ ngày</label>
+                                <div class="form-group">
+                                    <p-calendar [(ngModel)]="filterModel.orderDateFrom" [showIcon]="false" 
+                                        dateFormat="yy/mm/dd" (keydown.Tab)="selectedDate()"
+                                        (onSelect)="selectedDate()" [showTime]="false"
+                                        [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}">
+                                    </p-calendar>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Đến ngày</label>
+                                <div class="form-group">
+                                    <p-calendar [(ngModel)]="filterModel.orderDateTo" [showIcon]="false" hourFormat="24"
+                                        dateFormat="yy/mm/dd" (keydown.Tab)="selectedDate()" (onSelect)="selectedDate()"
+                                        [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                                        [style]="{'width': '100%'}"></p-calendar>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Khách hàng</label>
+                                <div class="form-group">
+                                    <p-autoComplete [style]="{'width':'100%'}" [(ngModel)]="customer"
+                                        [suggestions]="filteredCustomers" [minLength]="1"
+                                        (completeMethod)="filterCustomers($event)" (onSelect)="onSelectedCustomer()"
+                                        styleClass="select-input form-control none-padding" [dropdown]="false"
+                                        (keydown.Tab)="keyTabSender($event)">
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Bưu cục</label>
+                                <div class="form-group">
+                                    <p-dropdown styleClass="select-input form-control" [options]="lstHub"
+                                        [(ngModel)]="filterModel.fromHubId" [style]="{'width':'100%'}" filter="filter"
+                                        (onChange)="changeFilter()" autofocus tabindex="1">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Xe tải / xe máy</label>
+                                <div class="form-group">
+                                    <p-dropdown styleClass="select-input form-control" [options]="vehicleTypes"
+                                        [(ngModel)]="filterModel.typePickup" [style]="{'width':'100%'}" filter="filter"
+                                        (onChange)="changeFilter()" autofocus tabindex="1">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Nhân viên</label>
+                                <div class="form-group">
+                                    <p-autoComplete [(ngModel)]="employee_2" [suggestions]="filteredEmployees_2"
+                                        [minLength]="1" (completeMethod)="filterEmployee_2($event)"
+                                        (onSelect)="onSelectedEmployee_2()"
+                                        styleClass="select-input form-control none-padding" [dropdown]="false"
+                                        (keydown.Tab)="keyTabEmployee_2($event)">
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Trạng thái</label>
+                                <div class="form-group">
+                                    <p-dropdown styleClass="select-input form-control" [options]="pickupTypes"
+                                        [(ngModel)]="filterModel.pickupType" [style]="{'width':'100%'}" filter="filter"
+                                        (onChange)="changeFilter()">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Sắp xếp</label>
+                                <div class="form-group">
+                                    <p-dropdown styleClass="select-input form-control" [options]="sort"
+                                        [(ngModel)]="filterModel.isSortDescending" [style]="{'width':'100%'}"
+                                        filter="filter" (onChange)="changeFilter()">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Quét mã yêu cầu: </label>
+                                <div class="form-group">
+                                    <input #txtShipmentNumber type="text" placeholder="Mã yêu cầu ..."
+                                        (change)="scanShipmentNumber(txtShipmentNumber)" style="width: 100%;" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul class="list-inline list-unstyled no-margin pull-left">
+                                    <li>
+                                        <div class="form-group">
+                                            <label>Chọn NV</label>
+                                            <!-- <p-dropdown styleClass="select-input" [options]="pickUser" [(ngModel)]="selectedPickUser"
+                                                filter="filter" tabindex="1" placeholder="-- Chọn nhân viên --"
+                                                (onChange)="changePickUser()" [style]="{'max-width':'170px'}">
+                                            </p-dropdown> -->
+
+                                            <p-autoComplete [(ngModel)]="employee_3" [suggestions]="filteredEmployees_3"
+                                                [minLength]="1" (completeMethod)="filterEmployee_3($event)"
+                                                (onSelect)="onSelectedEmployee_3()"
+                                                styleClass="select-input form-control none-padding" [dropdown]="false"
+                                                (keydown.Tab)="keyTabEmployee_3($event)"
+                                                [style]="{'max-width':'170px'}">
+                                            </p-autoComplete>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <button *ngIf="isEdit" type="button" class="btn btn-success ml-1"
+                                            [disabled]="checkSubmit" (click)="assignPickUser()">Phân NVLH</button>
+                                    </li>
+                                    <li>
+                                        <label>DS đã chọn</label>
+                                        <p-checkbox [(ngModel)]="reviewChecked" binary="true"
+                                            (onChange)="onChangeReview()"></p-checkbox>
+                                    </li>
+                                    <li>
+                                        <label></label>
+                                        Đã chọn
+                                        <strong>{{(selectedData) ? (selectedData.length) : 0}}</strong> vận đơn
+                                    </li>
+                                    <li>
+                                        <div class="form-group">
+                                            <button *ngIf="isEdit" type="button" class="btn btn-danger"
+                                                (click)="openDeleteModel(templateDelete)">Hủy</button>
+                                            <button type="button" class="btn btn-danger ml-1" (click)="clearSelect()">Bỏ
+                                                chọn đơn</button>
+                                        </div>
+                                    </li>
+                                </ul>
+
+                                <ul class="list-inline list-unstyled no-margin pull-right" style="margin-top: 25px">
+                                    <li>
+                                        <div (click)="newReuqest()" class="squareNewRequest"
+                                            style="background-color: blue" pTooltip="Yêu cầu mới"
+                                            tooltipPosition="bottom"></div>
+                                    </li>
+                                    <li>
+                                        <div (click)="rejectPickup()" class="squareRefusePickup"
+                                            style="background-color:orange" pTooltip="Từ chối lấy hàng"
+                                            tooltipPosition="bottom"></div>
+                                    </li>
+                                    <li>
+                                        <div (click)="failPickup()" class="squarePickupFail"
+                                            style="background-color: grey" pTooltip="Lấy hàng không thành công"
+                                            tooltipPosition="bottom"></div>
+                                    </li>
+                                    <li>
+                                        <div (click)="tooLate()" class="squarePickupFail" style="background-color: red"
+                                            pTooltip="Yêu cầu quá 4 tiếng" tooltipPosition="bottom"></div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [clickableIcons]="false">
+                                    <agm-marker *ngFor="let m of markers; let i = index" [latitude]="m.lat"
+                                        [longitude]="m.lng" [label]="m.label" [iconUrl]="m.icon">
+                                        <agm-info-window>
+                                            <div>
+                                                Nhân viên:
+                                                <b>{{loadRiderNameByID(selectedPickUser)}}</b>
+                                            </div>
+                                            <div>
+                                                Số lượng đơn hàng đã phân lệnh chưa xác nhận:
+                                                <b>{{reportEmp?.assignEmployeePickup || 0}}</b>
+                                            </div>
+                                            <div>
+                                                Số lượng đơn hàng chưa lấy:
+                                                <b>{{reportEmp?.picking || 0}}</b>
+                                            </div>
+                                        </agm-info-window>
+                                    </agm-marker>
+                                </agm-map>
+                            </div>
+                            <div class="col-md-12">
+                                <p style="font-size: 14px; margin-top: 10px">
+                                    <b>Nhân viên:</b>
+                                    <span class="color-red">{{loadRiderNameByID()}}</span>
+                                    -
+                                    <b>Số lượng đơn hàng đã phân lệnh chưa xác nhận:</b>
+                                    <span class="color-red">{{reportEmp?.assignEmployeePickup || 0}}</span>
+                                    -
+                                    <b>Số lượng đơn hàng chưa lấy:</b>
+                                    <span class="color-red">{{reportEmp?.picking || 0}}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <!-- <div class="row">
+                    <div class="col-md-9"></div>
+                    <div class="col-md-3">
+                        <label>Tìm kiếm</label>
+                        <div class="form-group">
+                            <input type="text" placeholder="Nhập chuỗi cần tìm ..." (input)="table.filterGlobal($event.target.value, 'contains')"
+                                class="input-sm form-control" id="filter" />
+                        </div>
+                    </div>
+                </div> -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <p-table #table [value]="listData" [responsive]="true" [paginator]="true" rows="20"
+                            [rowsPerPageOptions]="[10,20,50,100]" paginatorPosition="both" frozenWidth="232px"
+                            [(selection)]="selectedData" [totalRecords]="totalRecords" sortField="orderDate"
+                            [sortOrder]="-1" [lazy]="true" (onPage)="onPageChange($event)">
+                            <!-- <ng-template pTemplate="colgroup" let-columns>
+                                <colgroup>
+                                    <col *ngFor="let col of columns">
+                                </colgroup>
+                            </ng-template> -->
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width: 28px;">
+                                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                    </th>
+                                    <th style="width: 70px">
+                                    </th>
+                                    <th [pSortableColumn]="'shipmentNumber'" style="width: 150px">
+                                        Mã yêu cầu
+                                        <p-sortIcon [field]="'shipmentNumber'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'fromHub'" style="width: 150px">{{hub.stationHubLongName}}
+                                        lấy
+                                        <p-sortIcon [field]="'fromHub'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'fromDistrictName'" style="width: 150px">Quận lấy
+                                        <p-sortIcon [field]="'fromDistrictName'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'toDistrictName'" style="width: 150px">Quận giao
+                                        <p-sortIcon [field]="'toDistrictName'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'pickingAddress'" style="width: 250px">Địa chỉ lấy hàng
+                                        <p-sortIcon [field]="'pickingAddress'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'senderPhone'" style="width: 150px">Số đt lấy hàng
+                                        <p-sortIcon [field]="'senderPhone'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'shipmentStatusName'" style="width: 150px">Trạng thái
+                                        <p-sortIcon [field]="'shipmentStatusName'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'reasonName'" style="width: 150px">Lý do
+                                        <p-sortIcon [field]="'reasonName'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'note'" style="width: 200px">Ghi chú
+                                        <p-sortIcon [field]="'note'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'currentUserName'" style="width: 200px">Nhân viên đã phân
+                                        <p-sortIcon [field]="'currentUserName'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'receiverPhone'" style="width: 150px">Số đt nhận
+                                        <p-sortIcon [field]="'receiverPhone'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'shippingAddress'" style="width: 250px">Địa chỉ nhận
+                                        <p-sortIcon [field]="'shippingAddress'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'orderDate'" style="width: 150px">Ngày vận đơn
+                                        <p-sortIcon [field]="'orderDate'"></p-sortIcon>
+                                    </th>
+                                    <th style="width: 150px">Thời gian</th>
+                                    <th [pSortableColumn]="'weight'" style="width: 50px">TL
+                                        <p-sortIcon [field]="'weight'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'senderName'" style="width: 170px">Tên liên hệ lấy hàng
+                                        <p-sortIcon [field]="'senderName'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'companyFrom'" style="width: 150px">CTY gửi
+                                        <p-sortIcon [field]="'companyFrom'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'fromWard'" style="width: 150px">Tỉnh đi
+                                        <p-sortIcon [field]="'fromWard'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'receiverName'" style="width: 150px">Người nhận
+                                        <p-sortIcon [field]="'receiverName'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'companyTo'" style="width: 150px">CTY nhận
+                                        <p-sortIcon [field]="'companyTo'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'toWard'" style="width: 150px">Tỉnh đến
+                                        <p-sortIcon [field]="'toWard'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'toHub'" style="width: 150px">{{hub.stationHubLongName}}
+                                        giao
+                                        <p-sortIcon [field]="'toHub'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'toHubRouting'" style="width: 150px">Tuyến giao
+                                        <p-sortIcon [field]="'toHubRouting'"></p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-columns="columns" let-index="rowIndex">
+                                <tr [pSelectableRow]="rowData"
+                                    [ngStyle]="{'color': rowData.isQua4Tieng ? 'red' : rowData.shipmentStatusId == 54 || rowData.shipmentStatusId == 1 ? 'blue': rowData.shipmentStatusId == 4 ? 'grey' : rowData.shipmentStatusId == 42 ? 'orange' : 'unset'}">
+                                    <td style="width: 28px;">
+                                        <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                                    </td>
+                                    <td style="width: 70px">
+                                        <a class="btn btn-success" [(ngModel)]="rowData.shipmentNumber"
+                                            *ngIf="rowData.shipmentStatusId"
+                                            (click)="onEnterSearchGB(rowData.shipmentNumber)" ngDefaultControl>
+                                            <i class="fa fa-paste"></i> Xem</a>
+                                    </td>
+                                    <td style="width: 150px">{{rowData.shipmentNumber}}</td>
+                                    <td style="width: 150px">{{rowData.fromHubName}}</td>
+                                    <td style="width: 150px">{{rowData.fromDistrictName}}</td>
+                                    <td style="width: 150px">{{rowData.toDistrictName}}</td>
+                                    <td
+                                        style="width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                                        {{rowData.pickingAddress}}</td>
+                                    <td style="width: 150px">{{rowData.senderPhone}}</td>
+                                    <td style="width: 150px">{{rowData.shipmentStatusName}}</td>
+                                    <td style="width: 150px;">{{rowData.reasonName}}</td>
+                                    <td style="width: 200px;">{{rowData.note}}</td>
+                                    <td style="width: 200px">{{rowData.currentUserCode}} - {{rowData.currentUserName}}
+                                    </td>
+                                    <td style="width: 150px">{{rowData.receiverPhone}}</td>
+                                    <td style="width: 250px">{{rowData.shippingAddress}}</td>
+                                    <td style="width: 150px">{{rowData.orderDate | dateFormat}}</td>
+                                    <td style="width: 150px">{{getTimeLeft(rowData.orderDate, rowData)}}</td>
+                                    <td style="width: 50px">{{rowData.weight}}</td>
+                                    <td
+                                        style="width: 170px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                                        {{rowData.senderName}}</td>
+                                    <td style="width: 150px">{{rowData.companyFrom}}</td>
+                                    <td style="width: 150px">{{rowData.fromProvinceName}}</td>
+                                    <td style="width: 150px">{{rowData.receiverName}}</td>
+                                    <td style="width: 150px">{{rowData.companyTo}}</td>
+                                    <td style="width: 150px">{{rowData.toProvinceName}}</td>
+                                    <td style="width: 150px">{{rowData.toHubName}}</td>
+                                    <td style="width: 150px">{{rowData.toHubRoutingName}}</td>
+                                    <td style="width: 150px">{{rowData.fromHubRoutingName}}</td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="summary">
+                                Tổng: {{totalRecords}} yêu cầu
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #templateDelete>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+            (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">{{modalTitle}}
+        </h5>
+    </div>
+    <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 no-padding">
+            <div class="form-group">
+                <label>Lý do</label>
+                <select class="select-input form-control" [compareWith]="compareFn"
+                    [(ngModel)]="selectedReasonPickupCancel">
+                    <option [ngValue]="undefined" disabled selected>Chọn lý do</option>
+                    <option *ngFor="let item of reasonPickupCancel" [ngValue]="item">{{item.name}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-12 no-padding">
+            <div class="form-group">
+                <label>Ghi chú</label>
+                <input type="text" [(ngModel)]="noteCancel" style="width: 100%;" />
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="delete()">Xác nhận</button>
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+    </div>
+</ng-template>
+
+<div id="print-section">
+    <div class="bk-delivery-page">
+        <div class="page-header">
+            <div class="pull-left">
+                <div class="logo-wrapper">
+                    <div class="logo">
+                        <img class="logo-img" src="{{itemShipment.logoUrl}}">
+                    </div>
+                </div>
+            </div>
+            <div class="pull-left">
+                <div class="company-name">{{itemShipment.companyName}}</div>
+                <div>{{itemShipment.hotline}}</div>
+                <div>{{itemShipment.centerHubAddress}}</div>
+            </div>
+            <div class="pull-right">
+                <div class="barcode-wrapper">
+                    <div class="barcode" style="margin-bottom: 0px">
+                        <img id="listGoods" />
+                        <div style="text-align:center">{{dateCreate | dateFormat}}</div>
+                    </div>
+                    <div style="text-align:center">(Mã tra cứu: {{itemShipment.listGoods}})</div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="page-content">
+            <div class="page-title">
+                <span class="title" *ngIf="itemShipment.createdHub">BẢNG KÊ {{itemShipment.type}}
+                    {{itemShipment.createdHub}}</span>
+            </div>
+            <div class="content-wrapper">
+                <div class="row">
+                    <div class="col-xs-4">
+                        <b>Nhân viên nhận:</b>
+                        <span class=""> {{itemShipment.createdBy}}</span>
+                    </div>
+                    <div class="col-xs-4">
+                        <b>SĐT:</b>
+                        <span class=""> {{itemShipment.createdPhone}}</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <b>Trạng Thái:</b>
+                        <span class=""> {{itemShipment.shipmentStatus}}</span>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table class="table table-content">
+                        <thead>
+                            <tr>
+                                <th style="width:30px">STT</th>
+                                <th colspan="4">Thông tin người gửi</th>
+                                <th colspan="3">Thông tin đơn hàng</th>
+                                <th colspan="4">Thông tin người nhận</th>
+                            </tr>
+                            <tr>
+                                <th style="width:30px">STT</th>
+                                <th>Mã vận đơn</th>
+                                <th>Mã KH</th>
+                                <th>Tên người gửi</th>
+                                <th style="width:80px">Tỉnh đi</th>
+                                <th style="width:50px">Dịch vụ</th>
+                                <th style="width:50px">Số kiện</th>
+                                <th style="width:50px">Trọng lượng thực {{unit}}</th>
+                                <th style="width:80px">Tỉnh đến</th>
+                                <th>Tên người nhận</th>
+                                <th>Địa chỉ</th>
+                                <th style="width:80px">Số liên hệ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let x of itemShipment">
+                                <td>{{x.stt}}</td>
+                                <td style="padding: 0px !important; text-align: center !important;">
+                                    <div class="barcode" style="margin-bottom: 0px">
+                                        <img [id]="x.shipmentNumber" />
+                                    </div>
+                                    <div style="margin-top: -10px">{{x.shipmentNumber}}</div>
+                                </td>
+                                <td *ngIf="x.sender;else templateNone">{{x.sender.code}} </td>
+                                <ng-template #templateNone>
+                                    <td></td>
+                                </ng-template>
+                                <td> {{x.senderName}}</td>
+                                <td *ngIf="x.fromProvince;else templateNone"> {{x.fromProvince.name}}</td>
+                                <ng-template #templateNone>
+                                    <td></td>
+                                </ng-template>
+                                <td> {{x.service}}</td>
+                                <td class="text-right">{{x.totalBox}}</td>
+                                <td class="text-right">{{x.weight}}</td>
+                                <td *ngIf="x.toProvince;else templateNone" class="text-right"> {{x.toProvince.name}}
+                                </td>
+                                <ng-template #templateNone>
+                                    <td></td>
+                                </ng-template>
+                                <td>{{x.receiverName}}</td>
+                                <td>{{x.shippingAddress}}</td>
+                                <td>{{x.receiverPhone}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="page-footer">
+            <div class="signal-wrapper">
+                <div class="text-right">......................ngày..........tháng..........năm..........</div>
+                <div class="row">
+                    <div class="col-xs-4 text-center">
+                        <p>Nhân viên nhận bàn giao</p>
+                        <p class="signal">(Ký và ghi rõ họ tên)</p>
+                    </div>
+                    <div class="col-xs-offset-4 col-xs-4 text-center">
+                        <p>Nhân viên bàn giao</p>
+                        <p class="signal">(Ký và ghi rõ họ tên)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

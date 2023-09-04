@@ -1,0 +1,521 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+<tabset active="'createlist'">
+    <tab name="createlist">
+        <ng-template tabHeading>
+            <i class="fa fa-edit"></i>Tạo bảng kê thanh toán thu hộ
+        </ng-template>
+        <div class="row">
+            <!-- Begin Left Table -->
+            <div class="col-md-6 none-padding-right col-md-6-small">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Danh sách vận đơn chờ thanh toán thu hộ</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <button class="btn btn-success" (click)="clickRefresh(templateConfirmRefresh)">
+                                    <i class="fa fa-refresh"></i>&nbsp;refresh
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label>Khách hàng</label>
+                                <p-dropdown styleClass="select-input form-control" [options]="customers"
+                                    [(ngModel)]="selectedCustomer" [style]="{'width':'100%'}" placeholder="Chọn dữ liệu"
+                                    filter="filter" (onChange)="changeCustomer()">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-sm-6">
+                                <label>Ngày tạo</label>
+                                <strong class="pull-right">
+                                    <p-checkbox [(ngModel)]="isSuccessDelivery" binary="true"
+                                        (onChange)="onViewSuccessDelivery()" label="Ngày giao tc"></p-checkbox>
+                                </strong>
+                                <div class="input-group" daterangepicker (selected)="selectedDateLS($event, mainInput)"
+                                    (cancelDaterangepicker)="calendarEventsHandlerLS($event)"
+                                    (showDaterangepicker)="calendarEventsHandlerLS($event)">
+                                    <span class="form-control uneditable-input" name="daterange" style="height: 25px;">
+                                        <!-- <p style="margin-top: -3px">{{ mainInput.start | dateFormatNoTime }} - {{ mainInput.end | dateFormatNoTime }}</p> -->
+                                        <p style="margin-top: -3px">{{ selectedDate }}</p>
+                                    </span>
+                                    <span class="input-group-btn">
+                                        <a type="button" class="btn btn-default">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label>&nbsp;</label>
+                                <div class="input-group">
+                                    <input #filterGbLeft type="text" placeholder="Tìm kiếm ..."
+                                        class="input-sm form-control"
+                                        (input)="dtLeft.filterGlobal($event.target.value, 'contains')" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="table-responsive">
+                                    <h4
+                                        style="margin-bottom: 0; background-color: #EBEDF0; border: 2px solid #d9d9d9; border-bottom: unset;">
+                                        <b>
+                                            <span
+                                                style="padding: 13px;display: inline-block;border-right: 2px solid #d9d9d9;">Tổng
+                                                Vận đơn {{totalRecords}}</span>
+                                            <span
+                                                style="padding: 13px;display: inline-block;border-right: 2px solid #d9d9d9;">Tổng
+                                                cước {{sum(listData,"totalPrice") | number}}</span>
+                                            <span
+                                                style="padding: 13px;display: inline-block;border-right: 2px solid #d9d9d9;">Tổng
+                                                COD {{sum(listData,"cod") | number}}</span>
+                                        </b>
+                                    </h4>
+                                    <p-table #dtLeft [value]="listData" [responsive]="true" [(selection)]="selectedData"
+                                        [lazy]="true" (onLazyLoad)="loadLazy($event)" [totalRecords]="totalRecords"
+                                        [scrollable]="true" scrollHeight="600px">
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th class="p-col-checkbox">
+                                                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                                </th>
+                                                <th style="width: 50px">STT</th>
+                                                <th class="p-col-shipmentNumber">Mã vận đơn</th>
+                                                <th class="p-col-normal">Mã khách hàng</th>
+                                                <th class="p-col-date">Ngày gửi</th>
+                                                <th class="p-col-normal">Tên người nhận</th>
+                                                <th class="p-col-address">Địa chỉ nhận</th>
+                                                <th class="p-col-normal">SĐT người nhận</th>
+                                                <th class="p-col-date">Trọng lượng</th>
+                                                <th class="p-col-normal">COD</th>
+                                                <th class="p-col-normal">Ngày giao thành công</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                                            <tr>
+                                                <td class="p-col-checkbox">
+                                                    <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                                                </td>
+                                                <td style="width: 50px" class="text-center">{{rowIndex + 1 | number}}
+                                                </td>
+                                                <td class="p-col-shipmentNumber">{{rowData.shipmentNumber}}</td>
+                                                <td class="p-col-normal">{{rowData.sender?.name}}</td>
+                                                <td class="p-col-date">{{rowData.orderDate | dateFormat}}</td>
+                                                <td class="p-col-normal">{{rowData.receiverName}}</td>
+                                                <td class="p-col-address">
+                                                    {{rowData.addressNoteTo}}
+                                                    <br /> {{rowData.shippingAddress}}
+                                                </td>
+                                                <td class="text-right p-col-normal">{{rowData.receiverPhone}}</td>
+                                                <td class="text-right p-col-date">{{rowData.weight | number}}</td>
+                                                <td class="text-right p-col-normal">{{rowData.cod | number}}</td>
+                                                <td class="p-col-normal">{{rowData.endDeliveryTime | dateFormat}}</td>
+                                            </tr>
+                                        </ng-template>
+                                        <!-- <ng-template pTemplate="summary">
+                                            Tổng cộng {{ sum(listData,"totalPrice") | number}}&nbsp;&nbsp;&nbsp; Tổng COD {{ sum(listData,"cod") | number}}
+                                        </ng-template> -->
+                                    </p-table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Left Table -->
+            <!-- Begin Middle Button -->
+            <div class="col-md-1 col-md-1-small">
+                <div>
+                    <button class="btn btn-block btn-info btn-sm waves-effect waves-light btnAssign" (click)="assign()">
+                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div style="margin-top:20px">
+                    <button class="btn btn-block btn-danger btn-sm waves-effect waves-light btnUnAssign"
+                        (click)="unAssign()">
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- End Middle Button -->
+            <!-- Begin Left Table -->
+            <div class="col-lg-6 none-padding-left col-md-6-small">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Danh sách thao tác</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label>Ghi chú</label>
+                                <div class="input-group" style="width:100%">
+                                    <input [(ngModel)]="txtNote" type="text" class="input-sm form-control" />
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label>&nbsp;</label>
+                                <div>
+                                    <button *ngIf="isEdit" type="button" class="btn btn-success" (click)="save()">Tạo
+                                        bảng kê</button>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label>&nbsp;</label>
+                                <div class="input-group">
+                                    <input #filterGbRight type="text" placeholder="Tìm kiếm ..."
+                                        class="input-sm form-control"
+                                        (input)="dtRight.filterGlobal($event.target.value, 'contains')" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="table-responsive">
+                                    <h4
+                                        style="margin-bottom: 0; background-color: #EBEDF0; border: 2px solid #d9d9d9; border-bottom: unset;">
+                                        <b>
+                                            <span
+                                                style="padding: 13px;display: inline-block;border-right: 2px solid #d9d9d9;">Tổng
+                                                Vận đơn {{listDataRight?.length}}</span>
+                                            <span
+                                                style="padding: 13px;display: inline-block;border-right: 2px solid #d9d9d9;">Tổng
+                                                cước {{ sum(listDataRight,"totalPrice") | number}}</span>
+                                            <span
+                                                style="padding: 13px;display: inline-block;border-right: 2px solid #d9d9d9;">Tổng
+                                                COD {{ sum(listDataRight,"cod") | number}}</span>
+                                        </b>
+                                    </h4>
+                                    <p-table #dtRight [value]="listDataRight" [responsive]="true"
+                                        [(selection)]="selectedDataRight" [globalFilterFields]="columnsFilterRight"
+                                        [totalRecords]="listDataRight?.length" [scrollable]="true" scrollHeight="600px">
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th class="p-col-checkbox">
+                                                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                                </th>
+                                                <th style="width: 50px">STT</th>
+                                                <th class="p-col-shipmentNumber">Mã vận đơn</th>
+                                                <th class="p-col-normal">Mã khách hàng</th>
+                                                <th class="p-col-date">Ngày gửi</th>
+                                                <th class="p-col-normal">Tên người nhận</th>
+                                                <th class="p-col-address">Địa chỉ nhận</th>
+                                                <th class="p-col-normal">SĐT người nhận</th>
+                                                <th class="p-col-date">Trọng lượng</th>
+                                                <th class="p-col-normal">COD</th>
+                                                <th class="p-col-normal">Ngày giao thành công</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                                            <tr>
+                                                <td class="p-col-checkbox">
+                                                    <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                                                </td>
+                                                <td style="width: 50px" class="text-center">{{rowIndex + 1 | number}}
+                                                </td>
+                                                <td class="p-col-shipmentNumber">{{rowData.shipmentNumber}}</td>
+                                                <th class="p-col-normal">{{rowData.sender?.name}}</th>
+                                                <td class="p-col-date">{{rowData.orderDate | dateFormat}}</td>
+                                                <td class="p-col-normal">{{rowData.receiverName}}</td>
+                                                <td class="p-col-address">
+                                                    {{rowData.addressNoteTo}}
+                                                    <br /> {{rowData.shippingAddress}}
+                                                </td>
+                                                <td class="text-right p-col-normal">{{rowData.receiverPhone}}</td>
+                                                <td class="text-right p-col-date">{{rowData.weight | number}}</td>
+                                                <td class="text-right p-col-normal">{{rowData.cod | number}}</td>
+                                                <td class="p-col-normal">{{rowData.endDeliveryTime | dateFormat}}</td>
+                                            </tr>
+                                        </ng-template>
+                                        <!-- <ng-template pTemplate="summary">
+                                            Tổng cộng {{ sum(listDataRight,"totalPrice") | number}}&nbsp;&nbsp;&nbsp; Tổng COD {{ sum(listDataRight,"cod") | number}}
+                                        </ng-template> -->
+                                    </p-table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Left Table -->
+        </div>
+    </tab>
+    <tab name="managementlist">
+        <ng-template tabHeading>
+            <i class="fa fa-list"></i>Danh sách bảng kê thanh toán thu hộ
+        </ng-template>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <div class="ibox-tools">
+                            <p-header>
+                                <div>
+                                    <button type="button" class="btn btn-primary" (click)="dt.exportCSV()">
+                                        <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+                                    <button type="button" class="btn btn-success" (click)="refreshLCP()">
+                                        <i class="fa fa-refresh"></i>&nbsp;refresh</button>
+                                </div>
+                            </p-header>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label>Ngày tạo</label>
+                                <div class="form-group">
+                                    <div class="input-group" daterangepicker
+                                        (selected)="selectedDateLCP($event, dateRangeLCP)"
+                                        (cancelDaterangepicker)="calendarEventsHandler($event)"
+                                        (showDaterangepicker)="calendarEventsHandler($event)">
+                                        <span class="form-control uneditable-input" name="daterange"
+                                            style="height: 25px;">
+                                            <p style="margin-top: -3px">{{ dateRangeLCP.start | dateFormatNoTime }} -
+                                                {{ dateRangeLCP.end | dateFormatNoTime }}
+                                            </p>
+                                        </span>
+                                        <span class="input-group-btn">
+                                            <a type="button" class="btn btn-default">
+                                                <i class="glyphicon glyphicon-calendar"></i>
+                                            </a>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label>Khách hàng</label>
+                                <p-dropdown styleClass="select-input form-control" [options]="customersLRP"
+                                    [(ngModel)]="selectedCustomerLCP" [style]="{'width':'100%'}" filter="filter"
+                                    (onChange)="changeFilterLCP()">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-sm-3">
+                                <label>Tìm BK thanh toán thu hộ</label>
+                                <input type="text" placeholder="Nhập mã vận đơn ..." [(ngModel)]="txtShipmentNumber"
+                                    class="input-sm form-control" (keyup.enter)="changeFilterLCP()" />
+                            </div>
+                            <div class="col-sm-3">
+                                <label>Tìm kiếm</label>
+                                <div class="input-group">
+                                    <input #filterGb type="text" placeholder="Nhập chuỗi cần tìm ..."
+                                        class="input-sm form-control" id="filter" />
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-sm btn-primary"> Tìm kiếm</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="table-responsive">
+                                    <p-dataTable #dt [value]="listDataLCP" [paginator]="true" rows="10"
+                                        [rowsPerPageOptions]="[10,20,50,100]" [globalFilter]="filterGb" [lazy]="true"
+                                        [totalRecords]="totalRecordsLCP" (onLazyLoad)="loadLazyListReceiveMoney($event)"
+                                        srollable="true" scrollHeight="550px">
+                                        <p-column styleClass="p-col-normal" field="id" [style]="{'width':'300px'}"
+                                            header="Thao tác" [sortable]="true">
+                                            <ng-template pTemplate="body" let-rowData="rowData">
+                                                <div style="display: flex;">
+                                                    <button type="button" *ngIf="!rowData.locked && isEdit"
+                                                        class="btn btn-primary" (click)="lockLCP(rowData)">
+                                                        <i class="fa fa-lock"></i> Khóa</button>
+                                                    <button type="button"
+                                                        *ngIf="rowData.locked && !rowData.paid && isEdit"
+                                                        class="btn btn-primary" (click)="unlockLCP(rowData)">
+                                                        <i class="fa fa-lock"></i> Mở khóa</button>
+                                                    <button type="button" *ngIf="!rowData.locked && isEdit"
+                                                        class="btn btn-danger" (click)="cancelLCP(rowData)">
+                                                        <i class="fa fa-lock"></i> Hủy</button>
+                                                    <button type="button"
+                                                        *ngIf="rowData.locked && !rowData.paid && isEdit"
+                                                        class="btn btn-warning" (click)="payLCP(rowData)">
+                                                        <i class="fa fa-check"></i> Thanh toán</button>
+                                                    <button type="button" class="btn btn-info"
+                                                        (click)="viewLCP(rowData, templateVanDonTheoBangKe)">
+                                                        <i class="fa fa-eye"></i> Xem</button>
+                                                    <button type="button" class="btn btn-primary" (click)="print(rowData)">
+                                                        <i class="fa fa-print"></i> In</button>
+                                                </div>
+                                            </ng-template>
+                                        </p-column>
+                                        <p-column styleClass="p-col-normal" field="code" header="Mã" [sortable]="true">
+                                        </p-column>
+                                        <p-column styleClass="p-col-normal" field="customer.code" header="Mã khách hàng"
+                                            [sortable]="true"></p-column>
+                                        <p-column styleClass="p-col-normal" field="customer.name"
+                                            header="Tên khách hàng" [sortable]="true"></p-column>
+                                        <p-column styleClass="p-col-normal" field="customer.address" header="Địa chỉ"
+                                            [sortable]="true" hidden="true"></p-column>
+                                        <p-column styleClass="p-col-normal text-right" field="grandTotal"
+                                            header="Tổng tiền" [sortable]="true">
+                                            <ng-template pTemplate="body" let-rowData="rowData">
+                                                {{ rowData.grandTotal |number }}
+                                            </ng-template>
+                                        </p-column>
+                                        <p-column styleClass="p-col-normal" field="statusName" header="Tình trạng"
+                                            [sortable]="true">
+                                        </p-column>
+                                        <p-column styleClass="p-col-normal" field="userCreated.fullName"
+                                            header="Người tạo" [sortable]="true"></p-column>
+                                        <p-column styleClass="p-col-date" field="createdWhen" header="Ngày tạo"
+                                            [sortable]="true">
+                                            <ng-template pTemplate="body" let-rowData="rowData">
+                                                {{rowData.createdWhen | dateFormat}}
+                                            </ng-template>
+                                        </p-column>
+                                        <p-column styleClass="p-col-normal" field="userModified.fullName"
+                                            header="Người chỉnh sửa" [sortable]="true"></p-column>
+                                        <p-column styleClass="p-col-date" field="modifiedWhen" header="Ngày chỉnh sửa"
+                                            [sortable]="true">
+                                            <ng-template pTemplate="body" let-rowData="rowData">
+                                                {{rowData.modifiedWhen | dateFormat}}
+                                            </ng-template>
+                                        </p-column>
+                                    </p-dataTable>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </tab>
+</tabset>
+<ng-template #templateConfirmRefresh>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+            (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+    </div>
+    <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 no-padding">
+            <h4>Danh sách thao tác sẽ bị làm mới! Bạn có chắc chắn muốn làm mới dữ liệu không?</h4>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+        <button type="button" class="btn btn-danger" (click)="refresh()">Đồng ý</button>
+    </div>
+</ng-template>
+<!-- End Model -->
+
+<ng-template #templateVanDonTheoBangKe>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <h5 class="modal-title pull-left">Danh sách vận đơn theo bảng kê </h5>
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+            (click)="bsModalRef_LCP.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+    </div>
+    <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 no-padding">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <div class="ibox-tools">
+                        <p-header>
+                            <div>
+                                <button type="button" class="btn btn-primary" (click)="exportCSV()">
+                                    <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+                            </div>
+                        </p-header>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-3">
+                            <label>&nbsp;</label>
+                            <input #filterGbRight type="text" placeholder="Tìm kiếm ..."
+                                (input)="dtVanDonTheoBangKe.filterGlobal($event.target.value, 'contains')"
+                                class="input-sm form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="table-responsive">
+                                <p-table #dtVanDonTheoBangKe [value]="listShipment" [responsive]="true"
+                                    [(selection)]="selectedDataRight"
+                                    [globalFilterFields]="columnsFilterdtVanDonTheoBangKe" [paginator]="true"
+                                    [rows]="20" [rowsPerPageOptions]="[10,20,50,100]">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width: 50px">STT</th>
+                                            <th class="p-col-shipmentNumber">Mã vận đơn</th>
+                                            <th class="p-col-date">Ngày gửi</th>
+                                            <th class="p-col-normal">Tên người nhận</th>
+                                            <th class="p-col-address">Địa chỉ nhận</th>
+                                            <th class="p-col-normal">SĐT người nhận</th>
+                                            <th class="p-col-date">Trọng lượng</th>
+                                            <th class="p-col-normal">COD</th>
+                                            <th class="p-col-normal">Ngày giao thành công</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                                        <tr>
+                                            <td class="text-center">{{rowIndex + 1 | number}}</td>
+                                            <td>{{rowData.shipmentNumber}}</td>
+                                            <td>{{rowData.orderDate | dateFormat}}</td>
+                                            <td>{{rowData.receiverName}}</td>
+                                            <td>
+                                                {{rowData.addressNoteTo}}
+                                                <br /> {{rowData.shippingAddress}}
+                                            </td>
+                                            <td class="text-right">{{rowData.receiverPhone}}</td>
+                                            <td class="text-right">{{rowData.weight | number}}</td>
+                                            <td class="text-right">{{rowData.cod | number}}</td>
+                                            <td>{{rowData.endDeliveryTime | dateFormat}}</td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="summary">
+                                        Tổng cộng {{ sum(listShipment, "totalPrice") | number}}&nbsp;&nbsp;&nbsp; Tổng
+                                        COD {{ sum(listShipment,"cod") | number}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef_LCP.hide()">Đóng</button>
+    </div>
+</ng-template>
+
+<div id="print-section" [hidden]="true">
+    <div *ngIf="idPrint === 'print-receipt-payment'">
+        <form-receipt-payment></form-receipt-payment>
+    </div>
+    <iframe class="hidden-iframe" name="print-receipt-payment"></iframe>
+</div>

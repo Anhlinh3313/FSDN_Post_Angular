@@ -1,0 +1,173 @@
+<div class="row">
+  <div class="col-lg-12">
+    <ol class="ibox-title breadcrumb">
+      <li>
+        <a>{{parentPage}}</a>
+      </li>
+      <li class="active">
+        <strong>{{currentPage}}</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-title">
+        <div class="ibox-tools">
+          <p-header>
+            <div>
+              <button type="button" class="btn btn-primary" (click)="dt.exportCSV()">
+                <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+              <button type="button" class="btn btn-success" (click)="loadData()">
+                <i class="fa fa-refresh"></i>&nbsp;Xem</button>
+            </div>
+          </p-header>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+            <div class="col-md-2">
+                <label>Từ ngày</label>
+                <div class="form-group">
+                  <p-calendar [(ngModel)]="filterModel.fromDate" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                    (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                    [style]="{'width': '100%'}"></p-calendar>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <label>Đến ngày</label>
+                <div class="form-group">
+                  <p-calendar [(ngModel)]="filterModel.toDate" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                    (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                    [style]="{'width': '100%'}"></p-calendar>
+                </div>
+              </div>
+
+          <div class="col-sm-2">
+            <label>Từ tỉnh</label>
+            <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}" [options]="provinces"
+              [(ngModel)]="filterModel.fromProvinceId" filter="filter" (onChange)="changeFilter()">
+            </p-dropdown>
+          </div>
+
+          <div class="col-sm-2">
+            <label>Đến tỉnh</label>
+            <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}" [options]="provinces"
+              [(ngModel)]="filterModel.toProvinceId" filter="filter" (onChange)="changeFilter()">
+            </p-dropdown>
+          </div>
+
+
+          <div class="col-sm-2">
+            <label>Xe</label>
+            <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}" [options]="trucks" [(ngModel)]="filterModel.truckId"
+              filter="filter" (onChange)="changeFilter()">
+            </p-dropdown>
+          </div>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="table-responsive">
+              <p-table #dt [value]="lstData" [paginator]="true" [rows]="20" [rowsPerPageOptions]="[10,20,50,100]"
+                [lazy]="true" [totalRecords]="totalCount" [responsive]="true" [scrollable]="true" scrollHeight="500px"
+                [columns]="columns" (onPage)="onPageChange($event)">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th style="width: 150px">STT</th>
+                    <th style="width: 150px" pSortableColumn="id">ID
+                      <p-sortIcon field="id"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="shipmentNumber">Số vận đơn
+                      <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="issueDate">Ngày
+                      <p-sortIcon field="issueDate"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="issueHubName">Bưu cục/Kho xuất phát
+                      <p-sortIcon field="issueHubName"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="fromProvinceName">Từ tỉnh
+                      <p-sortIcon field="fromProvinceName"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="toProvinceName">Đến tỉnh
+                      <p-sortIcon field="toProvinceName"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="issueCode">Chuyến hàng
+                      <p-sortIcon field="issueCode"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="truckNumber">Số xe
+                      <p-sortIcon field="truckNumber"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="totalBox">Số kiện
+                      <p-sortIcon field="totalBox"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="weight">Trọng lượng
+                      <p-sortIcon field="weight"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="calWeight">Trọng lượng quy đổi
+                      <p-sortIcon field="calWeight"></p-sortIcon>
+                    </th>
+                    <th style="width: 150px" pSortableColumn="totalPriceAll">Doanh thu
+                      <p-sortIcon field="totalPriceAll"></p-sortIcon>
+                    </th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                  <tr>
+                    <td style="width: 150px">{{rowIndex + 1}}</td>
+                    <td style="width: 150px">{{rowData.id}}</td>
+                    <td style="width: 150px">{{rowData.shipmentNumber}}</td>
+                    <td style="width: 150px">{{rowData.issueDate | date:'dd/MM/yyyy'}}</td>
+                    <td style="width: 150px">{{rowData.issueHubName}}</td>
+                    <td style="width: 150px">{{rowData.fromProvinceName}}</td>
+                    <td style="width: 150px">{{rowData.toProvinceName}}</td>
+                    <td style="width: 150px">{{rowData.issueCode}}</td>
+                    <td style="width: 150px">{{rowData.truckNumber}}</td>
+                    <td style="width: 150px">{{rowData.totalBox}}</td>
+                    <td style="width: 150px">{{rowData.weight}}</td>
+                    <td style="width: 150px">{{rowData.calWeight}}</td>
+                    <td style="width: 150px">{{rowData.totalPriceAll | number}}</td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr>
+                    <td colspan="13">
+                      Không tìm thấy dữ liệu
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                  <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalCount}}</span>
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #templateConfirmRefresh>
+  <div class="modal-header" style="padding: 5px; text-align:left;">
+    <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+      <span class="sr-only">Close</span>
+    </button>
+  </div>
+  <div class="modal-body" style="overflow:hidden;">
+    <div class="col-md-12 no-padding">
+      <h4>Danh sách thao tác sẽ bị làm mới! Bạn có chắc chắn muốn làm mới dữ liệu không?</h4>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+    <button type="button" class="btn btn-danger" (click)="refresh()">Đồng ý</button>
+  </div>
+</ng-template>
+<!-- End Model -->

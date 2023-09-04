@@ -1,0 +1,274 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <!-- <h5>{{currentPage}}</h5> -->
+                <!-- <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div> -->
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <button class="btn btn-success" (click)="refresh()">
+                            <i class="fa fa-refresh"></i>&nbsp;refresh
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label style="width: 5px;height: 31px;"></label>
+                            <a *ngIf="isAdd" class="btn btn-primary" (click)="openModel(template)">
+                                <i class="fa fa-file-o"></i> Tạo mới</a>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Chọn {{hub.centerHubLongName}}</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="price" [(ngModel)]="selectedPrice" [style]="{'width':'100%'}"
+                                filter="filter" (onChange)="changePriceList()" autofocus tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label></label>
+                            <div class="input-group">
+                                <input type="text" placeholder="Nhập chuỗi cần tìm ..." (input)="dt.filterGlobal($event.target.value, 'contains')" class="input-sm form-control"
+                                id="filter" />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-sm btn-primary"> Tìm kiếm</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <!-- <p-dataTable [value]="listData" [paginator]="true" rows="10" [responsive]="true" [rowsPerPageOptions]="[10,20,50,100]" [globalFilter]="filterGb"
+                                [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="loadLazy($event)" [(first)]="first">
+                                <p-column field="code" header="Mã" [sortable]="true"></p-column>
+                                <p-column field="name" header="Tên" [sortable]="true"></p-column>
+                                <p-column field="priceList.name" header="Bảng giá" [sortable]="false"></p-column>
+                                <p-column field="service.name" header="Dịch vụ" [sortable]="false"></p-column>
+                                <p-column field="areaGroup.name" header="Nhóm khu vực" [sortable]="false"></p-column>
+                                <p-column field="weightGroup.name" header="Nhóm mức cân" [sortable]="false"></p-column>
+                                <p-column styleClass="col-button2">
+                                    <ng-template let-data="rowData" pTemplate="body">
+                                        <a *ngIf="isEdit" class="btn btn-info" (click)="openModel(template, data)">
+                                            <i class="fa fa-paste"></i> Sửa</a>
+                                        <a *ngIf="isDelete" class="btn btn-danger" (click)="openDeleteModel(templateDelete, data)">
+                                            <i class="fa fa-trash-o"></i>
+                                            <span class="bold">Xóa</span>
+                                        </a>
+                                    </ng-template>
+                                </p-column>
+                            </p-dataTable> -->
+                            <p-table #dt [value]="listData" [responsive]="true" [lazy]="true" (onLazyLoad)="loadLazy($event)" [totalRecords]="totalRecords"
+                                [responsive]="true" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50,100]">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width: 65px">
+                                            <a class="btn btn-info" (click)="refresh()">
+                                                <i class="fa fa-refresh"></i>
+                                            </a>
+                                        </th>                                        
+                                        <th pSortableColumn="code">Mã
+                                            <p-sortIcon field="code"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="name">Tên
+                                            <p-sortIcon field="name"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="priceList.name">Bảng giá
+                                            <p-sortIcon field="priceList.name"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="service.name">Dịch vụ
+                                            <p-sortIcon field="service.name"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="areaGroup.name">Nhóm khu vực
+                                            <p-sortIcon field="areaGroup.name"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="weightGroup.name">Nhóm mức cân
+                                            <p-sortIcon field="weightGroup.name"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="vatPercent" style="width: 70px;" class="text-right">%VAT
+                                            <p-sortIcon field="vatPercent "></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="fuelPercent" style="width: 80px;" class="text-right">%PPXD
+                                            <p-sortIcon field="fuelPercent"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="remoteAreasPricePercent" style="width: 80px;" class="text-right">%VSVX
+                                            <p-sortIcon field="remoteAreasPricePercent"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="dim" style="width: 70px;" class="text-right">DIM
+                                            <p-sortIcon field="dim"></p-sortIcon>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-data>
+                                    <tr *ngIf="!data.isAuto">
+                                        <td style="width: 65px">
+                                            <a *ngIf="isEdit" class="btn btn-info" (click)="openModel(template, data)">
+                                                <i class="fa fa-paste"></i> Sửa</a>
+                                            <a *ngIf="isDelete" class="btn btn-danger" (click)="openDeleteModel(templateDelete, data)">
+                                                <i class="fa fa-trash-o"></i>
+                                                <span class="bold">Xóa</span>
+                                            </a>
+                                        </td>
+                                        <td>{{data.code}}</td>
+                                        <td>{{data.name}}</td>
+                                        <td>{{data.priceList.name}}</td>
+                                        <td>{{data.service.name}}</td>
+                                        <td>{{data.areaGroup.name}}</td>
+                                        <td>{{data.weightGroup.name}}</td>
+                                        <td>{{data.vatPercent}}</td>
+                                        <td>{{data.fuelPercent}}</td>
+                                        <td>{{data.remoteAreasPricePercent}}</td>
+                                        <td>{{data.dim}}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Start Modal-->
+<ng-template #template>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">{{modalTitle}}
+        </h5>
+    </div>
+    <div class="modal-body" style="overflow:-webkit-paged-x;" *ngIf="data">
+        <div class="col-md-12 no-padding">
+            <div class="form-group">
+                <label>Bảng giá</label>
+                <!-- <select class="select-input form-control" [compareWith]="compareFn" [(ngModel)]="selectedPriceList" (change)="changePriceListService()"
+                    autofocus>
+                    <option *ngFor="let item of priceLists" [ngValue]="item">{{item.name}}</option>
+                </select> -->
+                <p-dropdown [options]="priceLists" [(ngModel)]="selectedPriceList" [style]="{'width':'100%'}" filter="true"></p-dropdown>
+            </div>
+            <div class="form-group">
+                <label>Dịch vu</label>
+                <!-- <select class="select-input form-control" (change)="changePriceListService()" [compareWith]="compareFn" [(ngModel)]="selectedService">
+                    <option *ngFor="let item of services" [ngValue]="item">{{item.name}}</option>
+                </select> -->
+                <p-dropdown [options]="services" [(ngModel)]="selectedService" (onChange)="changePriceListService()" [style]="{'width':'100%'}" filter="true"></p-dropdown>
+            </div>
+            <div class="form-group">
+                <label>Tên</label>
+                <input type="text" placeholder="Nhập tên" (keyup)="changePriceListService()" class="input-sm form-control" id="name" [(ngModel)]="data.name"
+                />
+            </div>
+            <div class="form-group">
+                <label>Mã</label>
+                <input type="text" placeholder="Nhập mã" (keyup)="changePriceListService()" class="input-sm form-control" id="code" [(ngModel)]="data.code"
+                />
+            </div>
+            <div class="form-group">
+                <label>Nhóm khu vực</label>
+                <!-- <select class="select-input form-control" [compareWith]="compareFn" [(ngModel)]="selectedAreaGroup">
+                    <option *ngFor="let item of areaGroups" [ngValue]="item">{{item.name}}</option>
+                </select> -->
+                <p-dropdown [options]="areaGroups" [(ngModel)]="selectedAreaGroup" [style]="{'width':'100%'}" filter="true"></p-dropdown>
+            </div>
+            <div class="form-group">
+                <label>Nhóm mức cân</label>
+                <!-- <select class="select-input form-control" [compareWith]="compareFn" [(ngModel)]="selectedWeightGroup">
+                    <option *ngFor="let item of weightGroups" [ngValue]="item">{{item.name}}</option>
+                </select> -->
+                <p-dropdown [options]="weightGroups" [(ngModel)]="selectedWeightGroup" [style]="{'width':'100%'}" filter="true"></p-dropdown>
+            </div>
+            <!-- <div class="form-group">
+                <div class="row">
+                    <div class="col-md-6">
+                            <label>Ngày mở bảng giá</label>
+                            <p-calendar [(ngModel)]="data.publicDateFrom" [locale]="es" dateFormat="dd/mm/yy"></p-calendar>
+                    </div>
+                    <div class="col-md-6">
+                            <label>Ngày khóa bảng giá</label>
+                            <p-calendar [(ngModel)]="data.publicDateTo" [locale]="es" dateFormat="dd/mm/yy"></p-calendar>
+                    </div>
+                </div>
+            </div> -->
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>%VAT</label>
+                        <p-spinner [min]="0" [step]="0.5" [(ngModel)]="selectedVatPercent" placeholder="%VAT"></p-spinner>
+                    </div>                
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>%PPXD</label>
+                        <p-spinner [min]="0" [step]="0.5" [(ngModel)]="selectedFuelPercent" placeholder="%PPXD"></p-spinner>
+                    </div>                
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>%VSVX</label>
+                        <p-spinner [min]="0" [step]="0.5" [(ngModel)]="selectedRemoteAreasPricePercent" placeholder="%VSVX"></p-spinner>
+                    </div>                
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label>DIM</label>
+                        <p-spinner [min]="0" [step]="0.5" [(ngModel)]="selectedDIM" placeholder="DIM"></p-spinner>
+                    </div>                
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button *ngIf="isEdit" type="button" class="btn btn-primary" (click)="save()">Lưu</button>
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+    </div>
+</ng-template>
+
+<ng-template #templateDelete>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+    </div>
+    <div class="modal-body" style="overflow:hidden;" *ngIf="data">
+        <div class="col-md-12 no-padding">
+            <h4>Bạn có chắc chắn muốn xoá
+                <b>&quot;{{data.name}}&quot;</b>?</h4>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button *ngIf="isDelete" type="button" class="btn btn-danger" (click)="delete()">Xoá</button>
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+    </div>
+</ng-template>
+<!--End Modal-->

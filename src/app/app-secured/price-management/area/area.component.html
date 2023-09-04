@@ -1,0 +1,186 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <!-- <h5>{{currentPage}}</h5> -->
+                <!-- <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div> -->
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <button class="btn btn-success" (click)="refresh()">
+                            <i class="fa fa-refresh"></i>&nbsp;refresh
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label style="width: 5px;height: 31px;"></label>
+                            <a *ngIf="isAdd" class="btn btn-primary" (click)="openModel(template)">
+                                <i class="fa fa-file-o"></i> Tạo mới</a>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Chọn nhóm khu vực</label>
+                            <p-dropdown [options]="areaGroups" [(ngModel)]="selectedAreaGroup" [style]="{'width':'100%'}" 
+                            filter="true" (onChange)="changeArea()"></p-dropdown>
+            
+                            <!-- <p-dropdown styleClass="select-input form-control" [options]="area" [(ngModel)]="selectedArea" [style]="{'width':'100%'}"
+                                filter="filter" (onChange)="changeArea()" autofocus tabindex="1">
+                            </p-dropdown> -->
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label></label>
+                            <div class="input-group">
+                                <input type="text" placeholder="Nhập chuỗi cần tìm ..." (input)="dt.filterGlobal($event.target.value, 'contains')" class="input-sm form-control"
+                                id="filter" />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-sm btn-primary"> Tìm kiếm</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <p-table #dt [value]="listData" [responsive]="true" [lazy]="true" (onLazyLoad)="loadLazy($event)" [totalRecords]="totalRecords"
+                                [responsive]="true" [paginator]="true" [rows]="20" [rowsPerPageOptions]="[20,50,100]">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th [pSortableColumn]="'code'">Mã
+                                            <p-sortIcon [field]="'code'"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="name">Tên
+                                            <p-sortIcon [field]="'name'"></p-sortIcon>
+                                        </th>
+                                        <!-- <th pSortableColumn="areaGroup.name">Nhóm khu vực
+                                            <p-sortIcon [field]="'areaGroup.name'"></p-sortIcon>
+                                        </th> -->
+                                        <th style="width: 150px">
+                                            <a class="btn btn-info" (click)="refresh()">
+                                                <i class="fa fa-refresh"></i>
+                                            </a>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-data>
+                                    <!-- <tr *ngIf="!data.isAuto"> -->
+                                    <tr>
+                                        <td>{{data?.code}}</td>
+                                        <td>{{data?.name}}</td>
+                                        <!-- <td>{{data?.areaGroup?.name}}</td> -->
+                                        <td style="width: 155px">
+                                            <a *ngIf="isEdit" class="btn btn-info" (click)="openModel(template, data)">
+                                                <i class="fa fa-paste"></i> Xem</a>
+                                            <a *ngIf="isDelete" class="btn btn-danger" (click)="openDeleteModel(templateDelete, data)">
+                                                <i class="fa fa-trash-o"></i>
+                                                <span class="bold">Xóa</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="4">
+                                            Không tìm thấy dữ liệu
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Start Modal-->
+<ng-template #template>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5>
+    </div>
+    <div class="modal-body" *ngIf="data">
+        <div class="col-md-12 no-padding">
+            <div class="form-group">
+                <label>Nhóm khu vực</label>
+                <p-dropdown [options]="areaGroups" [(ngModel)]="selectedAreaGroup" [style]="{'width':'100%'}" filter="true" 
+                (onChange)="areaGroupSelectChange()"></p-dropdown>
+            </div>
+            <div class="form-group">
+                <label>Tỉnh / thành</label>
+                <p-multiSelect [options]="provinces" [(ngModel)]="multiSelectProvinces" defaultLabel="Chọn tỉnh thành" selectedItemsLabel="{0} Tỉnh thành đã chọn"
+                    [style]="{'width':'100%'}" (onChange)="loadDistrictAllowSelect()">
+                </p-multiSelect>
+            </div>
+            <div class="form-group">
+                <label>Quận / huyện</label>
+                <p-multiSelect [options]="districts" [(ngModel)]="multiSelectDistricts" defaultLabel="Chọn quận huyện" selectedItemsLabel="{0} Quận huyện đã chọn"
+                    [style]="{'width':'100%'}">
+                </p-multiSelect>
+            </div>
+            <div class="form-group"> 
+                <label>Tên vùng</label>
+                <input type="text" placeholder="Nhập tên vùng" (keyup)="nameChange()" class="input-sm form-control" id="name" [(ngModel)]="data.name"
+                />
+            </div>
+            <div class="form-group">
+                <label>Mã vùng</label>
+                <input type="text" placeholder="Nhập mã vùng" class="input-sm form-control" id="code" readonly [(ngModel)]="data.code" />
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button *ngIf="isEdit" type="button" class="btn btn-primary" (click)="save()">Lưu</button>
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+    </div>
+</ng-template>
+
+<ng-template #templateDelete>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+    </div>
+    <div class="modal-body" style="overflow:hidden;" *ngIf="data">
+        <div class="col-md-12 no-padding">
+            <h4>Bạn có chắc chắn muốn xoá
+                <b>&quot;{{data.name}}&quot;</b>?</h4>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+        <button *ngIf="isDelete" type="button" class="btn btn-danger" (click)="delete()">Xoá</button>
+    </div>
+</ng-template>
+<!--End Modal-->

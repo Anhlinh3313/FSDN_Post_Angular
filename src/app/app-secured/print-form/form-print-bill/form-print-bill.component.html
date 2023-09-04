@@ -1,0 +1,40 @@
+<div [id]="formId">
+  <div *ngFor="let item of selectData">
+    <div style="page-break-after: always;">
+      <div style="text-align: text-left">
+        <strong>{{name}}</strong>
+      </div>
+
+      <div style="text-align: right" *ngIf="item.service">Dịch vụ: {{item.service?.name}}</div>
+
+      <div style="text-align: center; font-size: 18px;">
+        <div class="barcode" style="margin-top: -5px; margin-bottom: 10px; height: 60px;">
+          <img [id]="item.fakeId" />
+        </div>
+        <div class="bot-barcode">
+          <strong id="generator">{{item.shipmentNumber}}</strong>
+        </div>
+      </div>
+
+      <hr>
+
+      <div><b>Mã KH:</b> {{item.sender?.code}}</div>
+
+      <div>
+        <b>Người nhận:</b> {{item.receiverName}}, {{item.receiverPhone}}
+        <span *ngIf="item.addressNoteTo">, {{item.addressNoteTo}}</span>
+        <span *ngIf="item.shippingAddress"> - {{item.shippingAddress}}</span>
+      </div>
+
+      <div><b>Trọng lượng:</b> {{item.weight}}kg</div>
+      <div><b>COD:</b> {{item.cod | number}}VND</div>
+      <div style="text-align: center">
+        <b>{{item.toHub?.name}}</b>
+      </div>
+      <!-- <div *ngIf="item.totalPrice">Giá tiền: {{item.totalPrice | number}} VNĐ</div>
+      <div *ngIf="item.cusNote">Ghi chú: {{item.cusNote}}</div> -->
+      <div>
+      </div>
+    </div>
+  </div>
+</div>

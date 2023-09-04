@@ -1,0 +1,12 @@
+<div [id]="formId">
+    <div *ngFor="let item of selectData; index as i">
+        <div style="text-align: center; font-size: 18px;">
+            <div class="barcode" style="margin-top: -5px; margin-bottom: 10px; height: 60px;">
+                <img [id]="item.fakeId" />
+            </div>
+            <div class="bot-barcode">
+                <strong id="generator">{{item.shipmentNumber}}</strong>
+            </div>
+        </div> 
+    </div>
+</div>

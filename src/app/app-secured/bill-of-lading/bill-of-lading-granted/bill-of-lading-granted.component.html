@@ -1,0 +1,138 @@
+<div class="row">
+  <div class="col-lg-12">
+    <ol class="ibox-title breadcrumb">
+      <li>
+        <a>{{parentPage}}</a>
+      </li>
+      <li class="active">
+        <strong>{{currentPage}}</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-title">
+        <div class="ibox-tools">
+          <a class="collapse-link">
+            <button class="btn btn-success" (click)="refresh(dt)">
+              <i class="fa fa-refresh"></i>&nbsp;refresh
+            </button>
+          </a>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-md-2">
+            <div class="form-group">
+              <label>{{shortName}}</label>
+              <p-dropdown [options]="hubs" [(ngModel)]="selectedHub" [styleClass]="'form-control'" (onChange)="dt.filter($event.value, 'provideHubId', 'equals');loadUserByHubID()"
+                [style]="{'width':'100%'}" filter="true"></p-dropdown>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <label>Nhân viên</label>
+              <p-dropdown [options]="users" [(ngModel)]="selectedUser" [styleClass]="'form-control'" (onChange)="dt.filter($event.value, 'provideUserId', 'equals')"
+                [style]="{'width':'100%'}" filter="true"></p-dropdown>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <label>Khách hàng</label>
+              <p-dropdown [options]="customers" [(ngModel)]="selectedCustomer" [styleClass]="'form-control'" (onChange)="dt.filter($event.value, 'provideCustomerId', 'equals')"
+                [style]="{'width':'100%'}" filter="true"></p-dropdown>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <label>Trạng thái</label>
+              <p-dropdown [options]="provinceCodeStatus" [(ngModel)]="selectedProvinceCodeStatus" (onChange)="dt.filter($event.value, 'provideCodeStatusId', 'equals')"
+                [styleClass]="'form-control'" [style]="{'width':'100%'}" filter="true"></p-dropdown>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <label>Mã</label>
+              <input type="text" class="form-control" [(ngModel)]="code" (input)="dt.filter($event.target.value, 'code', 'equals')">
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-1">
+          <div class="col-md-12">
+            <button type="button" class="btn btn-primary" (click)="print()">In mã</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <p-table #dt [value]="lstData" [(selection)]="selectedData" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50,100]">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width: 2.25em">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                  </th>
+                  <th pSortableColumn="id" style="width: 80px">
+                    STT
+                    <p-sortIcon field="id"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="code">
+                    Mã
+                    <p-sortIcon field="code"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="provideCodeStatus.name">
+                    Trạng thái
+                    <p-sortIcon field="provideCodeStatus.name"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="hub.name">
+                    {{shortName}}
+                    <p-sortIcon field="hub.name"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="user.name">
+                    Nhân viên
+                    <p-sortIcon field="user.name"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="customer.name">
+                    Khách hàng
+                    <p-sortIcon field="customer.name"></p-sortIcon>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr style="height: 50px" [pSelectableRow]="rowData">
+                  <td>
+                    <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                  </td>
+                  <td>{{rowIndex + 1}}</td>
+                  <td>{{rowData.code}}</td>
+                  <td>{{rowData.provideCodeStatus?.name}}</td>
+                  <td>{{rowData.hub?.name}}</td>
+                  <td>{{rowData.user?.name}}</td>
+                  <td>{{rowData.customer?.name}}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                  <td colspan="7">
+                    Không tìm thấy dữ liệu
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="form-print" [hidden]="true">
+  <div *ngIf="idPrint === 'print-code-sticker-detail-shipment'">
+    <form-print-code-stricker-province-code></form-print-code-stricker-province-code>
+  </div>
+</div>
+
+<iframe class="hidden-iframe" name="print-code-sticker-detail-shipment"></iframe>

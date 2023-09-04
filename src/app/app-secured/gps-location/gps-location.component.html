@@ -1,0 +1,108 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <!-- <h5>{{currentPage}}</h5> -->
+                <div class="ibox-tools">
+                    <i class="fa fa-circle-o btn" style="background-color: #2bff00" aria-hidden="true"></i> Đang online
+                    <b>({{this.totalOnline}})</b> &nbsp;
+                    <i class="fa fa-circle-o btn" style="background-color: #D2D5DA" aria-hidden="true"></i> Đang
+                    offline
+                    <b>({{this.totalOffline}})</b> &nbsp;
+                    <span (click)="loadInit()">
+                        <i class="fa fa-circle-o btn btn-warning" aria-hidden="true"></i> Đang theo dõi (bấm huỷ theo
+                        dõi)
+                    </span>
+                </div>
+            </div>
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="row mb-2">
+                        <div class="col-md-3">
+                            <label>Trung tâm</label>
+                            <p-dropdown [options]="centerHub" [(ngModel)]="selectedCenterHub" [styleClass]="'form-control'"
+                                [filter]="true" [style]="{'width':'100%'}" (onChange)="changeCenterHub();"></p-dropdown>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Chi nhánh</label>
+                            <p-dropdown [options]="poHub" [(ngModel)]="selectedPoHub" [styleClass]="'form-control'"
+                                [filter]="true" [style]="{'width':'100%'}" (onChange)="changePoHub()"></p-dropdown>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Trạm </label>
+                            <p-dropdown [options]="hub" [(ngModel)]="selectedHub" [styleClass]="'form-control'"
+                                [filter]="true" [style]="{'width':'100%'}" (onChange)="changeHub()"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <h3>Bảng điều khiển</h3>
+                            <p-dataTable [value]="riders" scrollHeight="580px" scrollable="true" [responsive]="true">
+                                <p-column styleClass="p-col-map-button" field="id">
+                                    <ng-template pTemplate="header">
+                                        <a class="btn btn-info" (click)="refresh()">
+                                            <i class="fa fa-refresh"></i>
+                                        </a>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-rowData="rowData">
+                                        <i class="fa fa-circle-o btn" style="background-color: #D2D5DA" aria-hidden="true"
+                                            *ngIf="rowData.typeMap === 0" (click)="clickSelectRider(rowData.id)"></i>
+                                        <i class="fa fa-circle-o btn" style="background-color: #2bff00" aria-hidden="true"
+                                            *ngIf="rowData.typeMap === 1" (click)="clickSelectRider(rowData.id)"></i>
+                                        <i class="fa fa-circle-o btn btn-warning" aria-hidden="true" *ngIf="rowData.typeMap === 2"
+                                            (click)="clickSelectRider(rowData.id)"></i>
+                                    </ng-template>
+                                </p-column>
+                                <p-column field="fullName" header="Tên giao nhận" [filter]="true" filterMatchMode="contains">
+                                    <ng-template pTemplate="body" let-rowData="rowData">
+                                        <span #viewDetailUser style="cursor: pointer;" (click)="clickViewDetailUser(viewDetailUser, rowData)">
+                                            {{rowData.code}} - {{rowData.fullName}}
+                                        </span>
+                                    </ng-template>
+                                </p-column>
+                            </p-dataTable>
+                        </div>
+                        <div class="col-sm-9">
+                            <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom">
+                                <agm-marker *ngFor="let m of markers; let i = index" [latitude]="m.lat" [longitude]="m.lng"
+                                    [label]="m.label" [iconUrl]="m.icon">
+                                    <agm-info-window>
+                                        <div>
+                                            <b>Nhân viên:</b>{{m.data.code}} - {{m.data.fullName}}
+                                        </div>
+                                        <div>
+                                            <b>Số ĐT:</b> {{m.data.phoneNumber}}
+                                        </div>
+                                        <div>
+                                            <b>Vị trí:</b> {{street}}
+                                        </div>
+                                        <div>
+                                            <b>Thời gian gần nhất:</b> {{m.data.lastUpdateLocationTime | dateFormat}}
+                                        </div>
+                                        <div>
+                                            <b>Trạng thái:</b> {{(m.isOnline) ? "Đang online" : "Đang offline"}}
+                                        </div>
+                                    </agm-info-window>
+                                </agm-marker>
+                            </agm-map>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,119 @@
+<div [id]="formId">
+    <div class="bk-delivery-page" style="padding: 16px;">
+        <div class="page-header">
+            <div class="pull-left">
+                <div class="logo-wrapper">
+                    <div class="logo">
+                        <img class="logo-img" src="{{logo}}">
+                    </div>
+                </div>
+            </div>
+            <div class="pull-left">
+                    <div class="company-name">{{selectData.companyName}}</div>
+                    <div>{{selectData.hotLine}}</div>
+                    <div>{{selectData.centerHubAddress}}</div>
+            </div>
+            <div class="pull-right">
+                <div class="barcode-wrapper">
+                    <div class="barcode" style="margin-bottom: 0px">
+                        <img id="listGoods" />
+                        <!-- <div style="text-align:center">{{selectData.dateCreate | dateFormat}}</div> -->
+                    </div>
+                    <div style="text-align:center">{{selectData.listGoods}}</div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="">
+            <div class="page-title" style="padding-bottom: 0px;">
+                <strong class="title">BẢNG KÊ {{selectData.type}}</strong>
+            </div>
+            <div class="text-center">
+                <span>Ngày lập: {{selectData.dateCreate | dateFormat}}</span>
+            </div>
+            <div class="content-wrapper">
+                <div class="table-wrapper">
+                    <table class="table table-content">
+                        <thead>
+                            <tr>
+                                <th style="width:40px">STT</th>
+                                <th style="width:170px">Mã vận đơn</th>
+                                <th style="width:100px">T/L (gr)</th>
+                                <th style="width:100px">K/L (m3)</th>
+                                <th style="width:40px">Số kiện</th>
+                                <th style="width:80px">Tỉnh đi</th>
+                                <th style="width:80px">Tỉnh đến</th>
+                                <th style="width:200px">Công ty gửi</th>
+                                <th>Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let x of selectData">
+                                <td class="text-right">{{x.stt}}</td>
+                                <td style="padding-bottom: 10px !important; text-align: center !important;">
+                                    <div class="barcode" style="margin-bottom: 0px">
+                                        <img [id]="x.fakeId" />
+                                    </div>
+                                    <div style="margin-top: -10px">{{x.shipmentNumber}}</div>
+                                </td>
+                                <td class="text-right">{{(x.weight) ? x.weight : "-"}} </td>
+                                <td class="text-right">{{(x.calWeight) ? x.calWeight : "-"}}</td>
+                                <td class="text-right">{{(x.totalBox) ? x.totalBox : 0}}</td>
+                                <td class="text-right">{{(x.toProvince) ? x.toProvince.code : "" }}</td>
+                                <td class="text-right">{{(x.fromProvince) ? x.fromProvince.code : "" }}</td>
+                                <td class="text-center">{{(x.companyFrom) ? x.companyFrom : "" }}</td>
+                                <td class="text-center">{{(x.transferNote) ? x.transferNote : "" }}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>{{ (selectData.totalWeight) ? selectData.totalWeight : 0 }}</td>
+                                <td>{{ (selectData.totalCalWeight) ? selectData.totalCalWeight : 0 }}</td>
+                                <td>{{ (selectData.totalBox) ? selectData.totalBox : 0 }}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>                        
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="page-footer">
+            <div class="signal-wrapper">
+                <div class="row">
+                    <div class="col-xs-4 text-center">
+                        <div>
+                            <strong class="text-uppercase">Bên lập phiếu</strong>
+                        </div>
+                        <div>
+                            <strong>{{selectData.userHubName}}</strong>
+                        </div>
+                        <div>
+                            <span style="font-weight: normal">{{selectData.createdBy}}</span>
+                        </div>
+                        <div class="signature"></div>
+                        <div style="font-weight: normal">Ngày ..../ ..../{{selectData.getFullYear}}</div>
+                    </div>
+                    <div class="col-xs-offset-4 col-xs-4 text-center">
+                        <div>
+                            <strong class="text-uppercase">Bên bàn giao</strong>
+                        </div>
+                        <div>
+                            <strong>&nbsp;</strong>
+                        </div>
+                        <div>
+                            <span style="font-weight: normal">&nbsp;</span>
+                        </div>
+                        <div class="signature"></div>
+                        <div style="font-weight: normal">Ngày ..../ ..../{{selectData.getFullYear}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <img src="{{logo}}" class="logo-img-background">
+</div>

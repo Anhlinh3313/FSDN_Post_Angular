@@ -1,0 +1,273 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <div class="ibox-tools">
+                    <p-header>
+                        <div>
+                            <button type="button" class="btn btn-primary" (click)="exportCSV()">
+                                <i class="fa fa-file-excel-o"></i>&nbsp;Excel</button>
+                            <button type="button" class="btn btn-success" (click)="loadShipment()">
+                                <i class="fa fa-refresh"></i>&nbsp;Xem</button>
+                        </div>
+                    </p-header>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Từ ngày</label>
+                        <div class="form-group">
+                            <p-calendar [(ngModel)]="fromDateComplain" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                                (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                                [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Đến ngày</label>
+                        <div class="form-group">
+                            <p-calendar [(ngModel)]="toDateComplain" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                                (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                                [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group ui-fluid">
+                            <label>Nhân viên kinh danh</label>
+                            <p-autoComplete [(ngModel)]="selectedSaler" [suggestions]="lstSuggestionsSaler" [minLength]="1"
+                                (completeMethod)="filterSaler($event)" (onSelect)="onSelectedSaler()" styleClass="wid100 input-s-lg"
+                                [dropdown]="false" (keydown.Tab)="keyTabSaler($event)" (onUnselect)="removeSaler($event)"
+                                [multiple]="false" (onClear)="onClearSaler()">
+                            </p-autoComplete>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group ui-fluid">
+                            <label>Nhân viên xử lý</label>
+                            <p-autoComplete [(ngModel)]="selectedHandleEmp" [suggestions]="lstSuggestionsHandleEmp"
+                                [minLength]="1" (completeMethod)="filterHandleEmp($event)" (onSelect)="onSelectedHandleEmp()"
+                                styleClass="wid100 input-s-lg" [dropdown]="false" (keydown.Tab)="keyTabHandleEmp($event)"
+                                [multiple]="false" (onClear)="onClearHandleEmp()">
+                            </p-autoComplete>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label>
+                            Tình trạng
+                        </label>
+                        <div class="form-group">
+                            <p-triStateCheckbox [(ngModel)]="isCompensationComplain" [label]="textCompleted" (onChange)="onChangeIsCompleted()"></p-triStateCheckbox>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <p-table #dt [value]="datasource" [paginator]="true" [rows]="rowPerPage" (onPage)="onPageChange($event)"
+                                [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true" [totalRecords]="totalRecords"
+                                [alwaysShowPaginator]="true" [responsive]="true" [columns]="columnsExp" [scrollable]="true"
+                                scrollHeight="450px">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="p-col-stt">STT</th>
+                                        <th pSortableColumn="customerCode" class="p-col-user">Mã khách hàng
+                                            <p-sortIcon field="customerCode"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="orderDate" class="p-col-user">Ngày Vận Đơn
+                                            <p-sortIcon field="orderDate"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="shipmentNumber" class="p-col-user">Số Vận Đơn
+                                            <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="fromProvinceName" class="p-col-user">Từ Tỉnh
+                                            <p-sortIcon field="fromProvinceName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="toProvinceName" class="p-col-user">Đến Tỉnh
+                                            <p-sortIcon field="toProvinceName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="shippingAddress" class="p-col-address">Địa chỉ đến
+                                            <p-sortIcon field="shippingAddress"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="receiverName" class="p-col-user">Tên người nhận
+                                            <p-sortIcon field="receiverName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="receiverPhone" class="p-col-user">Số ĐT người nhận
+                                            <p-sortIcon field="receiverPhone"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="weight" class="p-col-user">Trọng Lượng thực
+                                            <p-sortIcon field="weight"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="calWeight" class="p-col-user">Trọng Lượng Qui Đổi
+                                            <p-sortIcon field="calWeight"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="cod" class="p-col-user">Số tiền COD
+                                            <p-sortIcon field="cod"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="defaultPrice" class="p-col-user">Cước
+                                            <p-sortIcon field="defaultPrice"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="totalDVGT" class="p-col-user">phụ phí
+                                            <p-sortIcon field="totalDVGT"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="priceCOD" class="p-col-user">Phí COD
+                                            <p-sortIcon field="priceCOD"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="totalPriceAll" class="p-col-user">Tổng Cước Phí
+                                            <p-sortIcon field="totalPriceAll"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="complainTypeName" class="p-col-user">Lý do khiếu nại
+                                            <p-sortIcon field="complainTypeName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="complainContent" class="p-col-user">Ý kiến khách hàng
+                                            <p-sortIcon field="complainContent"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="complainStatusName" class="p-col-user">Kết quả xử lý
+                                            <p-sortIcon field="complainStatusName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="isCompensation" class="p-col-user">Đền bù
+                                            <p-sortIcon field="isCompensation"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="handleEmpFullName" class="p-col-user">Người xử lý
+                                            <p-sortIcon field="handleEmpFullName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="endDate" class="p-col-user">Thời gian kết thúc
+                                            <p-sortIcon field="endDate"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="compensationValue" class="p-col-user">Số tiền đền bù
+                                            <p-sortIcon field="compensationValue"></p-sortIcon>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                                    <tr>
+                                        <td class="p-col-stt">{{i + 1}}</td>
+                                        <td class="p-col-user">{{rowData.customerCode}}</td>
+                                        <td class="p-col-user">{{rowData.orderDate}}</td>
+                                        <td class="p-col-user">{{rowData.shipmentNumber}}</td>
+                                        <td class="p-col-user">{{rowData.fromProvinceName}}</td>
+                                        <td class="p-col-user">{{rowData.toProvinceName}}</td>
+                                        <td class="p-col-address">{{rowData.shippingAddress}}</td>
+                                        <td class="p-col-user">{{rowData.receiverName}}</td>
+                                        <td class="p-col-user">{{rowData.receiverPhone}}</td>
+                                        <td class="p-col-user">{{rowData.weight}}</td>
+                                        <td class="p-col-user">{{rowData.calWeight}}</td>
+                                        <td class="p-col-user">{{rowData.cod}}</td>
+                                        <td class="p-col-user">{{rowData.defaultPrice}}</td>
+                                        <td class="p-col-user">{{rowData.totalDVGT}}</td>
+                                        <td class="p-col-user">{{rowData.priceCOD}}</td>
+                                        <td class="p-col-user">{{rowData.totalPriceAll}}</td>
+                                        <td class="p-col-user">{{rowData.complainTypeName}}</td>
+                                        <td class="p-col-user">{{rowData.complainContent}}</td>
+                                        <td class="p-col-user">{{rowData.complainStatusName}}</td>
+                                        <td class="p-col-user">{{rowData.isCompensation}}</td>
+                                        <td class="p-col-user">{{rowData.handleEmpFullName}}</td>
+                                        <td class="p-col-user">{{rowData.endDate}}</td>
+                                        <td class="p-col-user">{{rowData.compensationValue}}</td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer" let-columns>
+                                    <tr>
+                                        <th class="p-col-stt">STT</th>
+                                        <th pSortableColumn="customerCode" class="p-col-user">Mã khách hàng
+                                            <p-sortIcon field="customerCode"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="orderDate" class="p-col-user">Ngày Vận Đơn
+                                            <p-sortIcon field="orderDate"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="shipmentNumber" class="p-col-user">Số Vận Đơn
+                                            <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="fromProvinceName" class="p-col-user">Từ Tỉnh
+                                            <p-sortIcon field="fromProvinceName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="toProvinceName" class="p-col-user">Đến Tỉnh
+                                            <p-sortIcon field="toProvinceName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="shippingAddress" class="p-col-address">Địa chỉ đến
+                                            <p-sortIcon field="shippingAddress"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="receiverName" class="p-col-user">Tên người nhận
+                                            <p-sortIcon field="receiverName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="receiverPhone" class="p-col-user">Số ĐT người nhận
+                                            <p-sortIcon field="receiverPhone"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="weight" class="p-col-user">Trọng Lượng thực
+                                            <p-sortIcon field="weight"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="calWeight" class="p-col-user">Trọng Lượng Qui Đổi
+                                            <p-sortIcon field="calWeight"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="cod" class="p-col-user">Số tiền COD
+                                            <p-sortIcon field="cod"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="defaultPrice" class="p-col-user">Cước
+                                            <p-sortIcon field="defaultPrice"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="totalDVGT" class="p-col-user">phụ phí
+                                            <p-sortIcon field="totalDVGT"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="priceCOD" class="p-col-user">Phí COD
+                                            <p-sortIcon field="priceCOD"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="totalPriceAll" class="p-col-user">Tổng Cước Phí
+                                            <p-sortIcon field="totalPriceAll"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="complainTypeName" class="p-col-user">Lý do khiếu nại
+                                            <p-sortIcon field="complainTypeName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="complainContent" class="p-col-user">Ý kiến khách hàng
+                                            <p-sortIcon field="complainContent"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="complainStatusName" class="p-col-user">Kết quả xử lý
+                                            <p-sortIcon field="complainStatusName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="isCompensation" class="p-col-user">Đền bù
+                                            <p-sortIcon field="isCompensation"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="handleEmpFullName" class="p-col-user">Người xử lý
+                                            <p-sortIcon field="handleEmpFullName"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="endDate" class="p-col-user">Thời gian kết thúc
+                                            <p-sortIcon field="endDate"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="compensationValue" class="p-col-user">Số tiền đền bù
+                                            <p-sortIcon field="compensationValue"></p-sortIcon>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td [attr.colspan]="'32'">
+                                            Không tìm thấy dữ liệu
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="summary">
+                                    <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecords}}
+                                        khách hàng</span>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

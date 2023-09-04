@@ -1,0 +1,143 @@
+<div class="row">
+  <div class="col-lg-12">
+      <ol class="ibox-title breadcrumb">
+          <li>
+              <a>{{parentPage}}</a>
+          </li>
+          <li class="active">
+              <strong>{{currentPage}}</strong>
+          </li>
+      </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+          <div class="ibox-title">
+              <div class="ibox-tools">
+                  <p-header>
+                      <div>
+                          <button type="button" class="btn btn-primary" (click)="exportCSV()">
+                              <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+                          <button type="button" class="btn btn-success" (click)="load_Expense()">
+                              <i class="fa fa-refresh"></i>&nbsp;Xem</button>
+                      </div>
+                  </p-header>
+              </div>
+          </div>
+          <div class="ibox-content">
+              <div class="row">
+                  <div class="col-md-2">
+                      <label>Từ ngày</label>
+                      <div class="form-group">
+                          <p-calendar [(ngModel)]="selectedDateFrom" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                              (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                              [style]="{'width': '100%'}"></p-calendar>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                      <label>Đến ngày</label>
+                      <div class="form-group">
+                          <p-calendar [(ngModel)]="selectedDateTo" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                              (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                              [style]="{'width': '100%'}"></p-calendar>
+                      </div>
+                  </div>
+                  <div class="col-sm-2">
+                    <label>Nhân viên</label>
+                    <p-autoComplete [(ngModel)]="empCurrent" [suggestions]="filterEmpCurrents" [minLength]="1"
+                        (completeMethod)="filterEmpCurrent($event)" (onSelect)="onSelectedEmpCurrent()"
+                        styleClass="select-input form-control none-padding" [dropdown]="true">
+                    </p-autoComplete>
+                </div>
+                  <div class="col-sm-2">
+                      <label>{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}}</label>
+                      <p-dropdown styleClass="select-input form-control" [(ngModel)]="selectedHub" [options]="hubs"
+                          [style]="{'width':'100%'}" filter="filter" (onChange)="changeHub()">
+                      </p-dropdown>
+                  </div>
+                  <div class="col-sm-2">
+                    <label>Tài khoản</label>
+                    <p-dropdown styleClass="select-input form-control" [options]="listAccountingAccount"
+                        [(ngModel)]="selectedAccounting" [style]="{'width':'100%'}" filter="filter">
+                    </p-dropdown>
+                  </div>
+                  <div class="col-sm-2">
+                      <label>Tìm kiếm</label>
+                      <div class="input-group">
+                          <input #filterGb type="text" placeholder="Nhập chuỗi cần tìm ..." class="input-sm form-control"
+                              id="filter" (input)="dt.filterGlobal($event.target.value, 'contains')" />
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="ibox-content">
+              <div class="row">
+                  <div class="col-sm-12">
+                      <div class="">
+                          <p-table #dt [value]="listData" [paginator]="true" [rows]="10" [scrollable]="true"
+                              scrollHeight="450px" [responsive]="true" [rowsPerPageOptions]="[10,20,50,100]"
+                              [totalRecords]="totalRecords" [lazy]="true" (onLazyLoad)="loadLazy($event)"
+                              [scrollable]="true">
+                              <ng-template pTemplate="header">
+                                  <tr>
+                                      <th style="width:50px;" pSortableColumn="stt">STT
+                                          <p-sortIcon field="stt"></p-sortIcon>
+                                      </th>
+                                      <th class="p-col-normal" pSortableColumn="acceptDate">Ngày
+                                      </th>
+                                      <th class="p-col-normal" pSortableColumn="accountingAccountCode">Tài khoản
+                                          <p-sortIcon field="code"></p-sortIcon>
+                                      </th>
+                                      <th class="p-col-normal" pSortableColumn="accountingAccountName">Tên tài khoản
+                                          <p-sortIcon field="fullName"></p-sortIcon>
+                                      </th>
+                                      <th class="p-col-normal" pSortableColumn="note">Mô tả
+                                      </th>
+                                      <th class="p-col-normal" pSortableColumn="moneyDifference">Tiền chênh lệch
+                                      </th>
+                                      <th class="p-col-normal" pSortableColumn="FeeBank">Phí ngân hàng
+                                      </th> 
+                                      <th class="p-col-normal" pSortableColumn="grandTotal">Tổng tiền nộp
+                                      </th> 
+                                      <th class="p-col-normal" pSortableColumn="grandTotalReal">Nhận thực tế
+                                      </th> 
+                                      <th class="p-col-normal" pSortableColumn="fullName">Tên nhân viên
+                                      </th> 
+                                  </tr>
+                              </ng-template>
+                              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                                  <tr>
+                                      <td style="width:50px; height: 50px">{{rowIndex + 1}}</td>
+                                      <td class="p-col-normal">{{rowData.acceptDate | dateFormat}}</td>
+                                      <td class="p-col-normal">{{rowData.accountingAccountCode}}</td>
+                                      <td class="p-col-normal">{{rowData.accountingAccountName}}</td>
+                                      <td class="p-col-normal">{{rowData.note }}</td>
+                                      <td class="p-col-normal">{{rowData.moneyDifference | number}}</td>
+                                      <td class="p-col-normal">{{rowData.feeBank | number}}</td> 
+                                      <td class="p-col-normal">{{rowData.grandTotal | number}}</td> 
+                                      <td class="p-col-normal">{{rowData.grandTotalReal | number}}</td> 
+                                      <td class="p-col-normal">{{rowData.fullName}}</td> 
+                                  </tr>
+                              </ng-template>
+                              <ng-template pTemplate="emptymessage">
+                                  <tr>
+                                      <td [attr.colspan]="'32'">
+                                          Không tìm thấy dữ liệu
+                                      </td>
+                                  </tr>
+                              </ng-template> 
+                              <ng-template pTemplate="summary">
+                                  <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecords}} tài khoản</span>
+                              </ng-template>
+                          </p-table>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+  </div>
+</div>
+ 

@@ -1,0 +1,202 @@
+<div [id]="formId">
+    <div class="bk-delivery-page" style="padding: 16px;">
+        <div class="page-header">
+            <div class="pull-left">
+                <div class="logo-wrapper">
+                    <div class="logo">
+                        <img class="logo-img" src="{{logo}}">
+                    </div>
+                </div>
+            </div>
+            <div class="pull-left">
+                <div class="company-name">{{selectData.companyName}}</div>
+                <div>{{selectData.hotline}}</div>
+                <div>{{selectData.centerHubAddress}}</div>
+            </div>
+            <div class="pull-right">
+                <div class="barcode-wrapper">
+                    <div class="barcode" style="margin-bottom: 0px">
+                        <img id="listGoods" />
+                        <!-- <div style="text-align:center">{{selectData.dateCreate | dateFormat}}</div> -->
+                    </div>
+                    <div style="text-align:center">{{selectData.listGoods}}</div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="">
+            <div class="page-title" style="padding-bottom: 0px;">
+                <strong class="title">{{selectData.namePrintLabel}}</strong>
+            </div>
+            <div class="text-center">
+                <span>Ngày lập: {{selectData.dateCreate | dateFormat}}</span>
+            </div>
+            <div class="content-wrapper">
+                <div class="table-wrapper">
+                    <table class="table table-content">
+                        <thead>
+                            <tr>
+                                <th class="BK-STT">STT</th>
+                                <th class="BK-ShipmentNumber">Mã vận đơn</th>
+                                <th class="BK-SenderName">Người gửi</th>
+                                <th class="BK-Weight">T/L (kg)</th>
+                                <th class="BK-Box">SK</th>
+                                <th *ngIf="companyName !== 'gsdp'" class="BK-Service">Dịch vụ</th>
+                                <th *ngIf="selectData.listGoodsTypeId==3 || companyName === 'gsdp'"
+                                    class="BK-FromProvince">Tỉnh đến</th>
+                                <th *ngIf="selectData.listGoodsTypeId==3 || companyName === 'gsdp'"
+                                    class="BK-ShippingInfo">Thông tin nhận</th>
+                                <th *ngIf="selectData.listGoodsTypeId==3 || companyName === 'gsdp'"
+                                    class="BK-ShippingAddress">Địa chỉ nhận</th>
+                                <th *ngIf="selectData.listGoodsTypeId==10 && companyName !== 'gsdp'"
+                                    class="BK-FromProvince">Tỉnh gửi</th>
+                                <th *ngIf="selectData.listGoodsTypeId==10 && companyName !== 'gsdp'"
+                                    class="BK-ShippingInfo">Thông tin trả</th>
+                                <th *ngIf="selectData.listGoodsTypeId==10 && companyName !== 'gsdp'"
+                                    class="BK-ShippingAddress">Địa chỉ trả</th>
+                                <th *ngIf="companyName === 'gsdp'" class="BK-Service">Khai giá</th>
+                                <th *ngIf="companyName === 'gsdp' && selectData.listGoodsTypeId==3" class="BK-Service">
+                                    COD</th>
+                                <th *ngIf="companyName !== 'gsdp'" class="BK-Service">Tổng phải thu</th>
+                                <th class="BK-COD">Ghi chú</th>
+                                <th *ngIf="companyName === 'be' || companyName === 'veep'" class="BK-COD">Ký nhận</th>
+                                <th class="BK-COD" *ngIf="companyName === 'gsdp' && selectData.listGoodsTypeId==10">#
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let x of selectData">
+                                <td class="text-right">{{x.stt}}</td>
+                                <td style="padding-bottom: 0px !important; text-align: center !important;"
+                                    *ngIf="selectData.isPrintBareCode">
+                                    <div class="barcode" style="margin-bottom: 0px">
+                                        <img [id]="x.fakeId" />
+                                    </div>
+                                    <div style="margin-top: -10px">{{x.shipmentNumber}}</div>
+                                </td>
+                                <td style="padding-bottom: 10px !important; text-align: center !important;"
+                                    *ngIf="!selectData.isPrintBareCode">
+                                    <div>{{x.shipmentNumber}}</div>
+                                </td>
+                                <td class="text-right">
+                                    <div>{{x.senderName}}</div>
+                                </td>
+                                <td class="text-right">{{(x.weight) ? x.weight.toLocaleString('en-US') : "-"}}</td>
+                                <td class="text-right">{{(x.totalBox) ? x.totalBox : "-"}}</td>
+                                <td class="text-uppercase text-center" *ngIf="companyName !== 'gsdp' && x.service">{{x.service
+                                    ? x.service.code :
+                                    ""}}
+                                </td>
+                                <td *ngIf="selectData.listGoodsTypeId==3 || companyName === 'gsdp'" class="text-right">
+                                    {{ (x.toProvince)? x.toProvince.name : "" }} </td>
+                                <td *ngIf="selectData.listGoodsTypeId==3 || companyName === 'gsdp'"
+                                    class="BK-ShippingInfo">
+                                    <b>({{x.receiverPhone}})</b> {{x.receiverName}}</td>
+                                <td *ngIf="selectData.listGoodsTypeId==3 || companyName === 'gsdp'"
+                                    class="BK-ShippingAddress">
+                                    {{(x.addressNoteTo)? x.addressNoteTo +", ":""}} {{x.shippingAddress}}</td>
+                                <td *ngIf="selectData.listGoodsTypeId==10 && companyName !== 'gsdp'" class="text-right">
+                                    {{ (x.fromProvince)? x.fromProvince.name : "" }} </td>
+                                <td *ngIf="selectData.listGoodsTypeId==10 && companyName !== 'gsdp'"
+                                    class="BK-ShippingInfo">
+                                    <b>({{x.senderPhone}})</b> {{x.senderName}}</td>
+                                <td *ngIf="selectData.listGoodsTypeId==10 && companyName !== 'gsdp'"
+                                    class="BK-ShippingAddress">
+                                    {{(x.addressNoteFrom)? x.addressNoteFrom +", ":""}} {{x.pickingAddress}}</td>
+                                <td class="text-right" *ngIf="companyName === 'gsdp'">
+                                    {{ (x.insured) ? x.insured.toLocaleString('en-US') : 0}}</td>
+                                <td class="text-right" *ngIf="companyName !== 'gsdp'">
+                                    {{ (x.sumPrice) ? x.sumPrice.toLocaleString('en-US') : 0}}</td>
+                                <td class="text-right" *ngIf="companyName === 'gsdp' && selectData.listGoodsTypeId==3">
+                                    {{ (x.cod) ? x.cod.toLocaleString('en-US') : 0}}</td>
+                                <!-- <td class="text-right">{{(x.totalPriceAll)? x.totalPriceAll.toLocaleString('en-US'): "0"}}</td> -->
+                                <td class="text-center"  *ngIf="selectData.listGoodsTypeId==3">{{x.cusNote}}</td>
+                                <td class="text-center"  *ngIf="selectData.listGoodsTypeId==10">{{x.deliveryNote}}</td>
+                                <td *ngIf="companyName === 'be' || companyName === 'veep'" class="BK-COD"></td>
+                                <td class="text-right" *ngIf="companyName === 'gsdp' && selectData.listGoodsTypeId==10">
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>{{ ((selectData.totalWeight) ? selectData.totalWeight : 0) | number }}</td>
+                                <td>{{ ((selectData.totalBox) ? selectData.totalBox : 0) }}</td>
+                                <td *ngIf="companyName !== 'gsdp'"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td *ngIf="companyName === 'gsdp' && selectData.listGoodsTypeId==3"></td>
+                                <td> {{ (selectData.totalSumPrice) ? selectData.totalSumPrice.toLocaleString('en-US') :
+                                    0 }}</td>
+                                <!-- <td>{{(selectData.totalPriceAll)? selectData.totalPriceAll.toLocaleString('en-US') : "0"}}</td> -->
+                                <td></td>
+                                <td *ngIf="companyName === 'gsdp' && selectData.listGoodsTypeId==10"></td>
+                                <td *ngIf="companyName === 'be' || companyName === 'veep'" class="BK-COD"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="page-footer">
+            <div class="signal-wrapper">
+                <div class="row">
+                    <div class="col-xs-4 text-center">
+                        <div>
+                            <strong class="text-uppercase">Bên lập phiếu</strong>
+                        </div>
+                        <div>
+                            <strong>{{selectData.userHubName}}</strong>
+                        </div>
+                        <div>
+                            <strong>Bộ phận {{selectData.userDepartmentName}}</strong>
+                        </div>
+                        <div class="signature"></div>
+                        <div>
+                            <span style="font-weight: normal">{{selectData.createdBy}}</span>
+                        </div>
+                        <div style="font-weight: normal">.... giờ .... Ngày ..../ ..../{{selectData.getFullYear}}</div>
+                    </div>
+                    <div class="col-xs-4 text-center" *ngIf="selectData.listGoodsTypeId!=10">
+                    </div>
+                    <div class="col-xs-4 text-center" *ngIf="selectData.listGoodsTypeId==10">
+                        <div>
+                            <strong class="text-uppercase">Kho/người nhận</strong>
+                        </div>
+                        <div>
+                            <strong></strong>
+                        </div>
+                        <div>
+                            <strong>Bộ phận: ...............................</strong>
+                        </div>
+                        <div class="signature"></div>
+                        <div>
+                            <span style="font-weight: normal">..................................</span>
+                        </div>
+                        <div style="font-weight: normal">.... giờ .... Ngày ..../ ..../{{selectData.getFullYear}}</div>
+                    </div>
+                    <div class="col-xs-4 text-center">
+                        <div>
+                            <strong class="text-uppercase">Nhân viên giao nhận</strong>
+                        </div>
+                        <div>
+                            <strong>{{selectData.empHubName}}</strong>
+                        </div>
+                        <div>
+                            <strong>Bộ phận {{selectData.empDepartmentName}}</strong>
+                        </div>
+                        <div class="signature"></div>
+                        <div>
+                            <span style="font-weight: normal">{{selectData?.currentEmp}}</span>
+                        </div>
+                        <div style="font-weight: normal">.... giờ .... Ngày ..../ ..../{{selectData.getFullYear}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <img src="{{logo}}" class="logo-img-background">
+</div>

@@ -1,0 +1,193 @@
+<app-card>
+  <a class="parentPage">{{parentPage}}</a>
+  <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-title">
+        <!-- <h5>{{currentPage}}</h5> -->
+        <!-- <div style="margin:0 auto;margin-bottom:5px; text-align: right">
+          <button class="btn btn-success" (click)="exportExcelFormat()">
+            Export
+          </button>
+          <button class="btn btn-success" (click)="exportTabOneDetail()">
+            <i class="fa fa-file-excel-o"></i>
+          </button>
+          <button class="btn btn-success" (click)="refresh()">
+            <i class="fa fa-refresh"></i>
+          </button>
+        </div> -->
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-md-2">
+            <div class="form-group">
+              <label>Từ ngày</label>
+              <p-calendar [(ngModel)]="filterModel.dateFrom" [showIcon]="false" hourFormat="24"
+                dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <label>Đến ngày</label>
+              <p-calendar [(ngModel)]="filterModel.dateTo" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                [style]="{'width': '100%'}"></p-calendar>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>Nhân viên giao hàng</label>
+              <p-autoComplete [(ngModel)]="employee" [suggestions]="filteredEmployees" [minLength]="1"
+                (completeMethod)="filterEmployee($event)" (onSelect)="onSelectedEmployee()"
+                styleClass="select-input form-control none-padding" [dropdown]="true">
+              </p-autoComplete>
+            </div>
+          </div> 
+        </div>
+      </div>
+
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-sm-12">
+            <p-table #dt [value]="lstData" [responsive]="true" [paginator]="true" rows="20" dataKey="code" [(selection)]="selected_lstData"
+              (onLazyLoad)="loadLazy($event)" [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true"
+              [totalRecords]="totalCount" paginatorPosition="both">
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <th style="width:2.2em">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                  </th>
+                  <th class="p-col-stt">STT</th>
+                  <th style="width: 340px; vertical-align: top">Thao tác
+                  </th>
+                  <th pSortableColumn="code" Class="p-col-shipmentNumber">Mã xuất kho
+                    <p-sortIcon field="code"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="createdWhen" Class="p-col-normal">Ngày tạo
+                    <p-sortIcon field="createdWhen"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="modifiedWhen" Class="p-col-normal">Ngày chỉnh sửa
+                    <p-sortIcon field="modifiedWhen"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="fromHubName" Class="p-col-normal">Kho xuất
+                    <p-sortIcon field="fromHubName"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="createByFullName" Class="p-col-normal">NV xuất kho
+                    <p-sortIcon field="createByFullName"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="fullName" Class="p-col-normal">Nhân viên giao nhận
+                    <p-sortIcon field="fullName"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="totalShipment" Class="p-col-normal">Tổng vận đơn
+                    <p-sortIcon field="totalShipment"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="realWeight" Class="p-col-normal">Trọng lượng bàn giao
+                    <p-sortIcon field="realWeight"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="totalWeight" Class="p-col-normal">Trọng lượng thực tế
+                    <p-sortIcon field="totalWeight"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="totalCalWeight" Class="p-col-normal">Trọng lượng quy đổi
+                    <p-sortIcon field="totalCalWeight"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="totalNotReceive" Class="p-col-normal">Vận đơn chưa xác nhận
+                    <p-sortIcon field="totalNotReceive"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="delivering" Class="p-col-normal">Đang giao
+                    <p-sortIcon field="delivering"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="deliveryComplete" Class="p-col-normal">Giao TC
+                    <p-sortIcon field="deliveryComplete"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="deliveryFail" Class="p-col-normal">Giao không TC
+                    <p-sortIcon field="deliveryFail"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="totalBox" Class="p-col-normal">Tổng số {{infoGeneral.pack}}
+                    <p-sortIcon field="totalBox"></p-sortIcon>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-data let-columns="columns" let-i="rowIndex">
+                <tr [pSelectableRow]="data">
+                  <td>
+                    <p-tableCheckbox [value]="data"></p-tableCheckbox>
+                  </td>
+                  <td class="p-col-stt">{{i + 1}}</td>
+                  <td style="width: 340px">
+                    <button type="button" class="btn btn-success" (click)="printLAD(data, true, false)">
+                      <i class="fa fa-print"></i> In C.</button>
+                    <button type="button" class="btn btn-success" (click)="printLAD(data, false, false)">
+                      <i class="fa fa-print"></i> In</button>
+                    <button type="button" class="btn btn-success" (click)="printSignature(data, true, false)">
+                      <i class="fa fa-print"></i> In KN</button>
+                    <button type="button" class="btn btn-primary"
+                      (click)="viewShipment(templateViewShipment, data)">
+                      <i class="fa fa-eye"></i> Xem</button>
+                    <button *ngIf="data.isBlock" type="button" class="btn btn-danger" (click)="unBlock(data)">
+                      <i class="fa fa-unlock"></i> Mở khóa</button>
+                    <!--<div style="display: flex; justify-content: space-between">
+                    </div>-->
+                  </td>
+                  <td class="p-col-shipmentNumber">
+                    {{data.code}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.createdWhen | dateFormat}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.modifiedWhen | dateFormat}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.fromHubName}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.createByFullName}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.fullName}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.totalShipment || 0}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.realWeight || 0}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.totalWeight || 0}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.totalCalWeight || 0}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.assignEmployeeDelivery || 0}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.delivering || 0}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.deliveryComplete || 0}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.deliveryFail || 0}}
+                  </td>
+                  <td class="p-col-normal">
+                    {{data.totalBox || 0}}
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="summary">
+                <span class="ui-column-title" style="font-weight: bold;">Tổng : {{ (totalCount) || 0}} bảng
+                  kê</span>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

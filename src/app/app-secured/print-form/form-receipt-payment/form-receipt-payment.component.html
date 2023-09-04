@@ -1,0 +1,61 @@
+<section [id]="formId" *ngFor="let item of selectData">
+    <div class="row">
+      <div class="col-xs-1"></div>
+      <div class="col-xs-3">
+        <div><b>Đơn vị: </b> ............................</div>
+        <div><b>Địa chỉ: </b> ............................</div>
+      </div>
+  
+      <div class="col-xs-4"></div>
+  
+      <div class="col-xs-3">
+        <div style="padding-left: 2px; border: 1px solid black">
+          <div><b>Mẫu số 6 - TT</b></div>
+          <div>(Ban hành theo Thông tư số 113/2016/TT-BTC ngày 26/8/2016 của Bộ Tài Chính)</div>
+        </div>
+      </div>
+  
+      <!-- <div class="col-xs-1"></div> -->
+    </div>
+  
+    <div class="row">
+      <div class="col-xs-12 text-center">
+        <div style="text-transform: uppercase; font-size: 14px"><b>Biên lai trả tiền</b></div>
+        <div><i>Ngày...tháng...năm...</i></div>
+      </div>
+    </div>
+  
+    <div class="row">
+      <div class="col-xs-8"></div>
+      <div class="col-xs-3">
+        <div>Quyển số: ...............</div>
+        <div>Số: ..........................</div>
+      </div>
+    </div>
+  
+    <div class="row">
+      <div class="col-xs-1"></div>
+      <div class="col-xs-10">
+        <div>Họ và tên người trả: {{item.customer?.name}}</div>
+        <div>Địa chỉ:</div>
+        <div>Nội dung thu: {{item.note}}</div>
+        <div>Số tiền thu: {{item.grandTotalReal || 0 | number}} &nbsp;&nbsp; (Viết bằng chữ)
+          {{convertNumberToText.DocTienBangChu(item.grandTotalReal || 0)}}</div>
+      </div>
+    </div>
+  
+    <div class="row mt-2">
+      <div class="col-xs-1"></div>
+      <div class="col-xs-5 text-center">
+        <b>Người trả tiền</b>
+        <div><i>(Ký, họ tên)</i></div>
+        <div>{{item.customer?.name}}</div>
+      </div>
+  
+      <div class="col-xs-5 text-center">
+        <b>Người thu tiền</b>
+        <div><i>(Ký, họ tên)</i></div>
+        <div>{{userName}}</div>
+      </div>
+    </div>
+  </section>

@@ -1,0 +1,80 @@
+<div [id]="formId" >
+  
+  <div style="text-align: center; width: 100%; font-size: 20px !important; margin-top: 10px; ">
+      <strong>{{selectData.printName}}</strong>
+  </div>
+  
+  <table id="customers" style="border-collapse: collapse;border-spacing: 0;width: 96%;margin-top: 10px; font-size: 10px; margin-left: 15px;">
+    <thead>
+      <tr>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">STT</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">Mã vận đơn</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">Mã NV thao tác cuối</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">NV thao tác cuối</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">Trạng thái</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">Ngày nhập kho lấy hàng</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">Ngày xuất/nhập cuối</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">Thời gian giao hàng thành công</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">Thời gian</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">Tên người nhận</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">Địa chỉ nhận</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">COD</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px; ">Ghi Chú</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor='let item of selectData;let i = index'>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{i + 1}}</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{item.shipmentNumber}}</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{item.currentEmp.code}}</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{item.currentEmp.fullName}}</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{item.shipmentStatus.name}}</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{item.endPickTime | dateFormat}}</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{item.inOutDate | dateFormat}}</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{item.endDeliveryTime | dateFormat}}</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{item.timeCompareString?item.timeCompareString : null }}</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{item.receiverName}}</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{item.shippingAddress}}</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{item.cod | number}}</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{item.cusNote}}</th>
+
+      </tr>
+      <tr> <td style="margin-top: 50px;"><br> </td> </tr>
+      <tr>
+        <th></th>
+        <th></th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;" colspan="3">Tổng đơn giao hàng thành công</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{ selectData.deliverysucces ? selectData.deliverysucces: 0 | number}}</th>
+        <th></th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;" colspan="2">Tổng tiền đã thu</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{ selectData.total_payed ? selectData.total_payed: 0 | number}}</th>
+      </tr>
+      <tr>
+        <th></th>
+        <th></th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;" colspan="3">Tổng đơn giao hàng không thành công</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{ selectData.deliveryfail ? selectData.deliveryfail: 0 | number}}</th>
+        <th></th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;" colspan="2">Tổng tiền chưa thu</th>
+        <th style="border: 1px solid #000;text-align: center;padding: 3px;">{{ selectData.total_notpay ? selectData.total_notpay: 0 | number}}</th>
+      </tr>
+    </tbody>
+  </table>
+  
+  <table id="chuky" style=" font-size: 12px; border-collapse: collapse;border-spacing: 0;width: 100%;margin-top: 10px; ">
+    <tbody>
+      <tr>
+        <th style="padding: 3px;width: 35%;">
+          NVGH xác nhận
+        </th>
+        <th style="padding: 3px;width: 35%;">
+          Thủ Quỹ xác nhận
+        </th>
+        <th style="padding: 3px;width: 30%;">
+          <p style="margin: 0;">Tp, Hồ Chí Minh, ngày…tháng…năm 2020</p>
+          <p style="margin: 0;">GS xác nhận</p>
+        </th>
+      </tr>
+    </tbody>
+  </table>  
+</div>

@@ -1,0 +1,222 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <div class="ibox-tools">
+                    <p-header>
+                        <div>
+                            <button type="button" class="btn btn-primary" (click)="exportCSV()">
+                                <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+                            <button type="button" class="btn btn-success" (click)="refresh()">
+                                <i class="fa fa-refresh"></i>&nbsp;refresh</button>
+                        </div>
+                    </p-header>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Từ ngày</label>
+                        <div class="form-group">
+                            <p-calendar [(ngModel)]="shipmentFilterViewModel.OrderDateFrom" [showIcon]="false"
+                                hourFormat="24" dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                                [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Đến ngày</label>
+                        <div class="form-group">
+                            <p-calendar [(ngModel)]="shipmentFilterViewModel.OrderDateTo" [showIcon]="false" hourFormat="24"
+                                dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                                [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Người gửi</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="sendersLS" [(ngModel)]="selectedSenderLS"
+                                [style]="{'width':'100%'}" filter="filter" (onChange)="changeSender()" autofocus
+                                tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-2" style="float: right">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <div class="">
+                            <input type="text" placeholder="Nhập chuỗi cần tìm ..." (keyup.enter)="search()"
+                                [(ngModel)]="txtSearchText" class="input-sm form-control" id="filter" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ibox-content">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="table-responsive">
+                        <p-table #dt [value]="listData" [responsive]="true" [paginator]="true" [rows]="rowPerPage"
+                            [scrollable]="true" scrollHeight="600px" [rowsPerPageOptions]="[10,20,50,100]" (onPage)="onPageChange($event)"
+                            [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="loadLazy($event)">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th colspan="14" style="width: 100%">Tổng tiền: {{totalRecevice | number}} Đ</th>
+                                </tr>
+                                <tr>
+                                    <th [pSortableColumn]="'id'">ID
+                                        <p-sortIcon [field]="'id'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'shipmentNumber'">Mã vận đơn
+                                        <p-sortIcon [field]="'shipmentNumber'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'orderDate'">Ngày đi
+                                        <p-sortIcon [field]="'orderDate'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'weight'">Trọng lượng
+                                        <p-sortIcon [field]="'weight'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'shipmentStatus?.name'">Lộ trình
+                                        <p-sortIcon [field]="'shipmentStatus?.name'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'cod'">Thu hộ (COD)
+                                        <p-sortIcon [field]="'cod'"></p-sortIcon>
+                                    </th>
+                                    <th>COD (Hoàn)
+                                    </th>
+                                    <th>Đã thu COD
+                                    </th>
+                                    <th>Chưa thu COD
+                                    </th>
+                                    <th>Đã TT COD
+                                    </th>
+                                    <th>Chưa TT COD
+                                    </th>
+                                    <th [pSortableColumn]="'totalPrice'">Tổng cước
+                                        <p-sortIcon [field]="'totalPrice'"></p-sortIcon>
+                                    </th>
+                                    <th>Đã TT cước
+                                    </th>
+                                    <th>Chưa TT cước
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-data>
+                                <tr>
+                                    <td>
+                                        {{data.id}}
+                                    </td>
+                                    <td>
+                                        {{data.shipmentNumber}}
+                                    </td>
+                                    <td>
+                                        {{data.orderDate | dateFormat}}
+                                    </td>
+                                    <td>
+                                        {{data.weight}}
+                                    </td>
+                                    <td>
+                                        {{data.shipmentStatus?.name}}
+                                    </td>
+                                    <td>
+                                        {{data.cod | number}}
+                                    </td>
+                                    <td>
+                                        {{(data.isReturn ? data.cod : 0) | number}}
+                                    </td>
+                                    <td>
+                                        {{ (data.shipmentStatusId == 12 ? data.cod : 0) | number}}
+                                    </td>
+                                    <td>
+                                        {{ (data.shipmentStatusId != 12 ? data.cod : 0) | number}}
+                                    </td>
+                                    <td>
+                                        {{ (data.listCustomerPaymentCODId ? data.cod : 0) | number}}
+                                    </td>
+                                    <td>
+                                        {{ (!data.listCustomerPaymentCODId ? data.cod : 0) | number}}
+                                    </td>
+                                    <td>
+                                        {{ data.totalPrice | number}}
+                                    </td>
+                                    <td>
+                                        {{ (data.listCustomerPaymentTotalPriceId ? data.totalPrice : 0) | number}}
+                                    </td>
+                                    <td>
+                                        {{ (!data.listCustomerPaymentTotalPriceId ? data.totalPrice : 0) | number}}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td [attr.colspan]="'32'">
+                                        Không tìm thấy dữ liệu
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="footer" let-columns>
+                                <tr>
+                                    <th [pSortableColumn]="'id'">ID
+                                        <p-sortIcon [field]="'id'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'shipmentNumber'">Mã vận đơn
+                                        <p-sortIcon [field]="'shipmentNumber'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'orderDate'">Ngày đi
+                                        <p-sortIcon [field]="'orderDate'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'weight'">Trọng lượng
+                                        <p-sortIcon [field]="'weight'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'shipmentStatus?.name'">Lộ trình
+                                        <p-sortIcon [field]="'shipmentStatus?.name'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'cod'">Thu hộ (COD)
+                                        <p-sortIcon [field]="'cod'"></p-sortIcon>
+                                    </th>
+                                    <th>COD (Hoàn)
+                                    </th>
+                                    <th>Đã thu COD
+                                    </th>
+                                    <th>Chưa thu COD
+                                    </th>
+                                    <th>Đã TT COD
+                                    </th>
+                                    <th>Chưa TT COD
+                                    </th>
+                                    <th [pSortableColumn]="'totalPrice'">Tổng cước
+                                        <p-sortIcon [field]="'totalPrice'"></p-sortIcon>
+                                    </th>
+                                    <th>Đã TT cước
+                                    </th>
+                                    <th>Chưa TT cước
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="summary">
+                                <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecords}} vận đơn
+                                    | Tổng tiền: {{totalRecevice | number}} Đ</span>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

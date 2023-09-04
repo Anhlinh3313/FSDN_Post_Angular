@@ -1,0 +1,123 @@
+<app-card>
+  <a class="parentPage">{{parentPage}}</a>
+  <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-sm-3">
+            <label>Mã vận đơn</label>
+            <div class="form-group">
+              <input #txtShipmentNumber autofocus placeholder="Scan mã vận đơn ..." (change)="scanShipmentNumber(txtShipmentNumber.value)"
+                [(ngModel)]="shipmentNumber" class="input-sm form-control" />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <label class="label-primary label-block">Thông tin vận đơn giao hàng thành công</label>
+          </div>
+        </div>
+        <div class="ibox-content" *ngIf="datasource">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="table-responsive">
+                <p-table #dt [value]="listData" [responsive]="true" [lazy]="true" [paginator]="true" [rows]="rowPerPage"
+                  [rowsPerPageOptions]="[2,20,50]" [totalRecords]="totalRecords" (onLazyLoad)="loadLazy($event)">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <!-- <th style="width:2.2em">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th> -->
+                      <th pSortableColumn="shipmentNumber">Mã vận đơn
+                      </th>
+                      <th pSortableColumn="orderDate">Ngày tạo vận đơn
+                      </th>
+                      <th pSortableColumn="deliverUserName">NV giao hàng
+                      </th>
+                      <th pSortableColumn="realRecipientName">Tên Người nhận thực tế
+                      </th>
+                      <th pSortableColumn="endDeliveryTime">TG nhận thực tế
+                      </th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-rowData>
+                    <tr [pSelectableRow]="rowData">
+                      <!-- <td style="width: 2.25em">
+                        <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                      </td> -->
+                      <td>{{rowData.shipmentNumber}}</td>
+                      <td>{{rowData.orderDate | dateFormat}}</td>
+                      <td>{{rowData.deliverUserName}}</td>
+                      <td>
+                        <input type="text" placeholder="Nhập tên người nhận thực tế ..." [(ngModel)]="rowData.realRecipientName" style="width: 100%"/>
+                      </td>
+                      <td>
+                        <div class="input-group div-flex" daterangepicker [options]="rowData.singlePickerEndDeliveryTime" (selected)="singleSelectEndDeliveryTime($event, rowData)">
+                          <span class="form-control uneditable-input" style="height: 26px;">
+                            <p style="margin-top: -3px">{{ rowData.endDeliveryTime | dateFormat }}</p>
+                          </span>
+                          <button type="button" class="btn btn-default">
+                            <i class="glyphicon glyphicon-calendar"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="summary">
+                    <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecords}} vận đơn</span>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+            <div class="col-sm-12" style="margin-top: 10px; text-align: center;" *ngIf="datasource[datasource.length - 1]">
+              <button *ngIf="isEdit"  style="font-size: 15px;" [disabled]="checkSubmit" class="btn btn-primary" (click)="updateShipments()">Lưu</button>
+              <button style="font-size: 15px;" class="btn btn-white" (click)="refresh()">Hủy</button>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="row" *ngIf="datasource">
+          <div class="col-sm-12">
+            <div *ngFor="let item of datasource">
+              <div class="row">
+                <div class="col-sm-4">
+                  <label>Mã vận đơn</label>
+                  <div>
+                      <input type="text" [(ngModel)]="item.shipmentNumber" style="width: 100%" disabled/>
+                  </div>                  
+                </div>
+                <div class="col-sm-4">
+                  <label>Người nhận thực tế</label>
+                  <div>
+                      <input type="text" placeholder="Nhập tên người nhận thực tế ..." [(ngModel)]="item.realRecipientName" style="width: 100%"/>
+                  </div>                  
+                </div>
+                <div class="col-sm-4">
+                  <label>TG nhận thực tế</label>
+                  <div class="form-group">
+                      <div class=" input-group" daterangepicker [options]="item.singlePickerEndDeliveryTime" (selected)="singleSelectEndDeliveryTime($event, item)">
+                          <span class="form-control uneditable-input" style="height: 25px;">
+                              <p style="margin-top: -3px">{{ item.endDeliveryTime | dateFormat }}</p>
+                          </span>
+                          <span class="input-group-btn">
+                              <a type="button" class="btn btn-default">
+                                  <i class="glyphicon glyphicon-calendar"></i>
+                              </a>
+                          </span>
+                      </div>
+                  </div>                  
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12" style="margin-top: 10px; text-align: center;" *ngIf="datasource[datasource.length - 1]">
+            <button style="font-size: 15px;" [disabled]="checkSubmit" class="btn btn-primary" (click)="updateShipments()">Lưu</button>
+            <button style="font-size: 15px;" class="btn btn-white" (click)="refresh()">Hủy</button>
+          </div>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</div>

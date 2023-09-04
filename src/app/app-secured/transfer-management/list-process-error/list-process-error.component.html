@@ -1,0 +1,114 @@
+<app-card>
+  <a class="parentPage">{{parentPage}}</a>
+  <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+
+
+<div class="row">
+  <div class="col-md-12 col-md-12-small">
+    <div class="ibox float-e-margins">
+      <div class="ibox-title">
+        <div class="ibox-tools">
+          <a class="collapse-link">
+            <button class="btn btn-success" (click)="refresh()">
+              <i class="fa fa-refresh"></i>&nbsp;refresh
+            </button>
+          </a>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="form-group">
+              <strong>Ngày tạo vận đơn</strong>
+              <div class="input-group" daterangepicker (selected)="selectedDate($event, mainInput)" (cancelDaterangepicker)="calendarEventsHandler($event)"
+                (showDaterangepicker)="calendarEventsHandler($event)">
+                <span class="form-control uneditable-input" name="daterange" style="height: 25px;">
+                  <p style="margin-top: -3px">{{ mainInput.start | dateFormatNoTime }} - {{ mainInput.end | dateFormatNoTime }}</p>
+                </span>
+                <span class="input-group-btn">
+                  <a type="button" class="btn btn-default">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-2">
+            <label>Người gửi</label>
+            <p-dropdown styleClass="select-input form-control" [options]="fromSenders" [(ngModel)]="selectedSender" [style]="{'width':'100%'}"
+              filter="filter" (onChange)="changeSender()">
+            </p-dropdown>
+          </div>
+          <div class="col-sm-4"></div>
+          <div class="col-sm-3" style="float:right">
+            <label>&nbsp;</label>
+            <div>
+              <input type="text" [(ngModel)]="txtSearch" placeholder="Nhập chuỗi cần tìm ..." (keyup.enter)="search($event.target.value)" class="input-sm form-control"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="table-responsive">
+              <p-table [value]="datasource" [responsive]="true" [paginator]="true" [rows]="rowPerPage" [rowsPerPageOptions]="[10,20,50,100]"
+                [alwaysShowPaginator]="true" (onPage)="onPageChange($event)" [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="loadLazy($event)"
+                scrollable="true" scrollable="true" sortField="id" sortOrder="-1">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th class="p-col-numPick" pSortableColumn="id">
+                      ID
+                      <p-sortIcon field="id"></p-sortIcon>
+                    </th>
+                    <th class="p-col-shipmentNumber" pSortableColumn="shipmentNumber">
+                      Mã vận đơn
+                      <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                    </th>
+                    <th class="p-col-normal" pSortableColumn="listGoods.name">
+                      Mã BK
+                      <p-sortIcon field="listGoods.name"></p-sortIcon>
+                    </th>
+                    <th class="p-col-normal" pSortableColumn="currentHub.name">
+                      {{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} đi
+                    </th>
+                    <th class="p-col-normal" pSortableColumn="receiveHub.name">
+                      {{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} quét BK
+                    </th>
+                    <th class="p-col-normal" pSortableColumn="toHub.name">
+                      {{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} giao
+                    </th>
+                    <th class="p-col-orderdate" pSortableColumn="orderDate">
+                      Ngày vận đơn
+                      <p-sortIcon field="orderDate"></p-sortIcon>
+                    </th>
+                    <th class="p-col-normal" pSortableColumn="transferUser.fullName">
+                      NV trung chuyển
+                    </th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData>
+                  <tr>
+                    <td class="p-col-numPick">{{rowData.id}}</td>
+                    <td class="p-col-shipmentNumber">{{rowData.shipmentNumber}}</td>
+                    <td class="p-col-normal">{{rowData.listGoods?.name}}</td>
+                    <td class="p-col-normal">{{rowData.currentHub?.name}}</td>
+                    <td class="p-col-normal">{{rowData.receiveHub?.name}}</td>
+                    <td class="p-col-normal">{{rowData.toHub?.name}}</td>
+                    <td class="p-col-orderdate">{{rowData.orderDate | dateFormat}}</td>
+                    <td class="p-col-normal">{{rowData.transferUser?.fullName}}</td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                  Số lượng: {{totalRecords}}
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

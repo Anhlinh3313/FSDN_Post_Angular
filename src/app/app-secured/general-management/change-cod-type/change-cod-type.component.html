@@ -1,0 +1,161 @@
+<div class="row">
+  <div class="col-lg-12">
+      <ol class="ibox-title breadcrumb">
+          <li>
+              <a>{{parentPage}}</a>
+          </li>
+          <li class="active">
+              <strong>{{currentPage}}</strong>
+          </li>
+      </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12" style="padding-bottom: 20px;">
+      <div class="ibox float-e-margins">
+          
+          <div class="ibox-content">
+              <!-- <div class="row">
+                  <div class="col-sm-5">
+                      <div class="form-group">
+                          <label>&nbsp;</label>
+                          <div>
+                              <a *ngIf="isAdd" class="btn btn-primary" (click)="openModel(template,true )">
+                                  <i class="fa fa-file-o"></i> Tạo mới</a>
+                          </div>
+                      </div>
+                  </div>  
+                  <div class="col-sm-4"></div>
+                  <div class="col-sm-3" style="text-align: right;">
+                      <div class="form-group">
+                          <label>&nbsp;</label>
+                          <div class="input-group pull-right">
+                           
+                            <input #filterGb type="text" placeholder="Nhập chuỗi cần tìm ..." class="input-sm form-control" (input)="dt.filterGlobal($event.target.value, 'contains')">
+                        </div>
+                      </div>
+                  </div>
+              </div> -->
+          </div>
+          <div class="ibox-content">
+              <div class="row">
+                  <div class="col-sm-12" style="overflow: scroll;">
+                      <p-table #dtt [value]="datasource" [responsive]="true" [rows]="pageSize" [lazy]="true"
+                          [totalRecords]="totalRecords"  >
+                          <ng-template pTemplate="caption">
+                            <div style="text-align: right">        
+                                <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                                <input type="text" pInputText size="50" placeholder="Nhập chuỗi cần tìm..." (input)="dtt.filterGlobal($event.target.value, 'contains')" style="width:232px">
+                            </div>
+                        </ng-template>
+                          <ng-template pTemplate="header">
+                          
+                              <tr>
+                                  <th class="p-col-normal">Thao tác</th> 
+                                  <th class="p-col-normal" *ngFor="let col of columnsExport">
+                                    {{col.header}}
+                                  </th> 
+                              </tr>
+                          </ng-template>
+                          <ng-template pTemplate="body" let-data>
+                              <tr>
+                                  <td class="p-col-normal" style="text-align: center;">
+                                    <a class="btn btn-info" style="margin-right: 10px;" (click)="openModel(template,false,data)">
+                                          <i class="fa fa-paste"></i> Xem</a>
+                                      <!-- <a  class="btn btn-danger"
+                                          (click)="openDeleteModel(templateDelete, data)">
+                                          <i class="fa fa-trash-o"></i>
+                                          <span class="bold">Xóa</span>
+                                      </a>  -->
+                                  </td>
+                                  <td class="p-col-normal">{{data.id}}</td>
+                                  <td class="p-col-normal">{{data.code}}</td>
+                                  <td class="p-col-normal">{{data.name}}</td> 
+                              </tr>
+                          </ng-template> 
+                      </p-table>
+                      <!-- </div> -->
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+ 
+
+<ng-template #templateDeleteCusDepartment>
+  <div class="modal-header" style="padding: 5px; text-align:left;">
+      <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+          (click)="bsModalRef.hide()">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+      </button>
+  </div>
+  <div class="modal-body" style="overflow:hidden;">
+      <div class="col-md-12 no-padding">
+          <h4>Bạn có chắc chắn muốn xoá ?</h4>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-danger" (click)="deleteCusDepartment()">Xoá</button>
+      <button type="button" class="btn btn-white" data-dismiss="modal"
+          (click)="bsModalRef.hide()">Đóng</button>
+  </div>
+</ng-template>
+
+<!--Start Modal-->
+<ng-template #template>
+  <div >
+      <div class="modal-header" style="padding: 5px; text-align:left;">
+          <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+              <span aria-hidden="true">&times;</span>
+              <span class="sr-only">Close</span>
+          </button>
+          <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5>
+      </div>
+      <div class="modal-body" style="overflow:hidden; " *ngIf="data">
+          <div class="col-md-12 no-padding">
+              <div class="form-group">
+                  <label>Mã</label>
+                  <input type="text" placeholder="Nhập mã" class="input-sm form-control" id="code" [(ngModel)]="data.code" focus="true" />
+              </div>
+              <div class="form-group">
+                  <label>Tên</label>
+                  <input type="text" placeholder="Nhập tên" class="input-sm form-control" id="name" [(ngModel)]="data.name" />
+              </div>
+          </div>
+      </div>
+      <div class="modal-footer" *ngIf="isCreate==false">
+          <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+          <button  type="button" class="btn btn-primary" (click)="update_method(data)">Lưu</button> 
+      </div>
+      <div class="modal-footer" *ngIf="isCreate==true">
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+        <button type="button" class="btn btn-primary" (click)="creat_method(data)">Tạo mới</button>
+      </div>
+  </div>
+</ng-template>
+
+<ng-template #templateDelete>
+  <div class="modal-header" style="padding: 5px; text-align:left;">
+      <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+          (click)="bsModalRef.hide()">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+      </button>
+  </div>
+  <div class="modal-body" style="overflow:hidden;" *ngIf="data">
+      <div class="col-md-12 no-padding">
+          <h4>Bạn có chắc chắn muốn xoá
+              <b>&quot;{{data.name}}&quot;</b>?</h4>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+      <button type="button" class="btn btn-danger" (click)="delete_model(data)">Xoá</button>
+  </div>
+</ng-template>
+ 
+<!--End Modal-->

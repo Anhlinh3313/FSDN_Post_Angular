@@ -1,0 +1,177 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <div class="ibox-tools">
+                    <p-header>
+                        <div>
+                            <button type="button" class="btn btn-primary" (click)="dt.exportCSV()">
+                                <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+                            <button type="button" class="btn btn-success" (click)="loadShipment()">
+                                <i class="fa fa-refresh"></i>&nbsp;Xem</button>
+                        </div>
+                    </p-header>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Từ ngày</label>
+                        <div class="form-group">
+                            <p-calendar [(ngModel)]="selectedDateFrom" [showIcon]="false" hourFormat="24"
+                                dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                                [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Đến ngày</label>
+                        <div class="form-group">
+                            <p-calendar [(ngModel)]="selectedDateTo" [showIcon]="false" hourFormat="24"
+                                dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                                [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Khách hàng</label>
+                        <p-autoComplete [(ngModel)]="customer" [suggestions]="filteredCustomers" [minLength]="1"
+                            (completeMethod)="filterCustomers($event)" (onSelect)="onSelectedCustomer()"
+                            styleClass="select-input form-control none-padding" [dropdown]="true">
+                        </p-autoComplete>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Loại khách hàng</label>
+                        <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}"
+                            [options]="customerTypes" [(ngModel)]="selectedCustomerType" filter="filter"
+                            (onChange)="changeFilter()">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>TT/CN/BC</label>
+                        <p-autoComplete [(ngModel)]="selectedHub" [suggestions]="filteredHubs" [minLength]="1"
+                            (completeMethod)="filterHub($event)" (onSelect)="onSelectedHub()"
+                            styleClass="select-input form-control none-padding" [dropdown]="true">
+                        </p-autoComplete>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <p-table #dt [value]="listData" [paginator]="true" rows="10"
+                                [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true" [totalRecords]="totalRecords"
+                                (onLazyLoad)="loadLazy($event)" [responsive]="true" [scrollable]="true"
+                                scrollHeight="500px">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="p-col-normal">ID</th>
+                                        <th class="p-col-normal">Mã khách hàng</th>
+                                        <th class="p-col-normal">Tên khách hàng</th>
+                                        <th class="p-col-normal">Số điện thoại</th>
+                                        <th class="p-col-normal">Công ty</th>
+                                        <th class="p-col-normal" style="width: 300px">Địa chỉ</th>
+                                        <th class="p-col-normal">Loại khách hàng</th>
+                                        <th class="p-col-normal text-right">Tổng vận đơn đã gửi</th>
+                                        <th class="p-col-normal text-right">Tổng vận đơn giao thành công</th>
+                                        <th class="p-col-normal text-right">Tổng vận đơn chuyển hoàn</th>
+                                        <th class="p-col-normal text-right">Tổng cước đã TT</th>
+                                        <th class="p-col-normal text-right">Tổng cước chưa TT</th>
+                                        <th class="p-col-normal text-right">Tổng COD đã TT</th>
+                                        <th class="p-col-normal text-right">Tổng COD chưa TT</th>
+                                        <th class="p-col-normal text-right">Tổng COD chưa thu</th>
+                                        <th class="p-col-normal text-right">Tổng COD đã thu chưa TT</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData>
+                                    <tr>
+                                        <td class="p-col-normal">{{rowData.id}}</td>
+                                        <td class="p-col-normal">{{rowData.code}}</td>
+                                        <td class="p-col-normal">{{rowData.name}}</td>
+                                        <td class="p-col-normal">{{rowData.phoneNumber}}</td>
+                                        <td class="p-col-normal">{{rowData.companyName}}</td>
+                                        <td class="p-col-normal" style="width: 300px">{{rowData.address}}</td>
+                                        <td class="p-col-normal">{{rowData.customerTypeName}}</td>
+                                        <td class="p-col-normal">{{rowData.totalShipment | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalShipmentDeliveryComplete | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalShipmentReturn | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalPricePaid | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalPriceUnpaid | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalCODPaid | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalCODUnpaid | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalCODUnpaidUnRecived | number}}</td>
+                                        <td class="p-col-normal">{{rowData.totalCODUnpaidRecived | number}}</td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer" let-columns>
+                                    <tr>
+                                        <th class="p-col-normal">ID</th>
+                                        <th class="p-col-normal">Mã khách hàng</th>
+                                        <th class="p-col-normal">Tên khách hàng</th>
+                                        <th class="p-col-normal">Số điện thoại</th>
+                                        <th class="p-col-normal">Công ty</th>
+                                        <th class="p-col-normal" style="width: 300px">Địa chỉ</th>
+                                        <th class="p-col-normal">Loại khách hàng</th>
+                                        <th class="p-col-normal text-right">Tổng vận đơn đã gửi</th>
+                                        <th class="p-col-normal text-right">Tổng vận đơn giao thành công</th>
+                                        <th class="p-col-normal text-right">Tổng vận đơn chuyển hoàn</th>
+                                        <th class="p-col-normal text-right">Tổng cước đã TT</th>
+                                        <th class="p-col-normal text-right">Tổng cước chưa TT</th>
+                                        <th class="p-col-normal text-right">Tổng COD đã TT</th>
+                                        <th class="p-col-normal text-right">Tổng COD chưa TT</th>
+                                        <th class="p-col-normal text-right">Tổng COD chưa thu</th>
+                                        <th class="p-col-normal text-right">Tổng COD đã thu chưa TT</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td [attr.colspan]="'32'">
+                                            Không tìm thấy dữ liệu
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="summary">
+                                    <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecords}} vận
+                                        đơn | Tổng cước chưa TT: {{totalRecevice | number}} Đ</span>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<ng-template #templateConfirmRefresh>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+            (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+    </div>
+    <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 no-padding">
+            <h4>Danh sách thao tác sẽ bị làm mới! Bạn có chắc chắn muốn làm mới dữ liệu không?</h4>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+        <button type="button" class="btn btn-danger" (click)="refresh()">Đồng ý</button>
+    </div>
+</ng-template>
+<!-- End Model -->

@@ -1,0 +1,135 @@
+<div class="row">
+  <div class="col-lg-12">
+    <ol class="ibox-title breadcrumb">
+      <li>
+        <a>{{parentPage}}</a>
+      </li>
+      <li class="active">
+        <strong>{{currentPage}}</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-title">
+        <div class="ibox-tools">
+          <p-header>
+            <div>
+              <button type="button" class="btn btn-primary" (click)="dt.exportCSV()">
+                <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+              <button type="button" class="btn btn-success" (click)="loadShipment()">
+                <i class="fa fa-refresh"></i>&nbsp;Xem</button>
+            </div>
+          </p-header>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-md-2">
+            <label>Từ ngày</label>
+            <div class="form-group">
+              <p-calendar [(ngModel)]="selectedDateFrom" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                [style]="{'width': '100%'}"></p-calendar>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <label>Đến ngày</label>
+            <div class="form-group">
+              <p-calendar [(ngModel)]="selectedDateTo" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+                (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+                [style]="{'width': '100%'}"></p-calendar>
+            </div>
+          </div>
+
+          <div class="col-sm-3">
+            <label>TT/CN/T</label>
+            <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}" [options]="hubs" [(ngModel)]="selectedHub"
+              filter="filter" (onChange)="changeFilter()">
+            </p-dropdown>
+          </div>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="table-responsive">
+              <p-table #dt [value]="listData" [paginator]="true" rows="10" [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true"
+                [totalRecords]="totalRecords" [responsive]="true" [scrollable]="true" scrollHeight="500px" [columns]="columns"
+                (onLazyLoad)="loadLazy($event)" [lazy]="true">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th class="p-col-normal" [pSortableColumn]="'id'">STT
+                      <p-sortIcon [field]="'id'"></p-sortIcon>
+                    </th>
+                    <th class="p-col-normal" [pSortableColumn]="'code'">Mã NV KD
+                      <p-sortIcon [field]="'code'"></p-sortIcon>
+                    </th>
+                    <th class="p-col-normal" [pSortableColumn]="'fullName'">Họ Tên NVKD
+                      <p-sortIcon [field]="'fullName'"></p-sortIcon>
+                    </th>
+                    <th class="p-col-normal" [pSortableColumn]="'totalCustomer'">Tổng số mã khách hàng
+                      <p-sortIcon [field]="'totalCustomer'"></p-sortIcon>
+                    </th>
+                    <th class="p-col-normal" [pSortableColumn]="'totalPriceAll'">Tổng doanh thu
+                      <p-sortIcon [field]="'totalPriceAll'"></p-sortIcon>
+                    </th>
+                    <th class="p-col-normal" [pSortableColumn]="'percentComplete'">% hoàn thành kế hoạch DT
+                      <p-sortIcon [field]="'percentComplete'"></p-sortIcon>
+                    </th>
+                    <th class="p-col-normal" [pSortableColumn]="'percentPayment'">Tỷ lệ thu hồi công nợ đúng hạn
+                      <p-sortIcon [field]="'percentPayment'"></p-sortIcon>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData>
+                  <tr>
+                    <td class="p-col-normal">{{rowData.id}}</td>
+                    <td class="p-col-normal">{{rowData.code}}</td>
+                    <td class="p-col-normal">{{rowData.fullName}}</td>
+                    <td class="p-col-normal">{{rowData.totalCustomer}}</td>
+                    <td class="p-col-normal">{{rowData.totalPriceAll | number}}</td>
+                    <td class="p-col-normal">{{rowData.percentComplete}}</td>
+                    <td class="p-col-normal">{{rowData.percentPayment}}</td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr>
+                    <td [attr.colspan]="'7'">
+                      Không tìm thấy dữ liệu
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                  <span class="ui-column-title" style="font-weight: bold;">Tổng: {{totalRecords}} khách hàng</span>
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #templateConfirmRefresh>
+  <div class="modal-header" style="padding: 5px; text-align:left;">
+    <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+      <span class="sr-only">Close</span>
+    </button>
+  </div>
+  <div class="modal-body" style="overflow:hidden;">
+    <div class="col-md-12 no-padding">
+      <h4>Danh sách thao tác sẽ bị làm mới! Bạn có chắc chắn muốn làm mới dữ liệu không?</h4>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+    <button type="button" class="btn btn-danger" (click)="refresh()">Đồng ý</button>
+  </div>
+</ng-template>
+<!-- End Model -->

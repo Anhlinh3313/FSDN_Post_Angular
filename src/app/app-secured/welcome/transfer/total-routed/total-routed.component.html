@@ -1,0 +1,48 @@
+<div class="modal-header" style="padding: 5px; text-align:left;">
+    <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h5 class="modal-title" style="font-size:20px">Tổng số đơn đã phân tuyến</h5>
+</div>
+<div div class="modal-body" style="overflow:hidden; padding: 0px;">
+    <div class="col-md-12 no-padding">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <p-dataTable #dt [value]="listData" exportFilename="request" [paginator]="true" rows="10" [responsive]="true" [rowsPerPageOptions]="[10,20,50,100]"
+                                [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="loadLazy($event)">
+                                <p-column styleClass="p-col-stt" field="id" header="STT" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="shipmentNumber" header="Mã" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-orderdate" field="orderDate" header="Ngày gửi" [sortable]="true">
+                                    <ng-template pTemplate="body" let-rowData="rowData">
+                                        {{rowData.orderDate | date:'dd/M/y H:mm'}}
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="p-col-normal" field="service.name" header="Dịch vụ" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="shipmentStatus.name" header="Trạng thái" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="deliverUser.fullName" header="NV gửi" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="senderName" header="Người gửi" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="senderPhone" header="Số điện thoại gửi" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="companyFrom" header="CTY" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-address" field="pickingAddress" header="Địa chỉ gửi" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="fromWard.district.province.name" header="Tỉnh đi" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="fromHub.name" header="Trạm lấy" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="fromHubRouting.name" header="Tuyến lấy" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="receiverName" header="Người nhận" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="receiverPhone" header="Số điện thoại nhận" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="companyTo" header="CTY" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-address" field="shippingAddress" header="Địa chỉ nhận" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="toWard.district.province.name" header="Tỉnh đến" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="toHub.name" header="Trạm giao" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="toHubRouting.name" header="Tuyến giao" [sortable]="true"></p-column>
+                            </p-dataTable>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

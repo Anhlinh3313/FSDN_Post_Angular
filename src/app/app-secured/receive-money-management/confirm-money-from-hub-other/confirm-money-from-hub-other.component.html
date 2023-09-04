@@ -1,0 +1,154 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <div class="ibox-tools">
+                    <p-header>
+                        <div>
+                            <button type="button" class="btn btn-primary" (click)="dt.exportCSV()">
+                                <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+                            <button type="button" class="btn btn-success" (click)="refreshLRM()">
+                                <i class="fa fa-refresh"></i>&nbsp;refresh</button>
+                        </div>
+                    </p-header>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label>Ngày tạo</label>
+                        <div class="form-group">
+                            <div class="input-group" daterangepicker (selected)="selectedDateLRM($event, dateRangeLRM)" (cancelDaterangepicker)="calendarEventsHandler($event)"
+                                (showDaterangepicker)="calendarEventsHandler($event)">
+                                <span class="form-control uneditable-input" name="daterange" style="height: 25px;">
+                                    <p style="margin-top: -3px">{{ dateRangeLRM.start | dateFormatNoTime }} - {{ dateRangeLRM.end | dateFormatNoTime }}
+                                    </p>
+                                </span>
+                                <span class="input-group-btn">
+                                    <a type="button" class="btn btn-default">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>{{hub.centerHubLongName}} gửi</label>
+                        <p-dropdown styleClass="select-input form-control" [options]="fromHubsLRM" [(ngModel)]="selectedFromHubLRM" [style]="{'width':'100%'}"
+                            filter="filter" (onChange)="changeFilterLRM()">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Tình trạng</label>
+                        <p-dropdown styleClass="select-input form-control" [options]="statuesLRM" [(ngModel)]="selectedStatusLRM" [style]="{'width':'100%'}"
+                            filter="filter" (onChange)="changeFilterLRM()">
+                        </p-dropdown>
+                    </div>
+
+                    <div class="col-sm-3">
+
+                        <label>Tìm kiếm</label>
+                        <div class="input-group">
+
+                            <input #filterGb type="text" placeholder="Nhập chuỗi cần tìm ..." [(ngModel)]="txtFilterGb" class="input-sm form-control"
+                                id="filter" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-sm btn-primary"> Tìm kiếm</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <p-dataTable #dt [value]="listDataLRM" [paginator]="true" rows="10" [rowsPerPageOptions]="[10,20,50,100]" [globalFilter]="filterGb"
+                                [lazy]="true" [totalRecords]="totalRecordsLRM" (onLazyLoad)="loadLazyListReceiveMoney($event)"
+                                [(first)]="first">
+                                <p-column styleClass="p-col-checkbox" header="STT">
+                                    <ng-template pTemplate="body" let-i="rowIndex">
+                                        {{i + 1}}
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="p-col-normal" field="id" header="Thao tác" [sortable]="true">
+                                    <ng-template pTemplate="body" let-rowData="rowData">
+                                        <div style="display: flex;">
+                                            <button type="button" *ngIf="rowData.listReceiptMoneyStatusId === 2 && isEdit" class="btn btn-warning" (click)="confirmLRM(rowData)">
+                                                <i class="fa fa-check"></i> Xác nhận</button>
+                                            <button type="button" class="btn btn-success" (click)="viewLRM(rowData)">
+                                                <i class="fa fa-eye"></i> Xem</button>
+                                        </div>
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="p-col-normal" field="code" header="Mã" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="listReceiptMoneyStatus.name" header="Tình trạng" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="fromHub.name" header="{{hub.centerHubLongName}} gửi" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal text-right" field="totalPrice" header="Tổng tiền cước" [sortable]="true">
+                                    <ng-template pTemplate="body" let-rowData="rowData">
+                                        {{rowData.totalPrice | number}}
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="p-col-normal text-right" field="totalCOD" header="Tổng tiền COD" [sortable]="true">
+                                    <ng-template pTemplate="body" let-rowData="rowData">
+                                        {{rowData.totalCOD | number}}
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="p-col-normal text-right" field="grandTotal" header="Tổng tiền" [sortable]="true">
+                                    <ng-template pTemplate="body" let-rowData="rowData">
+                                        {{rowData.grandTotal | number}}
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="p-col-normal" field="userCreated.fullName" header="Người tạo" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-date" field="orderDate" header="Ngày tạo" [sortable]="true">
+                                    <ng-template pTemplate="body" let-rowData="rowData">
+                                        {{rowData.createdWhen | dateFormat}}
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="p-col-normal" field="userModified.fullName" header="Người chỉnh sửa" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-date" field="orderDate" header="Ngày chỉnh sửa" [sortable]="true">
+                                    <ng-template pTemplate="body" let-rowData="rowData">
+                                        {{rowData.modifiedWhen | dateFormat}}
+                                    </ng-template>
+                                </p-column>
+                            </p-dataTable>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #templateConfirmRefresh>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+    </div>
+    <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 no-padding">
+            <h4>Danh sách thao tác sẽ bị làm mới! Bạn có chắc chắn muốn làm mới dữ liệu không?</h4>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+        <!-- <button type="button" class="btn btn-danger" (click)="refresh()">Đồng ý</button> -->
+    </div>
+</ng-template>
+<!-- End Model -->

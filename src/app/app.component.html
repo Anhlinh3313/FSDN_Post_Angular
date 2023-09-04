@@ -1,0 +1,14 @@
+<ng-progress></ng-progress>
+<router-outlet></router-outlet>
+<p-growl life="4000"></p-growl>
+
+<p-dialog header="Cảnh báo" [(visible)]="displayVersion" [responsive]="true" [positionTop]="20" [width]="350"
+    [minWidth]="200" [attr.minY]="70">
+    <!-- <span>{{message?.text}} ({{countNum}})</span> -->
+    <span>{{message}}</span>
+    <p-footer>
+        <button class="btn btn-success text-center" type="button" pButton (click)="displayVersion=false">
+            <i class="fa fa-close"></i>Đóng
+        </button>
+    </p-footer>    
+</p-dialog>

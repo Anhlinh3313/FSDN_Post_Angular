@@ -1,0 +1,96 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Deadline</label>
+                            <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}"
+                                [options]="kqiShipments" [(ngModel)]="selectedKPIShipment" [filter]="true">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 file-group" (change)="onFileChange($event)">
+                        <label for="file">
+                            <i class="icmn-upload" aria-hidden="true"></i> {{ fileExcelName }}
+                        </label>
+                        <input #myInputFiles type="file" class="file-input" style="margin-bottom: 15px;height: 28px;">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" (click)="clickSave()"  [disabled]="isDisabled" data-style="expand-left" class="btn btn-icon btn-info ladda-button mr-2 mb-2">
+                            <i class="fa fa-plus" aria-hidden="true"></i> Tạo tài khoản
+                        </button>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-icon btn-danger mr-2 mb-2" (click)="resData()">
+                            <i class="fa fa-close" aria-hidden="true"></i> Hủy
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="btn btn-icon btn-success mr-2 mb-2" href="UPLOAD_CHI_TIET_CHI_TIEU_GIAO_HANG.xlsx" download>
+                            <i class="icmn-download" aria-hidden="true"></i> Tải tập tin mẫu
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <blockquote class="blockquote" style="position: relative;">
+                            <label class="text-primary" *ngIf="dataKPIShipmentDetail && dataKPIShipmentDetail.length && dataKPIShipmentDetail.length > 0">Danh
+                                sách upload
+                                {{dataKPIShipmentDetail.length}} chi tiết chỉ tiêu giao hàng</label>
+                            <div class="progress mb-2">
+                                <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 0%"
+                                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                            <label class="text-success" *ngIf="countSuccesss && countSuccesss >= 0">Upload thành công
+                                {{countSuccesss}} chi tiết chỉ tiêu giao hàng</label>
+                            <div class="progress mb-2">
+                                <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
+                                    style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                            <!-- text-danger -->
+                            <label class="text-danger" *ngIf="countError && countError >= 0">
+                                Upload thất bại {{countError}} chi tiết chỉ tiêu giao hàng </label>
+                            <a style="margin-left: 10px; text-decoration: underline;" *ngIf="countError && countError >= 0" >Xem dữ liệu lỗi</a>
+                            <div class="progress mb-2">
+                                <div class="progress-bar progress-bar-striped bg-danger" role="progressbar"
+                                    style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                            <!-- <footer class="blockquote-footer">
+                                Someone famous in
+                                <cite title="Source Title">Source Title</cite>
+                            </footer> -->
+                            <div class="model-backdrop-loading"></div>
+                            <div id="loading">
+                                <div class="spinner" role="spinner">
+                                    <div class="spinner-icon"></div>
+                                </div>
+                            </div>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,189 @@
+<div class="row blue-bg p-md">
+    <div class="wrapper" style="padding:0 10px;">
+        <div class="gray-bg" style="color:#676a6c;">
+            <div class="wrapper wrapper-content">
+                <div class="row">
+                    <!-- Begin Left Table -->
+                    <div class="col-md-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-content">
+                                <h3 style="text-transform: uppercase;">Tra cứu yêu cầu</h3>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <input type="text" placeholder="Nhập vận đơn cần tìm ..." class="input-sm form-control" [(ngModel)]="shipmentNumber" autofocus
+                                                (keyup.enter)="onEnterSearchGBDetail()" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <p-radioButton name="shipmentType" value="1" [(ngModel)]="selectedShipmentType" label="Vận đơn"></p-radioButton>
+                                        &nbsp;
+                                        <p-radioButton name="shipmentType" value="2" [(ngModel)]="selectedShipmentType" label="Yêu cầu"></p-radioButton>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="shipmentData">
+                                    <div class="col-sm-12">
+                                        <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông tin chung</h4>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label>Mã vận đơn:</label>
+                                        <div class="form-group">
+                                            <b>{{shipmentData.shipmentNumber}}</b>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3" *ngIf="shipmentData.requestShipment; else templateRequest">
+                                        <label>Mã yêu cầu:</label>
+                                        <div class="form-group">
+                                            <b>{{(shipmentData.requestShipment) ? shipmentData.requestShipment.shipmentNumber
+                                                : ""}}</b>
+                                        </div>
+                                    </div>
+                                    <ng-template #templateRequest>
+                                        <div class="col-sm-3">&nbsp;</div>
+                                    </ng-template>
+                                    <div class="col-sm-3">
+                                        <label>Tình trạng:</label>
+                                        <br/>
+                                        <b>{{(shipmentData.shipmentStatus) ? shipmentData.shipmentStatus.name : ""}}</b>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label>TG đặt hàng:</label>
+                                        <div class="form-group">
+                                            <b>{{shipmentData.orderDate}}</b>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label>TG giao hàng:</label>
+                                        <div class="form-group">
+                                            <b>{{shipmentData.endDeliveryTime}}</b>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông tin hàng</h4>
+                                        <div>
+                                            <b>Trọng lượng: </b>
+                                            <span>{{shipmentData.weight}} g</span>
+                                        </div>
+                                        <div>
+                                            <b>HTTT: </b>
+                                            <span *ngIf="shipmentData.paymentType">{{shipmentData.paymentType.name}}</span>
+                                        </div>
+                                        <div>
+                                            <b>Dịch vụ: </b>
+                                            <span *ngIf="shipmentData.service">{{shipmentData.service.name}}</span>
+                                        </div>
+                                        <div>
+                                            <b>DVGT: </b>
+                                            <span *ngIf="shipmentData.serviceDVGT">{{shipmentData.serviceDVGT.name}}</span>
+                                        </div>
+                                        <div>
+                                            <b>COD: </b>
+                                            <span>{{(shipmentData.cod) ? shipmentData.cod.toLocaleString('vi-VN') : 0}}</span>
+                                        </div>
+                                        <div>
+                                            <b>Tổng cước phí: </b>
+                                            <span>{{(shipmentData.totalPrice) ? shipmentData.totalPrice.toLocaleString('vi-VN') : 0}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông tin bên gửi</h4>
+                                        <div>
+                                            <b>Tên: </b>
+                                            <span>{{shipmentData.senderName}}</span>
+                                        </div>
+                                        <div>
+                                            <b>Số ĐT: </b>
+                                            <span>{{shipmentData.senderPhone}}</span>
+                                        </div>
+                                        <div>
+                                            <b>Tỉnh thành: </b>
+                                            <span>{{(shipmentData.fromWard && shipmentData.fromWard.district && shipmentData.fromWard.district.province)
+                                                ? shipmentData.fromWard?.district?.province?.name : ""}}</span>
+                                        </div>
+                                        <div>
+                                            <b>Quận huyện: </b>
+                                            <span>{{(shipmentData.fromWard && shipmentData.fromWard.district) ? shipmentData.fromWard.district.name
+                                                : ""}}</span>
+                                        </div>
+                                        <div>
+                                            <b>Phường xã: </b>
+                                            <span>{{(shipmentData.fromWard) ? shipmentData.fromWard.name : ""}}</span>
+                                        </div>
+                                        <div>
+                                            <b>Địa chỉ: </b>
+                                            <span>{{shipmentData.pickingAddress}}</span>
+                                        </div>
+                                        <div>
+                                            <b>TT/CN/T: </b>
+                                            <span>{{(shipmentData.fromHub) ? shipmentData.fromHub.name : ""}}</span>
+                                        </div>
+                                        <div>
+                                            <b>Tuyến: </b>
+                                            <span>{{(shipmentData.fromHubRouting) ? shipmentData.fromHubRouting.name : ""}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông tin bên nhận</h4>
+                                        <div>
+                                            <b>Tên: </b>
+                                            <span>{{shipmentData.receiverName}}</span>
+                                        </div>
+                                        <div>
+                                            <b>Số ĐT: </b>
+                                            <span>{{shipmentData.receiverPhone}}</span>
+                                        </div>
+                                        <div>
+                                            <b>Tỉnh thành: </b>
+                                            <span>{{(shipmentData.toWard && shipmentData.toWard.district && shipmentData.toWard.district.province)
+                                                ? shipmentData.toWard?.district?.province?.name : ""}}</span>
+                                        </div>
+                                        <div>
+                                            <b>Quận huyện: </b>
+                                            <span>{{(shipmentData.toWard && shipmentData.toWard.district) ? shipmentData.toWard.district.name
+                                                : ""}}</span>
+                                        </div>
+                                        <div>
+                                            <b>Phường xã: </b>
+                                            <span>{{(shipmentData.toWard) ? shipmentData.toWard.name : ""}}</span>
+                                        </div>
+                                        <div>
+                                            <b>Địa chỉ: </b>
+                                            <span>{{shipmentData.shippingAddress}}</span>
+                                        </div>
+                                        <div>
+                                            <b>TT/CN/T: </b>
+                                            <span>{{(shipmentData.toHub) ? shipmentData.toHub.name : ""}}</span>
+                                        </div>
+                                        <div>
+                                            <b>Tuyến: </b>
+                                            <span>{{(shipmentData.toHubRouting) ? shipmentData.toHubRouting.name : ""}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">&nbsp;</div>
+                                    <div class="col-sm-12">
+                                        <div class="table-responsive">
+                                            <p-dataTable [value]="shipmentLadingSchedule" rows="20" [responsive]="true" scrollable="true" scrollable="true" scrollHeight="300px">
+                                                <p-column styleClass="p-col-date" field="dateCreated" header="Ngày" [sortable]="true"></p-column>
+                                                <p-column styleClass="p-col-date" field="timeCreated" header="Giờ" [sortable]="true"></p-column>
+                                                <p-column styleClass="p-col-normal" field="hubName" header="TT/CN/Trạm" [sortable]="true"></p-column>
+                                                <p-column styleClass="p-col-normal" field="userFullName" header="Nhân viên" [sortable]="true"></p-column>
+                                                <p-column styleClass="p-col-normal" field="shipmentStatusName" header="Tình trạng" [sortable]="true"></p-column>
+                                                <p-column styleClass="p-col-normal" field="location" header="Vị trí" [sortable]="true"></p-column>
+                                                <p-column styleClass="p-col-note" field="note" header="Ghi chú" [sortable]="true"></p-column>
+                                            </p-dataTable>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Left Table -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

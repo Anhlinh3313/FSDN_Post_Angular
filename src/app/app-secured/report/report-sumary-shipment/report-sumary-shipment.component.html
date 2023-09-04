@@ -1,0 +1,281 @@
+<div class="row">
+  <div class="col-lg-12">
+      <ol class="ibox-title breadcrumb">
+          <li>
+              <a>{{parentPage}}</a>
+          </li>
+          <li class="active">
+              <strong>{{currentPage}}</strong>
+          </li>
+      </ol>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+          <div class="ibox-title">
+              <div class="ibox-tools">
+                  <p-header>
+                      <div>
+                          <button type="button" class="btn btn-primary" (click)="exportCSVNew(dt)">
+                              <i class="fa fa-file-excel-o"></i>&nbsp;Excel Beta</button>
+                          <!-- <button type="button" class="btn btn-primary" (click)="exportCSV(dt)">
+                              <i class="fa fa-file-excel-o"></i>&nbsp;Excel</button> -->
+                          <button type="button" class="btn btn-success" (click)="loadShipment()">
+                              <i class="fa fa-refresh"></i>&nbsp;Xem</button>
+                      </div>
+                  </p-header>
+              </div>
+          </div>
+          <div class="ibox-content">
+              <div class="row">
+                  <div class="col-md-2">
+                      <label>Từ ngày</label>
+                      <div class="form-group">
+                          <p-calendar [(ngModel)]="shipmentFilterViewModel.OrderDateFrom" [showIcon]="false"
+                              hourFormat="24" dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                              [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                      </div>
+                  </div>
+                  <div class="col-md-2">
+                      <label>Đến ngày</label>
+                      <strong class="pull-right">
+                          <p-checkbox tabindex="2" [(ngModel)]="isSuccessDelivery" binary="true"
+                              (onChange)="onViewSuccessDelivery()"></p-checkbox>
+                          Giao TC
+                      </strong>
+                      <div class="form-group">
+                          <p-calendar [(ngModel)]="shipmentFilterViewModel.OrderDateTo" [showIcon]="false"
+                              hourFormat="24" dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+                              [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                      </div>
+                  </div>
+
+                  <div class="col-sm-2">
+                      <label>{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} Nhận</label>
+                      <p-autoComplete [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                          (onSelect)="eventOnSelectedFromHub()" [suggestions]="fromHubFilters"
+                          [(ngModel)]="fromHubSelected" (completeMethod)="eventFilterFromHubs($event)"
+                          forceSelection="true" [dropdown]="true" [minLength]="1" [placeholder]="placeHolderHub">
+                          <ng-template let-data pTemplate="item">
+                              <div>{{data}}</div>
+                          </ng-template>
+                      </p-autoComplete>
+                  </div>
+
+                  <div class="col-sm-2">
+                      <label>{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} Phát</label>
+                      <p-autoComplete [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                          (onSelect)="eventOnSelectedToHub()" [suggestions]="toHubFilters" [(ngModel)]="toHubSelected"
+                          (completeMethod)="eventFilterToHubs($event)" forceSelection="true" [dropdown]="true"
+                          [minLength]="1" [placeholder]="placeHolderHub">
+                          <ng-template let-data pTemplate="item">
+                              <div>{{data}}</div>
+                          </ng-template>
+                      </p-autoComplete>
+                  </div>
+
+                  <div class="col-sm-2">
+                      <label>{{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}} Giữ</label>
+                      <p-autoComplete [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                          (onSelect)="eventOnSelectedCurrentHub()" [suggestions]="currentHubFilters"
+                          [(ngModel)]="currentHubSelected" (completeMethod)="eventFilterCurrentHubs($event)"
+                          forceSelection="true" [dropdown]="true" [minLength]="1" [placeholder]="placeHolderHub">
+                          <ng-template let-data pTemplate="item">
+                              <div>{{data}}</div>
+                          </ng-template>
+                      </p-autoComplete>
+                  </div>
+
+                  <div class="col-sm-2">
+                      <label>Nhân viên</label>
+                      <strong class="pull-right">
+                          <p-checkbox tabindex="2" [(ngModel)]="shipmentFilterViewModel.isGroupEmp" binary="true"
+                              (onChange)="loadShipment()"></p-checkbox>
+                          Nhóm
+                      </strong>
+                      <p-autoComplete [(ngModel)]="empCurrent" [suggestions]="filterEmpCurrents" [minLength]="1"
+                          (completeMethod)="filterEmpCurrent($event)" (onSelect)="onSelectedEmpCurrent()"
+                          styleClass="select-input form-control none-padding" [dropdown]="true">
+                      </p-autoComplete>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-2">
+                      <label>Dịch vụ</label>
+                      <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}"
+                          [options]="services" [(ngModel)]="selectedService" filter="filter"
+                          (onChange)="changeService()">
+                      </p-dropdown>
+                  </div>
+                  <div class="col-sm-2">
+                      <label>Hình thức thanh toán</label>
+                      <p-dropdown styleClass="select-input form-control" [style]="{'width':'100%'}"
+                          [options]="paymentTypes" [(ngModel)]="selectedPaymentType" filter="filter"
+                          (onChange)="changePaymentType()">
+                      </p-dropdown>
+                  </div>
+
+                  <div class="col-sm-2">
+                      <label>Chọn trạng thái</label>
+                      <p-dropdown styleClass="select-input form-control" [options]="statuses"
+                          [(ngModel)]="shipmentFilterViewModel.groupStatusId" [style]="{'width':'100%'}"
+                          filter="filter" (onChange)="changeStatus()">
+                      </p-dropdown>
+                  </div>
+                  <div class="col-sm-2">
+                      <label>Khách hàng</label>
+                      <p-autoComplete [(ngModel)]="customer" [suggestions]="filteredCustomers" [minLength]="1"
+                          (completeMethod)="filterCustomers($event)" (onSelect)="onSelectedCustomer()"
+                          styleClass="select-input form-control none-padding" [dropdown]="true">
+                      </p-autoComplete>
+                  </div>
+                  <div class="col-sm-2">
+                      <label>Mã vận đơn</label>
+                      <input #filterGb type="text" placeholder="Mã vận đơn ..." [style]="{'width':'100%'}"
+                          [(ngModel)]="txtFilterShipment" class="input-sm form-control" id="filter"
+                          (keyup.enter)="searchByShipmentNumber($event.target.value)" />
+                  </div>
+                  <div class="col-sm-2">
+                      <label>Tìm kiếm</label>
+                      <input #filterGb type="text" placeholder="Nhập chuỗi cần tìm ..." [style]="{'width':'100%'}"
+                          [(ngModel)]="txtFilterGb" class="input-sm form-control" id="filter"
+                          (keyup.enter)="search($event.target.value)" />
+                  </div>
+              </div>
+              <div class="ibox-content">
+                  <div class="row">
+                      <div class="col-sm-12">
+                          <div class="table-responsive">
+                              <p-table #dt [value]="datasource" [responsive]="true" [paginator]="true"
+                                  [rows]="rowPerPage" [rowsPerPageOptions]="[10,20,50,100]"
+                                  (onPage)="onPageChange($event)" [lazy]="true" [totalRecords]="totalRecords"
+                                  (onLazyLoad)="loadLazy($event)" sortMode="single" [columns]="columnsExp"
+                                  scrollHeight="200px" paginatorPosition="both" sortField="orderDate" sortOrder="-1">
+                                  <ng-template pTemplate="caption">
+                                      <span class="ui-column-title" style="font-weight: bold;">Tổng:
+                                          {{totalRecords}} vận đơn</span>
+                                  </ng-template>
+                                  <ng-template pTemplate="header" let-columns>
+                                      <tr>
+                                          <th pSortableColumn="stt" Class="p-col-numPick">STT
+                                              <p-sortIcon field="stt"></p-sortIcon>
+                                          </th>
+                                          <th *ngFor="let col of columnsExp" [pSortableColumn]="col.field" class="p-col-normal">
+                                              {{col.header}}
+                                              <p-sortIcon [field]="col.field"></p-sortIcon>
+                                          </th>
+                                      </tr>
+                                  </ng-template>
+                                  <ng-template pTemplate="body" let-data let-columns="columns" let-i="rowIndex">
+                                      <tr [pSelectableRow]="data">
+                                          <td class="p-col-numPick">
+                                              {{i + 1}}
+                                          </td>
+                                          <td *ngFor="let col of columnsExp" class="p-col-normal">
+                                              <div *ngIf="col.typeFormat =='date' ||  col.typeFormat=='time'">
+                                                  {{col.formatString !== 'HH:mm' ? (data[col.field]| date:'dd/MM/yyyy') : (data[col.field] | date:'HH:mm')}}  
+                                              </div>
+                                              <div *ngIf="col.typeFormat !=='date' && col.typeFormat !=='time'  ">
+                                                    {{data[col.field]}}
+                                              </div>
+                                          </td>
+                                      </tr>
+                                  </ng-template>
+                                  <!-- <ng-template pTemplate="footer" let-columns>
+                                      <tr>
+                                          <th pSortableColumn="stt" Class="p-col-numPick"></th>
+                                          <th pSortableColumn="shipmentNumber" Class="p-col-normal"></th>
+                                          <th pSortableColumn="cusNote" Class="p-col-receive"></th>
+                                          <th pSortableColumn="note" Class="p-col-receive"></th>
+                                          <th pSortableColumn="orderDate" Class="p-col-date"></th>
+                                          <th pSortableColumn="orderDate" Class="p-col-date"></th>
+                                          <th pSortableColumn="paymentType.name" Class="p-col-normal"></th>
+                                          <th pSortableColumn="service.name" Class="p-col-normal"></th>
+                                          <th pSortableColumn="shipmentServiceDVGTs" Class="p-col-normal"></th>
+                                          <th pSortableColumn="content" Class="p-col-address"></th>
+                                          <th pSortableColumn="insured" Class="p-col-normal">
+                                              {{(datasource && datasource.length ? datasource[0].sumInsured : 0) | number}}
+                                          </th>
+                                          <th pSortableColumn="cod" Class="p-col-normal">
+                                              {{(datasource && datasource.length ? datasource[0].sumCOD : 0) | number}}
+                                          </th>
+                                          <th pSortableColumn="priceCOD" Class="p-col-normal">
+                                              {{(datasource && datasource.length ? datasource[0].sumPriceCOD : 0) | number}}
+                                          </th>
+                                          <th pSortableColumn="totalBox" Class="p-col-normal"></th>
+                                          <th pSortableColumn="weight" Class="p-col-normal"></th>
+                                          <th pSortableColumn="distance" Class="p-col-normal"></th>
+                                          <th pSortableColumn="defaultPrice" Class="p-col-normal"></th>
+                                          <th pSortableColumn="vatPrice" Class="p-col-normal"></th>
+                                          <th pSortableColumn="fuelPrice" Class="p-col-normal"></th>
+                                          <th pSortableColumn="remoteAreasPrice" Class="p-col-normal"></th>
+                                          <th pSortableColumn="totalDVGT" Class="p-col-normal"></th>
+                                          <th pSortableColumn="totalPrice" Class="p-col-normal">
+                                              {{(datasource && datasource.length ? datasource[0].sumTotalPrice : 0) | number}}
+                                          </th>
+                                          <th pSortableColumn="totalPricePay" Class="p-col-normal">
+                                              {{(datasource && datasource.length ? (datasource[0].sumTotalPricePay) : 0) | number}}
+                                          </th>
+                                          <th pSortableColumn="shipmentStatusName" Class="p-col-orderdate"></th>
+                                          <th pSortableColumn="senderCode" Class="p-col-normal"></th>
+                                          <th pSortableColumn="senderName" Class="p-col-address"></th>
+                                          <th pSortableColumn="senderPhone" Class="p-col-normal"></th>
+                                          <th pSortableColumn="companyFrom" Class="p-col-normal"></th>
+                                          <th pSortableColumn="pickingAddress" Class="p-col-max"></th>
+                                          <th pSortableColumn="fromProvinceName" Class="p-col-normal"></th>
+                                          <th pSortableColumn="fromHubName" Class="p-col-normal"></th>
+                                          <th pSortableColumn="fromHubRouting.name" Class="p-col-orderdate"></th>
+                                          <th pSortableColumn="receiverName" Class="p-col-address"></th>
+                                          <th pSortableColumn="receiverPhone" Class="p-col-normal"></th>
+                                          <th pSortableColumn="companyTo" Class="p-col-normal"></th>
+                                          <th pSortableColumn="addressNoteTo" Class="p-col-max"></th>
+                                          <th pSortableColumn="shippingAddress" Class="p-col-max"></th>
+                                          <th pSortableColumn="realRecipientName" Class="p-col-normal"></th>
+                                          <th pSortableColumn="receiverCode2" Class="p-col-normal"></th>
+                                          <th pSortableColumn="endDeliveryTime" Class="p-col-normal"></th>
+                                          <th pSortableColumn="timeCompareString" Class="p-col-normal"></th>
+                                          <th class="p-col-normal"></th>
+                                          <th class="p-col-normal"></th>
+                                          <th class="p-col-normal"></th>
+                                          <th class="p-col-normal"></th>
+                                          <th class="p-col-normal"></th>
+                                          <th class="p-col-normal"></th>
+                                          <th class="p-col-normal"></th>
+                                          <th pSortableColumn="toProvinceName" Class="p-col-normal"></th>
+                                          <th pSortableColumn="toDistrictName" Class="p-col-normal"></th>
+                                          <th pSortableColumn="toWardName" Class="p-col-normal"></th>
+                                          <th pSortableColumn="kmNumber" Class="p-col-normal"></th>
+                                          <th pSortableColumn="toHubName" Class="p-col-normal"></th>
+                                          <th pSortableColumn="toHubRoutingName" Class="p-col-orderdate"></th>
+                                          <th Class="p-col-orderdate"></th>
+                                          <th pSortableColumn="endPickTime" Class="p-col-orderdate"></th>
+                                          <th pSortableColumn="inOutDate" Class="p-col-orderdate"></th>
+                                          <th pSortableColumn="receiptCODCode" Class="p-col-orderdate"></th>
+                                          <th pSortableColumn="receiptCODCreatedWhen" Class="p-col-orderdate"></th>
+                                      </tr>
+                                  </ng-template> -->
+                                  <ng-template pTemplate="summary">
+                                      <span class="ui-column-title" style="font-weight: bold;">Tổng:
+                                          {{totalRecords}} vận đơn</span>
+                                  </ng-template>
+                              </p-table>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+      </div>
+  </div>
+
+  <ng-template #templateImages>
+      <div class="modal-body">
+          <div class="row">
+              <div class="col-md-12">
+                  <ngx-image-viewer [src]="dataModalImages" [config]="configImageViewer"></ngx-image-viewer>
+              </div>
+          </div>
+      </div>
+  </ng-template>

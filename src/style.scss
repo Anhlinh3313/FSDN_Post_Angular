@@ -1,0 +1,21 @@
+/* Import main Inspinia style */
+@import "assets/styles/style";
+.setwidthbyName{
+    width: 555px !important;
+}
+.setAlign{
+    text-align: right;
+    width: 100px;
+}
+// .format_num{
+//     numbẻr: "###,##0.00"
+// }
+.setTableCompare{
+    width: 100% !important;
+    margin-bottom: 0 !important;
+    font-size: 14px !important;
+    background-color: #fff !important;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border-color: grey;
+}

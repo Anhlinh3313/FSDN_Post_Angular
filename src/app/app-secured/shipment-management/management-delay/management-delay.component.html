@@ -1,0 +1,256 @@
+<app-card>
+    <a class="parentPage">{{parentPage}}</a>
+    <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <!-- <div class="div-flex"> Loại vận đơn</div> -->
+                <div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label>
+                                Từ ngày
+                            </label>
+                            <div class="form-group">
+                                <p-calendar [(ngModel)]="fromDate" dateFormat="yy/mm/dd"
+                                    [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}">
+                                </p-calendar>
+
+                                <!-- <div class="input-group" daterangepicker [options]="optionSingleDateFrom"
+                                    (selected)="selectedSingleDateFrom($event)">
+                                    <span class="form-control uneditable-input" name="daterange" style="height: 25px;">
+                                        <p style="margin-top: -3px">{{ fromDate | dateFormatNoTime }}
+                                        </p>
+                                    </span>
+                                    <span class="input-group-btn">
+                                        <a type="button" class="btn btn-default">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </a>
+                                    </span>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label>
+                                Đến ngày
+                            </label>
+                            <div class="form-group">
+                                <p-calendar [(ngModel)]="toDate" dateFormat="yy/mm/dd"
+                                    [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}">
+                                </p-calendar>
+
+                                <!-- <div class="input-group" daterangepicker [options]="optionSingleDateTo"
+                                    (selected)="selectedSingleDateTo($event)">
+                                    <span class="form-control uneditable-input" name="daterange" style="height: 25px;">
+                                        <p style="margin-top: -3px">{{ toDate | dateFormatNoTime }}
+                                        </p>
+                                    </span>
+                                    <span class="input-group-btn">
+                                        <a type="button" class="btn btn-default">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </a>
+                                    </span>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label>
+                                Khách hàng
+                            </label>
+                            <div class="form-group">
+                                <p-autoComplete [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                                    [suggestions]="customerFilters" [(ngModel)]="customerSelected"
+                                    (completeMethod)="eventFilterCustomers($event)" forceSelection="true"
+                                    [dropdown]="false" [minLength]="1" placeholder="Chọn khách hàng" readonly
+                                    (onSelect)="onSelectShipmentDelay()">
+                                    <ng-template let-data pTemplate="item">
+                                        <div>{{data}}</div>
+                                    </ng-template>
+                                </p-autoComplete>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label>
+                                Nguyên nhân delay
+                            </label>
+                            <div class="form-group">
+                                <p-dropdown styleClass="select-input" [style]="{'width':'100%'}"
+                                    [options]="reasonDelays" [(ngModel)]="reasonDelay"
+                                    (onChange)="onChangeReasonDelay()" placeholder="Nguyên nhân delay" filter="true"
+                                    readonly></p-dropdown>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label>
+                                Dịch vụ
+                            </label>
+                            <div class="form-group">
+                                <p-dropdown styleClass="select-input" [style]="{'width':'100%'}"
+                                    [options]="serviceDelays" [(ngModel)]="serviceDelay"
+                                    (onChange)="onChangeServiceDelay()" placeholder="Loại dịch vụ" filter="true"
+                                    readonly></p-dropdown>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label>
+                                Gửi email
+                            </label>
+                            <div class="form-group">
+                                <a class="btn btn-info" (click)="openModel(template)">
+                                    <i class="fa fa-paste"></i> Send Mail</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p-table #dt [value]="dataDelay" [responsive]="true" [paginator]="true"
+                                [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true" scrollable="true" sortField="id"
+                                sortOrder="-1" [(selection)]="selectedData" [rows]="rowPerPage"
+                                [totalRecords]="totalRecords" (onPage)="onPageChange($event)">
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th style="width: 28px">
+                                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                        </th>
+                                        <th [pSortableColumn]="" Class="p-col-normal">Mã
+                                            <p-sortIcon [field]=""></p-sortIcon>
+                                        </th>
+                                        <th [pSortableColumn]="" Class="p-col-normal"> Tên người gửi
+                                            <p-sortIcon [field]=""></p-sortIcon>
+                                        </th>
+                                        <th [pSortableColumn]="" Class="p-col-normal"> Số điện thoại người gửi
+                                            <p-sortIcon [field]=""></p-sortIcon>
+                                        </th>
+                                        <th [pSortableColumn]="" Class="p-col-address"> Địa chỉ người gửi
+                                            <p-sortIcon [field]=""></p-sortIcon>
+                                        </th>
+                                        <th [pSortableColumn]="" Class="p-col-normal"> Trọng lượng
+                                            <p-sortIcon [field]=""></p-sortIcon>
+                                        </th>
+                                        <th [pSortableColumn]="" Class="p-col-normal"> Tên người nhận
+                                            <p-sortIcon [field]=""></p-sortIcon>
+                                        </th>
+                                        <th [pSortableColumn]="" Class="p-col-normal"> Số điện thoại nhận
+                                            <p-sortIcon [field]=""></p-sortIcon>
+                                        </th>
+                                        <th [pSortableColumn]="" Class="p-col-address"> Địa chỉ nhận
+                                            <p-sortIcon [field]=""></p-sortIcon>
+                                        </th>
+                                        <th [pSortableColumn]="" Class="p-col-normal"> Dịch vụ
+                                            <p-sortIcon [field]=""></p-sortIcon>
+                                        </th>
+                                        <th [pSortableColumn]="" Class="p-col-normal"> Trạng thái
+                                            <p-sortIcon [field]=""></p-sortIcon>
+                                        </th>
+                                        <th [pSortableColumn]="" Class="p-col-normal"> Trạm hiện tại
+                                            <p-sortIcon [field]=""></p-sortIcon>
+                                        </th>
+                                        <th [pSortableColumn]="" Class="p-col-note"> Lý do delay
+                                            <p-sortIcon [field]=""></p-sortIcon>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-data let-columns="columns">
+                                    <tr [pSelectableRow]="data">
+                                        <td style="width: 2.25em">
+                                            <p-tableCheckbox [value]="data"></p-tableCheckbox>
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.shipmentNumber}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.senderName}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.senderPhone}}
+                                        </td>
+                                        <td class="p-col-address">
+                                            {{data.pickingAddress}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.weight}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.receiverName}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.receiverPhone}}
+                                        </td>
+                                        <td class="p-col-address">
+                                            {{data.shippingAddress}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.serviceName}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.shipmentStatusName}}
+                                        </td>
+                                        <td class="p-col-normal">
+                                            {{data.currentHubName}}
+                                        </td>
+                                        <td class="p-col-note">
+                                            {{data.reasonDelayName}}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #template>
+    <div>
+        <div class="modal-header" style="padding: 5px; text-align:left;">
+            <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+                (click)="bsModalRef.hide()">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span>
+            </button>
+            <h5 class="modal-title" style="font-size:20px">Gửi Email</h5>
+        </div>
+        <div class="modal-body" style="overflow:auto;" *ngIf="dataDelayRef">
+            <div class="col-md-12 no-padding">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Người gửi</label>
+                        <input type="text" [(ngModel)]="nameFrom" placeholder="Tên người gửi"
+                            class="input-sm form-control" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Tiêu đều</label>
+                        <input type="text" [(ngModel)]="title" placeholder="Chủ đề" class="input-sm form-control" />
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label>Tiêu đều</label>
+                        <div class="form-group">
+                            <form role="form" #myForm="ngForm" accept-charset="UTF-8" novalidate>
+                                <div class="form-group has-feedback" [ngClass]="{ 'has-error': myckeditor.invalid &&
+                                    myckeditor.touched }">
+                                    <ckeditor [(ngModel)]="body" #myckeditor="ngModel" name="myckeditor" required
+                                        [config]="ckeConfig" debounce="500" (change)="onChange($event)">
+                                    </ckeditor>
+                                    <div *ngIf="myckeditor.invalid &&
+                                        myckeditor.touched" class="help-block">Nội dung tin nhắn không được để trống.
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+            <button *ngIf="isEdit" type="button" class="btn btn-primary" (click)="clickSave()">Xác nhận</button>
+        </div>
+    </div>
+</ng-template>

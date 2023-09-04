@@ -1,0 +1,260 @@
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="ibox-title breadcrumb">
+            <li>
+                <a>{{parentPage}}</a>
+            </li>
+            <li class="active">
+                <strong>{{currentPage}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <div class="ibox-tools">
+                    <p-header>
+                        <div>
+                            <button type="button" class="btn btn-primary" (click)="dt.exportCSV()">
+                                <i class="fa fa-file-excel-o"></i>&nbsp;CSV</button>
+                            <button type="button" class="btn btn-success" (click)="refreshLRM()">
+                                <i class="fa fa-refresh"></i>&nbsp;refresh</button>
+                        </div>
+                    </p-header>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-md-1">
+                        <label>Từ ngày</label>
+                        <div class="form-group">
+                            <p-calendar [(ngModel)]="selectedDateFrom" [showIcon]="false" hourFormat="24"
+                                dateFormat="yy/mm/dd" (onSelect)="selectedDateLRM()" [showTime]="false"
+                                [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <label>Đến ngày</label>
+                        <div class="form-group">
+                            <p-calendar [(ngModel)]="selectedDateTo" [showIcon]="false" hourFormat="24"
+                                dateFormat="yy/mm/dd" (onSelect)="selectedDateLRM()" [showTime]="false"
+                                [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>{{hub.poHubSortName}}/{{hub.stationHubSortName}} gửi</label>
+                        <p-dropdown styleClass="select-input form-control" [options]="fromHubsLRM"
+                            [(ngModel)]="selectedFromHubLRM" [style]="{'width':'100%'}" filter="filter"
+                            (onChange)="changeFilterLRM()">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Tình trạng</label>
+                        <p-dropdown styleClass="select-input form-control" [options]="statuesLRM"
+                            [(ngModel)]="selectedStatusLRM" [style]="{'width':'100%'}" filter="filter"
+                            (onChange)="changeFilterLRM()">
+                        </p-dropdown>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <label>Tài khoản ngân hàng</label>
+                        <div class="form-group">
+                            <input [(ngModel)]="bankAccount" class="input-sm form-control"
+                                (input)="loadLazyListReceiveMoney(eventLRM)" />
+                        </div>
+                    </div>
+
+                    <!-- <div class="col-sm-2">
+                            <label>Tăng/Giảm</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="sortAmount"
+                                [(ngModel)]="value" [style]="{'width':'100%'}" filter="filter">
+                            </p-dropdown>
+                    </div> -->
+
+                    <div class="col-sm-4">
+                        <label>Tìm kiếm</label>
+                        <div class="input-group">
+
+                            <input #filterGb type="text" placeholder="Nhập chuỗi cần tìm ..." [(ngModel)]="txtFilterGb"
+                                class="input-sm form-control" id="filter"
+                                (input)="dt.filterGlobal($event.target.value, 'contains')" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-sm btn-primary"> Tìm kiếm</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="table-responsive">
+                            <p-table #dt [value]="listDataLRM" [paginator]="true" rows="10"
+                                [rowsPerPageOptions]="[10,20,50,100]" [lazy]="true" [totalRecords]="totalRecordsLRM"
+                                (onLazyLoad)="loadLazyListReceiveMoney($event)">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width: 50px"></th>
+                                        <th style="width: 150px" pSortableColumn="code">Mã
+                                            <p-sortIcon field="code"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 150px" pSortableColumn="grandTotal">Tổng tiền
+                                            <p-sortIcon field="grandTotal"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 150px" pSortableColumn="totalPrice">Tổng tiền cước
+                                            <p-sortIcon field="totalPrice"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 150px" pSortableColumn="totalCOD">Tổng tiền COD
+                                            <p-sortIcon field="totalCOD"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 150px" pSortableColumn="listReceiptMoneyStatus.name">Tình
+                                            trạng
+                                            <p-sortIcon field="listReceiptMoneyStatus.name"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 150px" pSortableColumn="fromHub.name">
+                                            {{hub.centerHubSortName}}/{{hub.poHubSortName}}/{{hub.stationHubSortName}}
+                                            gửi
+                                            <p-sortIcon field="fromHub.name"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 150px" pSortableColumn="userCreated.fullName">Người tạo
+                                            <p-sortIcon field="userCreated.fullName"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 150px" pSortableColumn="orderDate">Ngày tạo
+                                            <p-sortIcon field="orderDate"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 150px" pSortableColumn="userModified.fullName">Người chỉnh
+                                            sửa
+                                            <p-sortIcon field="userModified.fullName"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 150px" pSortableColumn="orderDate">Ngày chỉnh sửa
+                                            <p-sortIcon field="orderDate"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 200px">Hình ảnh</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+                                    <tr>
+                                        <td style="width: 50px">
+                                            <p-radioButton name="groupLeft"></p-radioButton>
+                                        </td>
+                                        <td style="width: 150px">{{data.code}}</td>
+                                        <td style="width: 150px">{{data.grandTotal | number}}</td>
+                                        <td style="width: 150px">{{data.totalPrice | number}}</td>
+                                        <td style="width: 150px">{{data.totalCOD | number}}</td>
+                                        <td style="width: 150px">{{data.listReceiptMoneyStatus?.name}}</td>
+                                        <td style="width: 150px">{{data.fromHub?.name}}</td>
+                                        <td style="width: 150px">{{data.userCreated?.fullName}}</td>
+                                        <td style="width: 150px">{{data.createdWhen | dateFormat}}</td>
+                                        <td style="width: 150px">{{data.userModified?.fullName}}</td>
+                                        <td style="width: 150px">{{data.modifiedWhen | dateFormat}}</td>
+                                        <td style="width: 200px">
+                                            <button class="btn btn-primary"
+                                                (click)="openModel(template, data.imagePathDOC)">Xem</button>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="12">
+                                            Không tìm thấy dữ liệu
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="table-responsive">
+                            <p-table #dt [value]="listDataLRM_Right" [paginator]="true" rows="10"
+                                [rowsPerPageOptions]="[10,20,50,100]" [totalRecords]="listDataLRM_Right.length">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width: 150px" pSortableColumn="created">Ngày tạo
+                                            <p-sortIcon field="created"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 150px" pSortableColumn="khach_hang_ma">Mã KH
+                                            <p-sortIcon field="khach_hang_ma"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 150px" pSortableColumn="khach_hang_ten">Tên KH
+                                            <p-sortIcon field="khach_hang_ten"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 150px" pSortableColumn="payamt">Payamit
+                                            <p-sortIcon field="payamt"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 150px" pSortableColumn="tien_con_lai">Tiền còn lại
+                                            <p-sortIcon field="tien_con_lai"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 150px" pSortableColumn="tien_da_cham">Tiền đã chấm
+                                            <p-sortIcon field="tien_da_cham"></p-sortIcon>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+                                    <tr>
+                                        <td style="width: 150px">{{data.created | dateFormat}}</td>
+                                        <td style="width: 150px">{{data.khach_hang_ma}}</td>
+                                        <td style="width: 150px">{{data.khach_hang_ten}}</td>
+                                        <td style="width: 150px">{{data.payamt}}</td>
+                                        <td style="width: 150px">{{data.tien_con_lai | number}}</td>
+                                        <td style="width: 150px">{{data.tien_da_cham | number}}</td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="11">
+                                            Không tìm thấy dữ liệu
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #template>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+            (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">Hình ảnh</h5>
+    </div>
+    <div class="modal-body" style="position: absolute;width: 100%">
+        <div class="col-md-12 no-padding" style="text-align: center">
+            <a href="data:image/png;base64,{{updateImagePath.data.fileBase64String}}" class="btn btn-primary"
+                style="position: absolute;" download="hinh.jpg">Tải
+                về</a>
+            <img src="data:image/png;base64,{{updateImagePath.data.fileBase64String}}" class="imgBase64String"
+                height="450" width="300" alt="">
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #templateConfirmRefresh>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+            (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+    </div>
+    <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 no-padding">
+            <h4>Danh sách thao tác sẽ bị làm mới! Bạn có chắc chắn muốn làm mới dữ liệu không?</h4>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+        <!-- <button type="button" class="btn btn-danger" (click)="refresh()">Đồng ý</button> -->
+    </div>
+</ng-template>
+<!-- End Model -->

@@ -1,0 +1,92 @@
+<div [id]="formId">
+    <!-- <div class="grid-container" style="grid-template-areas:
+      'menu main main main main main main main'
+      'menu footer footer footer footer footer footer footer';display:
+      grid;grid-template-columns: 250px; font-size: 12px;">
+      <div style="background-color: rgb(255, 255, 255);grid-area: menu">
+        <img [src]="envir.urlLogo" width="175" alt="" srcset="">
+      </div>
+      <div style="background-color: rgb(255, 255, 255);grid-area:
+        main;font-weight: bold;text-align: center; margin-top: 10px;">
+        <p style="margin: 0;">BẢNG KÊ NỘP TIỀN</p>
+        <p style="margin: 0;">MÃ BẢNG KÊ {{selectData ? selectData.code : ''}}</p>
+      </div>
+      <div style="background-color: rgb(255, 255, 255);grid-area:
+        footer;font-weight: bold;">
+        <p style="margin: 0;">Nhân Viên nộp: {{selectData ? selectData.paidByEmpName : ''}} </p>
+        <p style="margin: 0;">Ngày nộp: {{selectData ? selectData.createdWhen : '' | dateFormat}}</p>
+      </div>
+    </div> -->
+    <table style="border-collapse: collapse;border-spacing: 0;width: 98%;margin-top: 10px; margin-left: 10px; font-size: 12px;">
+      <tr>
+        <td style="width: 25%;">
+          <img [src]="envir.urlLogo"  style="width: 155px;" alt="" srcset="">
+        </td>
+        <td style="text-align: left;font-weight: bold; width: 25%;">
+          <p style="margin: 0;">Nhân Viên nộp: {{selectData ? selectData.paidByEmpName : ''}} </p>
+          <p style="margin: 0;">Ngày nộp: {{selectData ? (selectData.createdWhen | date:'dd/MM/yyyy HH:mm') : '' }}</p>
+        </td>
+        <td style="width: 25%;"></td>
+        <td style="text-align: center;font-weight: bold; width: 25%;"> 
+          <p style="margin: 0;">BẢNG KÊ NỘP TIỀN</p>
+          <p style="margin: 0;">MÃ BẢNG KÊ: {{selectData ? selectData.code : ''}}</p>
+        </td>
+      </tr>
+    </table>
+    <table id="customers" style="border-collapse: collapse;border-spacing: 0;width: 98%;margin-top: 3px; margin-left: 10px; font-size: 10px !important;">
+      <thead>
+        <tr>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">STT</th>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">Ngày vận đơn</th>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">Tên người gửi</th>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">Mã vận đơn</th>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">Tên người nhận</th>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">Địa chỉ nhận</th>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">COD đã thu</th>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">Ghi Chú</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor='let item of selectData;let i = index'>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">{{i + 1}}</th>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">{{item.shipment.orderDate | dateFormat}}</th>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">{{item.shipment.senderName}}</th>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">{{item.shipment.shipmentNumber}}</th>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">{{item.shipment.receiverName}}</th>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">{{item.shipment.shippingAddress}}</th>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">{{item.shipment.cod | number}}</th>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">{{item.shipment.cusNote}}</th>
+        </tr>
+        <tr>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;" colspan="6">Tổng cộng</th>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;">{{ selectData ? selectData.totalPrice: 0 | number}}</th>
+          <th style="border: 1px solid #000;text-align: center;padding: 8px;"></th>
+        </tr>
+      </tbody>
+    </table>
+    
+    <table id="chuky" style=" font-size: 10px; border-collapse: collapse;border-spacing: 0;width: 100%;margin-top: 10px; ">
+      <tbody>
+        <tr>
+          <th style="padding: 8px;width: 35%;">
+            Thủ Quỹ xác nhận
+          </th>
+          <th style="padding: 8px;width: 35%;">
+            Giám sát xác nhận
+          </th>
+          <th style="padding: 8px;width: 30%;">
+            <p style="margin: 0;">Tp, Hồ Chí Minh, ngày…tháng…năm...</p>
+            <p style="margin: 0;">Người nộp: {{selectData ? selectData.paidByEmpName : ''}}</p>
+            
+          </th>
+        </tr>
+        <tr>
+          <th></th>
+          <th></th>
+          <th>
+            <p style="margin: 0; margin-top: 60px;">{{selectData ? selectData.paidByEmpName : ''}}</p>
+          </th>
+        </tr>
+      </tbody>
+    </table>  
+</div>

@@ -1,0 +1,275 @@
+<app-card>
+    <a class="parentPage">{{parentPage}}</a>
+    <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <!-- <div class="ibox-title">
+                <h5>{{currentPage}}</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div> -->
+            <div class="ibox-content" *ngIf="data">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="">
+                            <label class="label-primary" style="display:block;padding:3px 15px">Thông tin lấy hàng</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Khách hàng gửi</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="customers" [(ngModel)]="selectedCustomer" [style]="{'width':'100%'}"
+                                        filter="filter" (onChange)="changeCustomer()" autofocus tabindex="1">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Số ĐT gửi</label>
+                                    <input class="input-sm form-control" placeholder="Nhập điện thoại" type="text" [(ngModel)]="data.senderPhone" tabindex="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Tên người gửi</label>
+                                    <input class="input-sm form-control" placeholder="Nhập tên người gửi" type="text" [(ngModel)]="data.senderName" tabindex="1">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Cty gửi</label>
+                                    <input class="input-sm form-control" placeholder="Nhập cty gửi" type="text" [(ngModel)]="data.companyFrom" tabindex="1">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Địa chỉ chi tiết</label>
+                                    <input class="input-sm form-control" placeholder="Phòng ban, toà nhà..." type="text" [(ngModel)]="data.addressNoteFrom" tabindex="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Địa chỉ lấy hàng</label>
+                                    <div class="form-group">
+                                        <input placeholder="Nhập địa chỉ" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control"
+                                            #searchFrom [formControl]="searchFromControl" tabindex="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Tỉnh / thành gửi</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="fromProvinces" [(ngModel)]="selectedFromProvince" [style]="{'width':'100%'}"
+                                        filter="filter" [(ngModel)]="data.fromProvinceId" (onChange)="changeFromProvince()">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Quận / huyện gửi</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="fromDistricts" [(ngModel)]="selectedFromDistrict" [style]="{'width':'100%'}"
+                                        filter="filter" [(ngModel)]="data.fromDistrictId" (onChange)="changeFromDistrict()">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Phường / xã gửi</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="fromWards" [(ngModel)]="selectedFromWard" [style]="{'width':'100%'}"
+                                        filter="filter" [(ngModel)]="data.fromWardId" (onChange)="changeFromWard()">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Trung tâm</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="fromCenterHubs" [(ngModel)]="selectedFromCenterHub" [style]="{'width':'100%'}"
+                                        filter="filter" [(ngModel)]="data.fromProvinceId" (onChange)="changeFromCenterHub()">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Bưu cục</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="fromPoHubs" [(ngModel)]="selectedFromPoHub" [style]="{'width':'100%'}"
+                                        filter="filter" (onChange)="changeFromPoHub()">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Trạm</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="fromStationHubs" [(ngModel)]="selectedFromStationHub" [style]="{'width':'100%'}"
+                                        filter="filter">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="">
+                            <label class="label-primary" style="display:block;padding:3px 15px">Thông tin giao hàng (không bắt buộc)</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Số ĐT nhận</label>
+                                    <input class="input-sm form-control" placeholder="Nhập điện thoại" type="text" [(ngModel)]="data.receiverPhone" tabindex="1">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Tên người nhận</label>
+                                    <input class="input-sm form-control" placeholder="Nhập tên người nhận" type="text" [(ngModel)]="data.receiverName" tabindex="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Cty nhận</label>
+                                    <input class="input-sm form-control" placeholder="Nhập cty nhận" type="text" [(ngModel)]="data.companyTo" tabindex="1">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Địa chỉ chi tiết</label>
+                                    <input class="input-sm form-control" placeholder="Phòng ban, toà nhà..." type="text" [(ngModel)]="data.addressNoteTo" tabindex="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Địa chỉ giao hàng</label>
+                                    <div class="form-group">
+                                        <input placeholder="Nhập địa chỉ" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control"
+                                            #searchTo [formControl]="searchToControl" tabindex="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Tỉnh / thành nhận</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="toProvinces" [(ngModel)]="selectedToProvince" [style]="{'width':'100%'}"
+                                        [(ngModel)]="data.provinceId" filter="filter" (onChange)="changeToProvince()">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Quận / huyện nhận</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="toDistricts" [(ngModel)]="selectedToDistrict" [style]="{'width':'100%'}"
+                                        [(ngModel)]="data.districtId" filter="filter" (onChange)="changeToDistrict()">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Phường / xã nhận</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="toWards" [(ngModel)]="selectedToWard" [style]="{'width':'100%'}"
+                                        [(ngModel)]="data.wardId" filter="filter" (onChange)="changeToWard()">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Trung tâm</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="toCenterHubs" [(ngModel)]="selectedToCenterHub" [style]="{'width':'100%'}"
+                                        filter="filter" (onChange)="changeToCenterHub()">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Bưu cục</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="toPoHubs" [(ngModel)]="selectedToPoHub" [style]="{'width':'100%'}"
+                                        filter="filter" (onChange)="changeToPoHub()">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Trạm</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="toStationHubs" [(ngModel)]="selectedToStationHub" [style]="{'width':'100%'}"
+                                        filter="filter">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="">
+                            <label class="label-primary" style="display:block;padding:3px 15px">Thông tin chung (không bắt buộc)</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>TL {{unit}}</label>
+                                    <input class="input-sm form-control" placeholder="Trọng lượng" type="number" [(ngModel)]="data.weight" tabindex="1">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>TL QĐ {{unit}}</label>
+                                    <input class="input-sm form-control" placeholder="Trọng lượng quy đổi" type="number" [(ngModel)]="data.calWeight" tabindex="1">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label style="display:block">
+                                        Số kiện
+                                    </label>
+                                    <input class="input-sm form-control" placeholder="..." type="number" [(ngModel)]="data.totalBox" appOnlyNumber>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>NV lấy hàng</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="employees" [(ngModel)]="selectedEmployee" [style]="{'width':'100%'}"
+                                    [(ngModel)]="data.pickUserId" filter="filter" tabindex="1">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>
+                                        Ghi chú
+                                    </label>
+                                    <input class="input-sm form-control" placeholder="Nhập ghi chú" type="text" [(ngModel)]="data.cusNote" tabindex="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-right">
+                                <button class="btn btn-white">Hủy</button>
+                                <button class="btn btn-primary" tabindex="1" (click)="clickSaveChange()">Cập nhật</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

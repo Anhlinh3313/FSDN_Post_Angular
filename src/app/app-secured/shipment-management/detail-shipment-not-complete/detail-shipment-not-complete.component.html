@@ -1,0 +1,523 @@
+<div class="modal-header" style="padding: 5px; text-align:left;">
+    <button type="button" class="close" shipmentData-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h5 class="modal-title" style="font-size:20px">Xem chi tiết</h5>
+</div>
+<div div class="modal-body overflow-visible">
+    <!-- Begin Left Table -->
+    <div class="col-md-12 no-padding">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content" *ngIf="shipmentData" (keydown)="keyDownFunction($event)">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="">
+                            <label class="label-primary" style="display:block;padding:3px 15px">Thông tin gửi</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Khách hàng gửi</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="customers" [(ngModel)]="selectedCustomer" [style]="{'width':'100%'}"
+                                        filter="true" (onChange)="changeCustomer()" autofocus tabindex="1" [disabled]="true"
+                                        ngDefaultControl>
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Tên người gửi</label>
+                                    <input class="input-sm form-control" placeholder="Nhập tên người gửi" type="text" [(ngModel)]="shipmentData.senderName" tabindex="1">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Số ĐT gửi</label>
+                                    <input class="input-sm form-control" placeholder="Nhập ĐT gửi" type="text" [(ngModel)]="shipmentData.senderPhone" tabindex="1" appPhoneNumber>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Địa chỉ chi tiết</label>
+                                    <input class="input-sm form-control" placeholder="Phòng ban, toà nhà..." type="text" [(ngModel)]="shipmentData.addressNoteFrom"
+                                        tabindex="1">
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>Cty gửi</label>
+                                    <input class="input-sm form-control" placeholder="Nhập cty gửi" type="text" [(ngModel)]="shipmentData.companyFrom" tabindex="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Địa chỉ gửi</label>
+                                    <input placeholder="Nhập địa chỉ" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="input-sm form-control"
+                                        #searchFrom [formControl]="searchFromControl" tabindex="1" [attr.disabled]="true" ngDefaultControl>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Tỉnh / thành gửi</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="fromProvinces" [(ngModel)]="selectedFromProvince" [style]="{'width':'100%'}"
+                                        filter="true" [(ngModel)]="shipmentData.fromProvinceId" (onChange)="changeFromProvince()"
+                                        [disabled]="true" ngDefaultControl>
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Quận / huyện gửi</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="fromDistricts" [(ngModel)]="selectedFromDistrict" [style]="{'width':'100%'}"
+                                        filter="true" [(ngModel)]="shipmentData.fromDistrictId" (onChange)="changeFromDistrict()"
+                                        [disabled]="true" ngDefaultControl>
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Phường / xã gửi</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="fromWards" [(ngModel)]="selectedFromWard" [style]="{'width':'100%'}"
+                                        filter="true" [(ngModel)]="shipmentData.fromWardId" (onChange)="changeFromWard()" [disabled]="true"
+                                        ngDefaultControl>
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Trung tâm</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="fromCenterHubs" [(ngModel)]="selectedFromCenterHub" [style]="{'width':'100%'}"
+                                        filter="true" [(ngModel)]="shipmentData.fromProvinceId" (onChange)="changeFromCenterHub()"
+                                        [disabled]="true" ngDefaultControl>
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Bưu cục</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="fromPoHubs" [(ngModel)]="selectedFromPoHub" [style]="{'width':'100%'}"
+                                        filter="true" (onChange)="changeFromPoHub()" [disabled]="true" ngDefaultControl>
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Trạm</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="fromStationHubs" [(ngModel)]="selectedFromStationHub" [style]="{'width':'100%'}"
+                                        filter="true" [disabled]="true" ngDefaultControl>
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="">
+                            <label class="label-primary" style="display:block;padding:3px 15px">Thông tin nhận</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Tên người nhận</label>
+                                    <input class="input-sm form-control" placeholder="Nhập tên người nhận" [(ngModel)]="shipmentData.receiverName" type="text"
+                                        tabindex="1">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Số ĐT nhận</label>
+                                    <input class="input-sm form-control" placeholder="Nhập ĐT nhận" type="text" [(ngModel)]="shipmentData.receiverPhone" tabindex="1" appPhoneNumber>
+                                </div>
+                            </div>
+                            <div class="col-md-4" *ngIf="shipmentData.shipmentStatusId != 55">
+                                <div class="form-group">
+                                    <label>NV giao/trung chuyển</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="employees" [(ngModel)]="selectedEmployee" [style]="{'width':'100%'}"
+                                        filter="true" tabindex="1">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Địa chỉ chi tiết</label>
+                                    <input class="input-sm form-control" placeholder="Phòng ban, toà nhà..." type="text" [(ngModel)]="shipmentData.addressNoteTo"
+                                        tabindex="1">
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>Cty nhận</label>
+                                    <input class="input-sm form-control" placeholder="Nhập cty nhận" type="text" [(ngModel)]="shipmentData.companyTo" tabindex="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Địa chỉ nhận</label>
+                                    <input placeholder="Nhập địa chỉ" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="input-sm form-control"
+                                        #searchTo [formControl]="searchToControl" tabindex="1" [attr.disabled]="true">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Tỉnh / thành nhận</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="toProvinces" [(ngModel)]="selectedToProvince" [style]="{'width':'100%'}"
+                                        filter="true" [(ngModel)]="shipmentData.toProvinceId" (onChange)="changeToProvince()"
+                                        [disabled]="true">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Quận / huyện nhận</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="toDistricts" [(ngModel)]="selectedToDistrict" [style]="{'width':'100%'}"
+                                        filter="true" [(ngModel)]="shipmentData.toDistrictId" (onChange)="changeToDistrict()"
+                                        [disabled]="true">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Phường / xã nhận</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="toWards" [(ngModel)]="selectedToWard" [style]="{'width':'100%'}"
+                                        filter="true" [(ngModel)]="shipmentData.toWardId" (onChange)="changeToWard()" [disabled]="true">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Trung tâm</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="toCenterHubs" [(ngModel)]="selectedToCenterHub" [style]="{'width':'100%'}"
+                                        filter="true" (onChange)="changeToCenterHub()" [disabled]="true">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Bưu cục</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="toPoHubs" [(ngModel)]="selectedToPoHub" [style]="{'width':'100%'}"
+                                        filter="true" (onChange)="changeToPoHub()" [disabled]="true">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Trạm</label>
+                                    <p-dropdown styleClass="select-input form-control" [options]="toStationHubs" [(ngModel)]="selectedToStationHub" [style]="{'width':'100%'}"
+                                        filter="true" [disabled]="true">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="label-primary" style="display:block;padding:3px 15px">Thông tin vận đơn</label>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Loại hàng hoá</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="structures" [(ngModel)]="selectedStructure" [style]="{'width':'100%'}"
+                                filter="true" [(ngModel)]="shipmentData.structureId" (onChange)="calculatePrice()" tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>                    
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label>TL {{unit}}</label>
+                            <input type="number" min="0" placeholder="{{unit}}" class="input-sm form-control" [(ngModel)]="shipmentData.weight" (change)="calculatePrice()"
+                            tabindex="1" />
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label>TL QĐ {{unit}}</label>
+                            <input type="number" min="0" placeholder="{{unit}}" class="input-sm form-control" [(ngModel)]="shipmentData.calWeight" tabindex="1" />
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label style="display:block">
+                                SK
+                                <a data-toggle="modal" href="#modal-form-shipment" class="label label-primary pull-right">Nhập</a>
+                            </label>
+                            <input type="number" min="0" placeholder="..." class="input-sm form-control" [(ngModel)]="shipmentData.totalBox" tabindex="1"
+                            appOnlyNumber/>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label>
+                                COD
+                            </label>
+                            <input type="number" min="0" placeholder="Thu hộ" class="input-sm form-control" [(ngModel)]="shipmentData.cod" (change)="calculatePrice()"
+                            tabindex="1" appOnlyNumber/>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label>
+                                Khai giá
+                            </label>
+                            <input type="number" min="0" placeholder="Giá trị HH" class="input-sm form-control" [(ngModel)]="shipmentData.insured" (change)="calculatePrice()"
+                            tabindex="1" appOnlyNumber/>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>
+                                Phí khác
+                            </label>
+                            <input type="number" min="0" placeholder="Phí khác" class="input-sm form-control" [(ngModel)]="shipmentData.otherPrice" (change)="calculatePrice()"
+                            tabindex="1" appOnlyNumber/>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>
+                                Nội dung
+                            </label>
+                            <input class="input-sm form-control" placeholder="Nội dung hàng hóa" type="text" [(ngModel)]="shipmentData.content" tabindex="1"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="label-primary" style="display:block;padding:3px 15px">Thông tin dịch vụ sử dụng</label>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>HT Thanh toán</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="paymentTypes" [(ngModel)]="selectedPaymentType" [style]="{'width':'100%'}"
+                                filter="true" [(ngModel)]="shipmentData.paymentTypeId" tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Dịch vụ</label>
+                            <p-dropdown styleClass="select-input form-control" [options]="services" [(ngModel)]="selectedService" [style]="{'width':'100%'}"
+                                filter="true" [(ngModel)]="shipmentData.serviceId" (onChange)="calculatePrice()" tabindex="1">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label>Dịch vụ gia tăng</label>
+                            <div>
+                                <span *ngFor="let item of serviceDVGTs">
+                                    <!-- <input type="checkbox" [(value)]="item.id" [(ngModel)]="selectedServiceDVGTs" [(ngModel)]="shipmentData.serviceDVGTs" ngDefaultControl>{{item.name}} -->
+                                    <p-checkbox [(value)]="item.id" [(ngModel)]="selectedServiceDVGTs" (onChange)="calculatePrice()"></p-checkbox>{{item.name}}&nbsp;
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="label-primary" style="display:block;padding:3px 15px">Thông tin giá cước</label>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>
+                                Cước chính
+                            </label>
+                            <input type="number" min="0" placeholder="0" class="input-sm form-control" [(ngModel)]="shipmentData.defaultPrice" [attr.disabled]="true"
+                            />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>
+                                VSVX
+                            </label>
+                            <input type="number" min="0" placeholder="0" class="input-sm form-control" [(ngModel)]="shipmentData.remoteAreasPrice" [attr.disabled]="true"
+                            />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>
+                                Phí xăng dầu
+                            </label>
+                            <input type="number" min="0" placeholder="0" class="input-sm form-control" [(ngModel)]="shipmentData.fuelPrice" [attr.disabled]="true"
+                            />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>
+                                Tổng phí DVGT
+                            </label>
+                            <input type="number" min="0" placeholder="0" class="input-sm form-control" [(ngModel)]="shipmentData.totalDVGT" [attr.disabled]="true"
+                            />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>
+                                VAT
+                            </label>
+                            <input type="number" min="0" placeholder="0" class="input-sm form-control" [(ngModel)]="shipmentData.vatPrice" [attr.disabled]="true"
+                            />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>
+                                Tổng
+                            </label>
+                            <input type="number" min="0" placeholder="0" class="input-sm form-control" [(ngModel)]="shipmentData.totalPrice" [attr.disabled]="true"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- End Left Table -->
+</div>
+
+<!--Start Modal-->
+<div id="modal-form-shipment" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 5px; text-align:left;">
+                <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button">
+                    <span aria-hidden="true">×</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12 no-padding">
+                    <div class="form-group">
+                        <label>Loại đóng kiện</label>
+                        <p-dropdown styleClass="select-input form-control" [options]="packTypes" [(ngModel)]="selectedPackType" [style]="{'width':'100%'}"
+                            filter="filter">
+                        </p-dropdown>
+                    </div>
+                    <div class="form-group">
+                        <label>Kích thước</label>
+                        <p-dropdown styleClass="select-input form-control" [options]="sizes" [(ngModel)]="selectedSize" [style]="{'width':'100%'}"
+                            filter="filter" (onChange)="changeSize()" autofocustabindex="1">
+                        </p-dropdown>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Nội dung</label>
+                            <input type="text" placeholder="Nhập nội dung" class="input-sm form-control" [(ngModel)]="selectedContent">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>TL {{unit}}</label>
+                            <input type="number" min="0" placeholder="Nhập trọng lượng" class="input-sm form-control" [(ngModel)]="selectedWeight">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Dài</label>
+                            <input type="number" min="0" #length name="length" placeholder="Nhập chiều dài" class="input-sm form-control" id="length"
+                                [(ngModel)]="selectedLength" (click)="changeLength(length.value)" (keyup)="changeLength(length.value)" appOnlyNumber
+                            />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Rộng</label>
+                            <input type="number" min="0" #width name="width" placeholder="Nhập chiều rộng" class="input-sm form-control" id="width" [(ngModel)]="selectedWidth"
+                                (click)="changeWidth(width.value)" (keyup)="changeWidth(width.value)" appOnlyNumber/>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Cao</label>
+                            <input type="number" min="0" #height name="height" placeholder="Nhập chiều cao" class="input-sm form-control" id="height"
+                                [(ngModel)]="selectedHeight" (click)="changeHeight(height.value)" (keyup)="changeHeight(height.value)" appOnlyNumber
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>TL QĐ</label>
+                            <input type="number" placeholder="0" class="input-sm form-control" [(ngModel)]="selectedCalWeight" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>SL</label>
+                            <input type="number" min="0" placeholder="Nhập số lượng" class="input-sm form-control" [(ngModel)]="selectedCountSK" appOnlyNumber>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <button style="float: left;margin-top: 17px;" type="button" class="btn btn-success" (click)="createBox()">Tạo Box</button>
+                        </div>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">&nbsp;</div>
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <p-dataTable [value]="totalBoxes" rows="20" [responsive]="true" scrollable="true" scrollable="true" scrollHeight="300px">
+                                <p-column styleClass="col-button4">
+                                    <ng-template pTemplate="header">
+                                    </ng-template>
+                                    <ng-template let-data="rowData" pTemplate="body">
+                                        <a class="btn btn-danger" (click)="deleteItemBox(data)">
+                                            <i class="fa fa-trash-o"></i>
+                                            <span class="bold">Xóa</span>
+                                        </a>
+                                    </ng-template>
+                                </p-column>
+                                <p-column styleClass="p-col-box" field="weight" header="TL {{unit}}" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-box" field="content" header="ND" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-box" field="length" header="Chiều dài (cm)" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-box" field="width" header="Chiều rộng (cm)" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-box" field="height" header="Chiều cao (cm)" [sortable]="true"></p-column>
+                                <p-column styleClass="p-col-normal" field="calWeight" header="TL QĐ {{unit}}" [sortable]="true"></p-column>
+                                <p-footer style="font-size: 12px;">
+                                    Tổng TLQĐ: {{totalTLQD}} {{unit}}
+                                </p-footer>
+                            </p-dataTable>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="button" (click)="saveBox()">Lưu</button>
+                <button class="btn btn-white" data-dismiss="modal" type="button">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End Modal-->
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" shipmentData-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+    <button type="button" class="btn btn-primary" (click)="save()">Lưu</button>
+</div>

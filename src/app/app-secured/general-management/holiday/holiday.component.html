@@ -1,0 +1,109 @@
+<div class="row">
+        <div class="col-lg-12">
+            <ol class="ibox-title breadcrumb">
+                <li>
+                    <a>{{parentPage}}</a>
+                </li>
+                <li class="active">
+                    <strong>{{currentPage}}</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <!-- <h5>{{currentPage}}</h5> -->
+                    <div style="margin:0 auto;margin-bottom:5px; text-align: right">
+                        <button class="btn btn-success">
+                            <i class="fa fa-refresh"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-3 filter-year">
+                            <p-dropdown [options]="year" [(ngModel)]="selectYear" [style]="{'width':'100%', 'height': '30px'}" filter="true" (onChange)="changeYear()"></p-dropdown>
+                        </div>
+                        <div class="col-sm-6">
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <p-calendar [(ngModel)]="date" [showIcon]="true"  dateFormat="yy/mm/dd"></p-calendar>
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-sm
+                                        btn-primary" (click)="create()"> Tạo mới</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="table-responsive">
+    
+                                <p-table #dt [value]="listData" [paginator]="true"
+                                    [rows]="10" [responsive]="true"
+                                    [rowsPerPageOptions]="[10,20,50,100]"
+                                    [lazy]="true">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:235px; height: 50px">Thao tác
+                                            </th>
+                                            <th style="width: 100%;" pSortableColumn="date">
+                                              Ngày/Tháng/Năm
+                                                <p-sortIcon field="date"></p-sortIcon>
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-rowData>
+                                        <tr>
+                                            <td style="width:235px; height: 50px">
+                                                <a class="btn btn-danger" (click)="openDeleteModel(templateDelete, rowData)">
+                                                    <i class="fa fa-trash-o"></i>
+                                                    <span class="bold">Xóa</span>
+                                                </a>
+                                            </td>
+                                            <td style="width: 100%;">{{rowData.date | dateFormat }}</td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="emptymessage"
+                                        let-columns>
+                                        <tr>
+                                            <td colspan="3">
+                                                Không tìm thấy dữ liệu
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!--Start Modal-->
+    <ng-template #templateDelete>
+        <div class="modal-header" style="padding: 5px; text-align:left;">
+            <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span>
+            </button>
+        </div>
+        <div class="modal-body" style="overflow:hidden;" *ngIf="dataDelete">
+            <div class="col-md-12 no-padding">
+                <h4>Bạn có chắc chắn muốn xoá
+                    <b>&quot;{{dataDelete.name}}&quot;</b>?</h4>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+            <button *ngIf="isDelete" type="button" class="btn btn-danger" (click)="delete()">Xoá</button>
+        </div>
+    </ng-template>
+    <!--End Modal-->

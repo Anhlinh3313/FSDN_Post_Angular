@@ -1,0 +1,124 @@
+<ng-template #templateBox>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" type="button" (click)="exitModal()">
+            <span aria-hidden="true">×</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">Kiện hàng</h5>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Loại đóng kiện</label>
+                    <p-dropdown styleClass="select-input form-control" [options]="packTypes" [(ngModel)]="selectedPackType" [style]="{'width':'100%'}"
+                        filter="filter">
+                    </p-dropdown>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Kích thước</label>
+                    <p-dropdown styleClass="select-input form-control" [options]="sizes" [(ngModel)]="selectedSize" [style]="{'width':'100%'}"
+                        filter="filter" (onChange)="changeSize()">
+                    </p-dropdown>
+                </div>
+            </div>
+        </div>        
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Dài</label>
+                    <input autofocus="true" type="number" min="0" name="length" placeholder="Nhập chiều dài" class="input-sm form-control" id="length"
+                        [(ngModel)]="selectedLength" (click)="changeLWH()" (keyup)="changeLWH()" appOnlyNumber/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Rộng</label>
+                    <input type="number" min="0" #width name="width" placeholder="Nhập chiều rộng" class="input-sm form-control" id="width" [(ngModel)]="selectedWidth"
+                        (click)="changeLWH()" (keyup)="changeLWH()" appOnlyNumber />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Cao</label>
+                    <input type="number" min="0" #height name="height" placeholder="Nhập chiều cao" class="input-sm form-control" id="height"
+                        [(ngModel)]="selectedHeight" (click)="changeLWH()" (keyup)="changeLWH()" appOnlyNumber/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>TL QĐ</label>
+                    <input type="number" min=0 placeholder="0" class="input-sm form-control" [(ngModel)]="selectedCalWeight" disabled>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>SL</label>
+                    <input type="number" min="0" placeholder="Nhập số lượng" class="input-sm form-control" [(ngModel)]="selectedCountSK" appOnlyNumber>
+                </div>
+            </div>            
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>TL Gỗ</label>
+                    <input type="number" min="0" placeholder="Nhập số lượng" class="input-sm form-control" [(ngModel)]="selectedWoodWeight" appOnlyNumber>
+                </div>
+            </div>            
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>TL{{unit}}</label>
+                    <input type="number" min="0" placeholder="Nhập trọng lượng" class="input-sm form-control" [(ngModel)]="selectedWeight">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Nội dung</label>
+                    <input type="text" placeholder="Nhập nội dung" class="input-sm form-control" [(ngModel)]="selectedContent">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="div-flex" style="justify-content: center;">
+                <div class="form-group">
+                    <button style="float: left;margin-top: 17px;" type="button" class="btn btn-success" (click)="createBox()">Tạo Box</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">&nbsp;</div>
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <p-dataTable [value]="totalBoxes" rows="20" [responsive]="true" scrollable="true" scrollable="true" scrollHeight="300px">
+                        <p-column styleClass="col-button4">
+                            <ng-template pTemplate="header">
+                            </ng-template>
+                            <ng-template let-data="rowData" pTemplate="body">
+                                <button class="btn btn-danger" (click)="deleteItemBox(data)">
+                                    <i class="fa fa-trash-o"></i>
+                                    <span class="bold">Xóa</span>
+                                </button>
+                            </ng-template>
+                        </p-column>
+                        <p-column styleClass="p-col-shipmentNumber" field="code" header="Code" [sortable]="true"></p-column>
+                        <p-column styleClass="p-col-box" field="weight" header="TL {{unit}}" [sortable]="true"></p-column>
+                        <p-column styleClass="p-col-box" field="content" header="ND" [sortable]="true"></p-column>
+                        <p-column styleClass="p-col-box" field="length" header="Chiều dài (cm)" [sortable]="true"></p-column>
+                        <p-column styleClass="p-col-box" field="width" header="Chiều rộng (cm)" [sortable]="true"></p-column>
+                        <p-column styleClass="p-col-box" field="height" header="Chiều cao (cm)" [sortable]="true"></p-column>
+                        <p-column styleClass="p-col-normal" field="calWeight" header="TL QĐ {{unit}}" [sortable]="true"></p-column>
+                        <p-footer style="font-size: 12px;">
+                            Tổng TLQĐ: {{totalChargeWeightBoxes}} {{unit}}
+                        </p-footer>
+                    </p-dataTable>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" (click)="saveBox(shipmentItem)">Lưu</button>
+        <button class="btn btn-white" data-dismiss="modal" (click)="exitModal()" type="button">Đóng</button>
+    </div>
+</ng-template>

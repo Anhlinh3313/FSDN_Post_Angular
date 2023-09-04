@@ -1,0 +1,370 @@
+<div class="modal-header" style="padding: 5px; text-align:left;">
+    <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;" (click)="bsModalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5>
+</div>
+<div div class="modal-body overflow-visible">
+    <!-- Begin Left Table -->
+    <div class="col-md-12 no-padding">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+
+                <div class="row" *ngIf="shipmentData">
+                    <div class="col-sm-6">
+                        <div class="">
+                            <label class="label-primary" style="display:block;padding:3px 15px">Thông tin lấy hàng</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Khách hàng gửi</label>
+                                    <!-- <p-dropdown styleClass="select-input form-control" [options]="customers" [(ngModel)]="selectedCustomer" [style]="{'width':'100%'}"
+                                        filter="filter" (onChange)="changeCustomer()" autofocus tabindex="1">
+                                    </p-dropdown> -->
+                                    <p-autoComplete [(ngModel)]="customer" [suggestions]="filteredCustomers" (completeMethod)="filterCustomers($event)" [minLength]="1" forceSelection="true"
+                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%','height': 'max-content'}" (onSelect)="onSelectedCustomer()" [dropdown]="true">
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Số ĐT gửi</label>
+                                    <!-- <input class="input-sm form-control" placeholder="Nhập điện thoại" type="text" [(ngModel)]="shipmentData.senderPhone" tabindex="1" appPhoneNumber> -->
+                                    <!-- <input class="input-sm form-control" placeholder="Nhập điện thoại" type="text" [(ngModel)]="data.senderPhone" tabindex="1"> -->
+                                    <p-autoComplete [(ngModel)]="senderPhone" [suggestions]="filteredSenderPhones" (completeMethod)="filterSenderPhones($event)"
+                                        [minLength]="1" placeholder="Nhập ĐT gửi..." [inputStyle]="{'padding':'3px 6px','font-weight':'normal','width':'100%'}"
+                                        (onSelect)="selectedSenderPhone(senderPhone)" appPhoneNumber>
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>                                    
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Phòng ban</label>
+                                    <p-autoComplete [(ngModel)]="cusDepartment" [suggestions]="filteredCusDepartments" (completeMethod)="filterCusDepartments($event)"
+                                        [minLength]="1" forceSelection="true" placeholder="Chọn phòng ban" [dropdown]="true"
+                                        [inputStyle]="{'padding':'3px 6px','font-weight':'normal','width':'100%'}"
+                                        (onSelect)="selectedCusDepartment()">
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>
+                                </div>
+                            </div>                             
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Tên người gửi</label>
+                                    <!-- <input class="input-sm form-control" placeholder="Nhập tên người gửi" type="text" [(ngModel)]="shipmentData.senderName" tabindex="1"> -->
+                                    <!-- <input class="input-sm form-control" placeholder="Nhập tên người gửi" type="text" [(ngModel)]="data.senderName" tabindex="1"> -->
+                                    <p-autoComplete [(ngModel)]="senderName" [suggestions]="filteredSenderNames" (completeMethod)="filterSenderNames($event)"
+                                        [minLength]="1" placeholder="Nhập tên người gửi" [inputStyle]="{'padding':'3px 6px','font-weight':'normal','width':'100%'}"
+                                        (onSelect)="selectedSenderName()" >
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>                                    
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Cty gửi</label>
+                                    <!-- <input class="input-sm form-control" placeholder="Nhập cty gửi" type="text" [(ngModel)]="shipmentData.companyFrom" tabindex="1"> -->
+                                    <!-- <input class="input-sm form-control" placeholder="Nhập cty gửi" type="text" [(ngModel)]="data.companyFrom" tabindex="1"> -->
+                                    <p-autoComplete [(ngModel)]="senderCompany" [suggestions]="filteredSenderCompanies" (completeMethod)="filterSenderCompanies($event)"
+                                        [minLength]="1" placeholder="Nhập Cty gửi" [inputStyle]="{'padding':'3px 6px','font-weight':'normal','width':'100%'}"
+                                        (onSelect)="selectedSenderCompany()">
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>                                    
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Địa chỉ chi tiết</label>
+                                    <!-- <input class="input-sm form-control" placeholder="Phòng ban, toà nhà..." type="text" [(ngModel)]="data.addressNoteFrom" tabindex="1"> -->
+                                    <input class="input-sm form-control" placeholder="Phòng ban, toà nhà..." type="text" [(ngModel)]="shipmentData.addressNoteFrom"
+                                        tabindex="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>Địa chỉ lấy hàng</label>
+                                    <div class="form-group">
+                                        <input placeholder="Nhập địa chỉ" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="input-sm form-control"
+                                            #searchFrom [formControl]="searchFromControl"
+                                            tabindex="1">
+                                        <!-- <input placeholder="Nhập địa chỉ" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control"> -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Trạm</label>
+                                    <!-- <p-dropdown styleClass="select-input form-control" [options]="fromCenterHubs" [(ngModel)]="selectedFromCenterHub" [style]="{'width':'100%'}"
+                                        filter="filter" [(ngModel)]="shipmentData.fromProvinceId" (onChange)="changeFromCenterHub()">
+                                    </p-dropdown>                                     -->
+                                    <p-autoComplete [(ngModel)]="fromHub" [suggestions]="filteredFromHubs" (completeMethod)="filterFromHubs($event)" [minLength]="1" forceSelection="true"
+                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%','height': 'max-content'}" (onSelect)="onSelectedFromHubs()" [dropdown]="true">
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>
+                                </div>
+                            </div>                            
+                        </div>
+                        <div class="row" [style.display]="fromLocation">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Tỉnh / thành gửi</label>
+                                    <!-- <p-dropdown styleClass="select-input form-control" [options]="fromProvinces" [(ngModel)]="selectedFromProvince" [style]="{'width':'100%'}"
+                                        filter="filter" [(ngModel)]="data.fromProvinceId" (onChange)="changeFromProvince()">
+                                    </p-dropdown> -->
+                                    <p-autoComplete [(ngModel)]="fromProvince" [suggestions]="filteredFromProvinces" (completeMethod)="filterFromProvinces($event)" [minLength]="1" forceSelection="true"
+                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%','height': 'max-content'}" (onSelect)="onSelectedFromProvinces()" [dropdown]="true">
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>                                            
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Quận / huyện gửi</label>
+                                    <!-- <p-dropdown styleClass="select-input form-control" [options]="fromDistricts" [(ngModel)]="selectedFromDistrict" [style]="{'width':'100%'}"
+                                        filter="filter" [(ngModel)]="data.fromDistrictId" (onChange)="changeFromDistrict()">
+                                    </p-dropdown> -->
+                                    <p-autoComplete [(ngModel)]="fromDistrict" [suggestions]="filteredFromDistricts" (completeMethod)="filterFromDistricts($event)" [minLength]="1" forceSelection="true"
+                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%','height': 'max-content'}" (onSelect)="onSelectedFromDistricts()" [dropdown]="true">
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>                                             
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Phường / xã gửi</label>
+                                    <!-- <p-dropdown styleClass="select-input form-control" [options]="fromWards" [(ngModel)]="selectedFromWard" [style]="{'width':'100%'}"
+                                        filter="filter" [(ngModel)]="data.fromWardId" (onChange)="changeFromWard()">
+                                    </p-dropdown> -->
+                                    <p-autoComplete [(ngModel)]="fromWard" [suggestions]="filteredFromWards" (completeMethod)="filterFromWards($event)" [minLength]="1" forceSelection="true"
+                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%','height': 'max-content'}" (onSelect)="onSelectedFromWards()" [dropdown]="true">
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>                                             
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="">
+                            <label class="label-primary" style="display:block;padding:3px 15px">Thông tin giao hàng (không bắt buộc)</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Số ĐT nhận</label>
+                                    <!-- <input class="input-sm form-control" placeholder="Nhập điện thoại" type="text" [(ngModel)]="data.receiverPhone" tabindex="1"> -->
+                                    <!-- <input class="input-sm form-control" placeholder="Nhập điện thoại" type="text" [(ngModel)]="shipmentData.receiverPhone" tabindex="1" appPhoneNumber> -->
+                                    <p-autoComplete [(ngModel)]="receiverPhone" [suggestions]="filteredReceiverPhones" (completeMethod)="filterReceiverPhones($event)"
+                                        [minLength]="1" placeholder="Nhập ĐT nhận..." [inputStyle]="{'padding':'3px 6px','font-weight':'normal','width':'100%'}"
+                                        (onSelect)="selectedReceiverPhone()" appPhoneNumber>
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>                                    
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Tên người nhận</label>
+                                    <!-- <input class="input-sm form-control" placeholder="Nhập tên người nhận" type="text" [(ngModel)]="shipmentData.receiverName"
+                                        tabindex="1"> -->
+                                    <!-- <input class="input-sm form-control" placeholder="Nhập tên người nhận" type="text" [(ngModel)]="data.receiverName" tabindex="1"> -->
+                                    <p-autoComplete [(ngModel)]="receiverName" [suggestions]="filteredReceiverNames" (completeMethod)="filterReceiverNames($event)"
+                                        [minLength]="1" placeholder="Nhập tên người nhận" [inputStyle]="{'padding':'3px 6px','font-weight':'normal','width':'100%'}"
+                                        (onSelect)="selectedReceiverName()">
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Cty nhận</label>
+                                    <!-- <input class="input-sm form-control" placeholder="Nhập cty nhận" type="text" [(ngModel)]="shipmentData.companyTo" tabindex="1"> -->
+                                    <!-- <input class="input-sm form-control" placeholder="Nhập cty nhận" type="text" [(ngModel)]="data.companyTo" tabindex="1"> -->
+                                    <p-autoComplete [(ngModel)]="receiverCompany" [suggestions]="filteredReceiverCompanies" (completeMethod)="filterReceiverCompanies($event)"
+                                        [minLength]="1" placeholder="Nhập Cty nhận" [inputStyle]="{'padding':'3px 6px','font-weight':'normal','width':'100%'}"
+                                        (onSelect)="selectedReceiverCompany()">
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>                                    
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Địa chỉ chi tiết</label>
+                                    <input class="input-sm form-control" placeholder="Phòng ban, toà nhà..." type="text" [(ngModel)]="shipmentData.addressNoteTo"
+                                        tabindex="1">
+                                    <!-- <input class="input-sm form-control" placeholder="Phòng ban, toà nhà..." type="text" [(ngModel)]="data.addressNoteTo" tabindex="1"> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>Địa chỉ giao hàng</label>
+                                    <div class="form-group">
+                                        <!-- <input placeholder="Nhập địa chỉ" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control"> -->
+                                        <input placeholder="Nhập địa chỉ" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="input-sm form-control" 
+                                            #searchTo [formControl]="searchToControl" tabindex="1">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Trạm</label>
+                                    <!-- <p-dropdown styleClass="select-input form-control" [options]="toHubs" [(ngModel)]="selectedToHub" [style]="{'width':'100%'}"
+                                        filter="filter">
+                                    </p-dropdown> -->
+                                    <p-autoComplete [(ngModel)]="toHub" [suggestions]="filteredToHubs" (completeMethod)="filterToHubs($event)" [minLength]="1" forceSelection="true"
+                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%','height': 'max-content'}" (onSelect)="onSelectedToHubs()" [dropdown]="true">
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>
+                                </div>
+                            </div>                            
+                        </div>
+                        <div class="row" [style.display]="toLocation">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Tỉnh / thành nhận</label>
+                                    <!-- <p-dropdown styleClass="select-input form-control" [options]="toProvinces" [(ngModel)]="selectedToProvince" [style]="{'width':'100%'}"
+                                        [(ngModel)]="data.provinceId" filter="filter" (onChange)="changeToProvince()">
+                                    </p-dropdown> -->
+                                    <p-autoComplete [(ngModel)]="toProvince" [suggestions]="filteredToProvinces" (completeMethod)="filterToProvinces($event)" [minLength]="1" forceSelection="true"
+                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%','height': 'max-content'}" (onSelect)="onSelectedToProvinces()" [dropdown]="true">
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>                                            
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Quận / huyện nhận</label>
+                                    <!-- <p-dropdown styleClass="select-input form-control" [options]="toDistricts" [(ngModel)]="selectedToDistrict" [style]="{'width':'100%'}"
+                                        [(ngModel)]="data.districtId" filter="filter" (onChange)="changeToDistrict()">
+                                    </p-dropdown> -->
+                                    <p-autoComplete [(ngModel)]="toDistrict" [suggestions]="filteredToDistricts" (completeMethod)="filterToDistricts($event)" [minLength]="1" forceSelection="true"
+                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%','height': 'max-content'}" (onSelect)="onSelectedToDistricts()" [dropdown]="true">
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>                                            
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Phường / xã nhận</label>
+                                    <!-- <p-dropdown styleClass="select-input form-control" [options]="toWards" [(ngModel)]="selectedToWard" [style]="{'width':'100%'}"
+                                        [(ngModel)]="data.wardId" filter="filter" (onChange)="changeToWard()">
+                                    </p-dropdown> -->
+                                    <p-autoComplete [(ngModel)]="toWard" [suggestions]="filteredToWards" (completeMethod)="filterToWards($event)" [minLength]="1" forceSelection="true"
+                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%','height': 'max-content'}" (onSelect)="onSelectedToWards()" [dropdown]="true">
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>                                             
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="">
+                            <label class="label-primary" style="display:block;padding:3px 15px">Thông tin chung (không bắt buộc)</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>TL {{unit}}</label>
+                                    <input class="input-sm form-control" placeholder="Trọng lượng" type="number" value={{shipmentData?.weight}} (input)="shipmentData.weight = $event.target.value" />
+                                    <!-- <input class="input-sm form-control" placeholder="Trọng lượng" type="number" [(ngModel)]="data.weight" tabindex="1"> -->
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>TL QĐ {{unit}}</label>
+                                    <input class="input-sm form-control" placeholder="Trọng lượng quy đổi" type="number" value={{shipmentData?.calWeight}} (input)="shipmentData.calWeight = $event.target.value">
+                                    <!-- <input class="input-sm form-control" placeholder="Trọng lượng quy đổi" type="number" [(ngModel)]="data.calWeight" tabindex="1"> -->
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label style="display:block">
+                                        Số kiện
+                                    </label>
+                                    <input class="input-sm form-control" placeholder="..." type="number" value={{shipmentData?.totalBox}} (input)="shipmentData.totalBox = $event.target.value" appOnlyNumber>
+                                    <!-- <input class="input-sm form-control" placeholder="..." type="number" [(ngModel)]="data.totalBox"> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>NV lấy hàng</label>
+                                    <!-- <p-dropdown styleClass="select-input form-control" [options]="employees"
+                                        [(ngModel)]="selectedEmployee" [style]="{'width':'100%'}" filter="filter" tabindex="1">
+                                    </p-dropdown> -->
+                                    <p-autoComplete [(ngModel)]="employee" [suggestions]="filteredEmployees" (completeMethod)="filterEmployees($event)" [minLength]="1" forceSelection="true"
+                                        [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%','height': 'max-content'}" (onSelect)="onSelectedEmployee()" [dropdown]="true">
+                                        <ng-template let-data pTemplate="item">
+                                            <div>{{data}}</div>
+                                        </ng-template>
+                                    </p-autoComplete>                                     
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>
+                                        Ghi chú
+                                    </label>
+                                    <input class="input-sm form-control" placeholder="Nhập ghi chú" type="text" value={{shipmentData?.cusNote}} (input)="shipmentData.cusNote = $event.target.value">
+                                    <!-- <input class="input-sm form-control" placeholder="Phòng ban, toà nhà..." type="text" [(ngModel)]="data.addressNoteFrom" tabindex="1"> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- End Left Table -->
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+    <button type="button" class="btn btn-primary" [disabled]="checkSubmit" (click)="save()">Lưu</button>
+</div>

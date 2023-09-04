@@ -1,0 +1,2308 @@
+<div class="row blue-bg p-md">
+    <div class="wrapper" style="padding:0 10px;">
+        <div class="gray-bg" style="color:#676a6c;">
+            <div class="wrapper wrapper-content">
+                <div class="row">
+                    <!-- Begin Left Table -->
+                    <div class="col-md-12">
+                        <div class="ibox float-e-margins">
+                            <div *ngIf="selectedShipmentType === true; else requestTitle" class="ibox-content">
+                                <h3 style="text-transform: uppercase;">Tra cứu vận đơn</h3>
+                            </div>
+                            <ng-template #requestTitle>
+                                <div class="ibox-content">
+                                    <h3 style="text-transform: uppercase;">Tra cứu yêu cầu</h3>
+                                </div>
+                            </ng-template>
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div *ngIf="selectedShipmentType; else requestInput" class="form-group">
+                                            <input type="text" placeholder="Nhập mã vận đơn cần tìm ..."
+                                                class="input-sm form-control" [(ngModel)]="shipmentNumber" autofocus
+                                                (keyup.enter)="onEnterSearchGBDetail(true)" />
+                                        </div>
+                                        <ng-template #requestInput>
+                                            <div class="form-group">
+                                                <input type="text" placeholder="Nhập mã yêu cầu cần tìm ..."
+                                                    class="input-sm form-control" [(ngModel)]="shipmentNumber" autofocus
+                                                    (keyup.enter)="onEnterSearchGBDetail(true)" />
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <p-inputSwitch [(ngModel)]="selectedShipmentType" (click)="changeInputSwitch()">
+                                        </p-inputSwitch>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p-accordion #accordion (onOpen)="onTabOpen($event)">
+                            <p-accordionTab [hidden]="!isParrentShipment"
+                                header="Thông tin vận đơn gốc {{cloneParrentShipmentNumber}}"
+                                style="position: relative;">
+                                <span *ngIf="tabIndex == 0"
+                                    style="position: absolute; top: 11px; right: -898px; font-size: 14px; color: white">{{shipmentData.shipmentTypeName
+                                    || 'Vận đơn thường'}}</span>
+                                <div class="ibox float-e-margins">
+                                    <div class="row" *ngIf="shipmentData">
+                                        <div *ngIf="!shipmentData.isReturn" class="col-sm-12">
+                                            <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông
+                                                tin chung</h4>
+                                        </div>
+                                        <!-- isReturn -->
+                                        <div *ngIf="shipmentData.isReturn" class="col-sm-10" style="padding-right: 0">
+                                            <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông
+                                                tin chung</h4>
+                                        </div>
+                                        <div *ngIf="shipmentData.isReturn" class="col-sm-2" style="padding-left: 0">
+                                            <h4
+                                                style="padding:5px; background: yellow; color: black; text-align: center">
+                                                Chuyển
+                                                hoàn</h4>
+                                        </div>
+                                        <!-- End -->
+                                        <div *ngIf="selectedShipmentType; else tplRequest">
+                                            <div class="row" style="margin-left: 0px;">
+                                                <div class="col-sm-3">
+                                                    <!-- <div class="div-flex">
+                                                                                        <label>Mã vận đơn:</label>
+                                                                                        <div class="form-group">
+                                                                                            <span>{{shipmentData.shipmentNumber}}</span>
+                                                                                        </div>
+                                                                                    </div> -->
+                                                    <b>Mã vận đơn: </b>
+                                                    <span>{{shipmentData.shipmentNumber}}</span>
+                                                </div>
+                                                <div class="col-sm-3"
+                                                    *ngIf="shipmentData.requestShipmentId; else templateRequest">
+                                                    <b>Mã yêu cầu: </b>
+                                                    <span>{{(shipmentData.requestShipmentId) ?
+                                                        shipmentData.requestShipmentNumber
+                                                        : ""}}
+                                                    </span>
+                                                </div>
+                                                <ng-template #templateRequest>
+                                                    <div class="col-sm-3">&nbsp;</div>
+                                                </ng-template>
+                                                <div class="col-sm-3">
+                                                    <b>Tên đối tác: </b>
+                                                    <span>{{(shipmentData.tplId) != null?
+                                                        shipmentData.tplName
+                                                        : ""}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>Mã đối tác: </b>
+                                                    <span>{{(shipmentData.tplNumber) ?
+                                                        shipmentData.tplNumber :
+                                                        ""}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-left: 0px;">
+                                                <div class="col-sm-3">
+                                                    <b>Tình trạng: </b>
+                                                    <span>{{shipmentData.shipmentStatusName}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>TG đặt hàng: </b>
+                                                    <span>{{shipmentData.orderDate | date:'dd/M/y H:mm'}}</span>
+                                                </div>
+                                                <div class="col-sm-3" *ngIf="!shipmentData.isReturn">
+                                                    <b>TG giao hàng: </b>
+                                                    <span>{{shipmentData.endDeliveryTime | date:'dd/M/y H:mm'}}</span>
+                                                </div>
+                                                <div class="col-sm-3" *ngIf="shipmentData.isReturn">
+                                                    <b>TG trả hàng: </b>
+                                                    <span>{{shipmentData.endReturnTime | date:'dd/M/y H:mm'}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>Người ký nhận: </b>
+                                                    <span>{{shipmentData.realRecipientName}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-left: 0px;">
+                                                <div class="col-sm-3">
+                                                    <b>NV giữ cước: </b>
+                                                    <span>{{priceEmName}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>Dự kiến giao: </b>
+                                                    <span>{{shipmentData.deliveryDate |  date:'dd/M/y H:mm'}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>Hub giữ cước: </b>
+                                                    <span>{{priceHubName}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>Hub giữ COD: </b>
+                                                    <span>{{codHubName}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-left: 0px;">
+                                                <div class="col-sm-3">
+                                                    <b>BK NB: </b>
+                                                    <span>{{shipmentData.listGoodsName}}</span>
+                                                </div>
+                                                <div class="col-sm-3">#
+                                                    <b>NV giữ COD: </b>
+                                                    <span>{{codEmName}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>BK thu cước: </b>
+                                                    <span>{{receiptPriceCode}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>BK thu COD: </b>
+                                                    <span>{{receiptCODCode}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-left: 0px;">
+                                                <div class="col-sm-3">
+                                                    <b>KH ghi chú: </b>
+                                                    <span>{{shipmentData.cusNote}}</span>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <b>Ghi chú: </b>
+                                                    <span>{{shipmentData.note}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>BK trả COD: </b>
+                                                    <span>{{shipmentData.paymentCODCode}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ng-template #tplRequest>
+                                            <div class="col-sm-2">
+                                                <label>Mã yêu cầu:</label>
+                                                <div class="form-group">
+                                                    <b>{{shipmentData.shipmentNumber}}</b>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3"
+                                                *ngIf="shipmentData.requestShipmentId; else templateRequest">
+                                                <label>Mã yêu cầu:</label>
+                                                <div class="form-group">
+                                                    <b>{{(shipmentData.requestShipmentId) ?
+                                                        shipmentData.requestShipmentNumber
+                                                        : ""}}
+                                                    </b>
+                                                </div>
+                                            </div>
+                                            <ng-template #templateRequest>
+                                                <div class="col-sm-3">
+                                                    <b>NV giữ COD: </b>
+                                                    <span>{{codEmName}}</span></div>
+                                            </ng-template>
+                                            <div class="col-sm-3">
+                                                <label>Tình trạng:</label>
+                                                <br />
+                                                <b>{{shipmentData.shipmentStatusName}}</b>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <label>TG đặt hàng:</label>
+                                                <div class="form-group">
+                                                    <b>{{shipmentData.orderDate | date:'dd/M/y
+                                                        H:mm:ss'}}</b>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <label>TG giao hàng:</label>
+                                                <div class="form-group" *ngIf="!shipmentData.isReturn">
+                                                    <b>{{shipmentData.endDeliveryTime | date:'dd/M/y H:mm'}}</b>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2" *ngIf="shipmentData.isReturn">
+                                                <label>TG giao hàng:</label>
+                                                <div class="form-group">
+                                                    <b>{{shipmentData.endReturnTime | date:'dd/M/y H:mm'}}</b>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                    <div class="col-sm-12">&nbsp;</div>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông
+                                                tin hàng</h4>
+                                            <div>
+                                                <b>Loại hàng hóa: </b>
+                                                <span>{{shipmentData.structureName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Nội dung: </b>
+                                                <span>{{shipmentData.content}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Trọng lượng: </b>
+                                                <span>{{shipmentData.weight}} {{unit}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Số kiện: </b>
+                                                <span>{{shipmentData.totalBox}}</span>
+                                                <!-- <a class="btn btn-primary" (click)="openModelXemKien(templateXemKien, shipmentData.id)">
+                                                    <i class="fa fa-eye"></i> Xem kiện
+                                                </a> -->
+                                            </div>
+                                            <div>
+                                                <b>Trọng lượng quy đổi: </b>
+                                                <span>{{shipmentData.calWeight}} {{unit}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Trọng lượng tính cước: </b>
+                                                <span
+                                                    *ngIf="!shipmentData.calWeight; else existCalWeight">{{shipmentData.weight}}
+                                                    {{unit}}
+                                                </span>
+                                                <ng-template #existCalWeight>
+                                                    <span>{{shipmentData.weight >=
+                                                        shipmentData.calWeight ?
+                                                        shipmentData.weight
+                                                        : shipmentData.calWeight}} {{unit}}
+                                                    </span>
+                                                </ng-template>
+                                            </div>
+                                            <div>
+                                                <b>Giá trị HH: </b>
+                                                <span>{{shipmentData.insured ? shipmentData.insured.toLocaleString('vi-VN') :
+                                                    0}}</span>
+                                            </div>
+                                            <div>
+                                                <b>HTTT: </b>
+                                                <span>{{shipmentData.paymentTypeName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Dịch vụ: </b>
+                                                <span>{{shipmentData.serviceName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>DVGT: </b>
+                                                <span
+                                                    *ngIf="shipmentData.serviceDVGT">{{shipmentData.serviceDVGT.name}}</span>
+                                            </div>
+                                            <div>
+                                                <b>COD: </b>
+                                                <span>{{(shipmentData.cod) ?
+                                                    shipmentData.cod.toLocaleString('vi-VN')
+                                                    : 0}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Cước COD: </b>
+                                                <span>{{(shipmentData.priceCOD) ?
+                                                    shipmentData.priceCOD.toLocaleString('vi-VN')
+                                                    : 0}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tổng cước vận chuyển: </b>
+                                                <span>{{(shipmentData.totalPrice) ?
+                                                    shipmentData.totalPrice.toLocaleString('vi-VN')
+                                                    : 0}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông
+                                                tin gửi</h4>
+                                            <div>
+                                                <b>Mã khách gửi: </b>
+                                                <span>{{shipmentData.senderCode}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tên: </b>
+                                                <span>{{shipmentData.senderName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Số ĐT: </b>
+                                                <span>{{shipmentData.senderPhone}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tỉnh thành: </b>
+                                                <span>{{shipmentData.fromProvinceName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Quận huyện: </b>
+                                                <span>{{shipmentData.fromDistrictName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Phường xã: </b>
+                                                <span>{{shipmentData.fromWardName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Địa chỉ: </b>
+                                                <span
+                                                    *ngIf="shipmentData.addressNoteFrom; else noAddressNoteFrom">{{shipmentData.addressNoteFrom}},
+                                                    {{shipmentData.pickingAddress}}
+                                                </span>
+                                                <ng-template #noAddressNoteFrom>
+                                                    <span>{{shipmentData.pickingAddress}}</span>
+                                                </ng-template>
+                                            </div>
+                                            <div>
+                                                <b>TT/CN/T: </b>
+                                                <span>{{shipmentData.fromHubName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tuyến: </b>
+                                                <span>{{shipmentData.fromHubRoutingName}}</span>
+                                            </div>
+                                            <div *ngIf="imagesPickup.length > 0">
+                                                <b>Hình lấy hàng: </b>
+                                                <a *ngIf="!selectedShipmentType" class="btn btn-primary"
+                                                    (click)="openModel(template, shipmentData.pickupImagePath)">
+                                                    <i class="fa fa-eye"></i> Xem
+                                                </a>
+                                                <a *ngIf="selectedShipmentType" class="btn btn-primary"
+                                                    (click)="openModelImages(templateImages, imagesPickup)">
+                                                    <i class="fa fa-eye"></i> Xem
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông
+                                                tin nhận</h4>
+                                            <div>
+                                                <b>Tên: </b>
+                                                <span>{{shipmentData.receiverName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Số ĐT: </b>
+                                                <span>{{shipmentData.receiverPhone}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tỉnh thành: </b>
+                                                <span>{{shipmentData.toProvinceName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Quận huyện: </b>
+                                                <span>{{shipmentData.toDistrictName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Phường xã: </b>
+                                                <span>{{shipmentData.toWardName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Địa chỉ: </b>
+                                                <span
+                                                    *ngIf="shipmentData.addressNoteTo; else noAddressNoteTo">{{shipmentData.addressNoteTo}},
+                                                    {{shipmentData.shippingAddress}}
+                                                </span>
+                                                <ng-template #noAddressNoteTo>
+                                                    <span>{{shipmentData.shippingAddress}}</span>
+                                                </ng-template>
+                                            </div>
+                                            <div>
+                                                <b>TT/CN/T: </b>
+                                                <span>{{shipmentData.toHubName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tuyến: </b>
+                                                <span>{{shipmentData.toHubRoutingName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>NV giao: </b>
+                                                <span>{{shipmentData.toHubRoutingEmp}}</span>
+                                            </div>
+                                            <div *ngIf="imagesDelivery.length > 0">
+                                                <b>Hình giao hàng: </b>
+                                                <a *ngIf="!selectedShipmentType" class="btn btn-primary"
+                                                    (click)="openModel(template, shipmentData.deliveryImagePath)">
+                                                    <i class="fa fa-eye"></i> Xem
+                                                </a>
+                                                <a *ngIf="selectedShipmentType" class="btn btn-primary"
+                                                    (click)="openModelImages(templateImages, imagesDelivery)">
+                                                    <i class="fa fa-eye"></i> Xem
+                                                </a>
+                                            </div>
+                                            <ng-template #requestIMG>
+                                                <b></b>
+                                                <span></span>
+                                            </ng-template>
+                                        </div>
+                                        <div class="col-sm-12">&nbsp;</div>
+                                        <div class="col-sm-12">
+                                            <div class="table-responsive">
+                                                <p-table [value]="shipmentLadingSchedule" rows="20" [responsive]="true"
+                                                    scrollable="true" scrollable="true" scrollHeight="300px"
+                                                    sortField="id" [sortOrder]="-1">
+                                                    <ng-template pTemplate="header" let-columns>
+                                                        <tr>
+                                                            <th pSortableColumn="id" Class="p-col-numPick">ID
+                                                                <p-sortIcon field="id"></p-sortIcon>
+                                                            </th>
+                                                            <th Class="p-col-dateNoTime">NGÀY</th>
+                                                            <th Class="p-col-time">GIỜ</th>
+                                                            <th Class="p-col-normal">TT/CN/TRẠM</th>
+                                                            <th Class="p-col-normal">NHÂN VIÊN</th>
+                                                            <th Class="p-col-normal">TÌNH TRẠNG</th>
+                                                            <th Class="p-col-normal">VỊ TRÍ</th>
+                                                            <th Class="p-col-normal">LÝ DO</th>
+                                                            <th Class="p-col-note">GHI CHÚ</th>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="body" let-data let-columns="columns">
+                                                        <tr [pSelectableRow]="data">
+                                                            <td class="p-col-numPick">
+                                                                {{data.id}}
+                                                            </td>
+                                                            <td class="p-col-dateNoTime">
+                                                                {{data.dateCreated}}
+                                                            </td>
+                                                            <td class="p-col-time">
+                                                                {{data.timeCreated}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.hubName}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.userCode}} -
+                                                                {{data.userFullName}} -
+                                                                {{data.userPhone}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.shipmentStatusName}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.location}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.reasonName}}
+                                                            </td>
+                                                            <td class="p-col-note">
+                                                                {{data.note}}
+                                                            </td>
+                                                        </tr>
+                                                    </ng-template>
+                                                </p-table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p-tabPanel *ngIf="!selectedShipmentType"
+                                        header="Danh sách bill con ({{totalChildShipments}})">
+                                        <div *ngFor="let item of listChildRequestShipmentAndShipment">
+                                            <p-panel [toggleable]="true" [style]="{'margin-bottom':'20px'}">
+                                                <p-header>
+                                                    <div class="col-sm-11" style="padding-right: 0px;">
+                                                        <label>Phòng ban: {{item.cusDepartmentName}}</label>
+                                                    </div>
+                                                </p-header>
+                                                <div class="row">
+                                                    <div class="col-sm-4"
+                                                        *ngIf="item.shipmentNumber && item.shipmentNumber != ''">
+                                                        <!-- <div>
+                                                                                <label style="display:block;padding:3px 15px; background: #ececec; text-align: center;">
+                                                                                    Mã vận đơn tổng: <b>{{item.shipmentNumber}}</b>
+                                                                                </label>
+                                                                            </div>  -->
+                                                        <div class="row">
+                                                            <label style="display:block;padding:3px 15px;">
+                                                                Mã vận đơn tổng: <b>{{item.shipmentNumber}}</b>
+                                                            </label>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                <div class="form-group">
+                                                                    <b>Số lượng vđ: </b>
+                                                                    <span>{{item.totalChildShipment ?
+                                                                        item.totalChildShipment:
+                                                                        0}}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <div class="form-group">
+                                                                    <b>Số kiện: </b>
+                                                                    <span>{{item.totalBox ? item.totalBox :
+                                                                        0}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                <div class="form-group">
+                                                                    <b>Trọng lượng: </b>
+                                                                    <span>{{item.weight ? item.weight : 0}}
+                                                                        {{unit}}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <div class="form-group">
+                                                                    <b>TLQĐ: </b>
+                                                                    <span>{{item.calWeight ? item.calWeight
+                                                                        :
+                                                                        0}}
+                                                                        {{unit}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group">
+                                                                    <b>Ghi chú: </b>
+                                                                    <span>{{item.note}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div [class]="item.classChildShipment">
+                                                        <!-- <div>
+                                                                                <label style="display:block;padding:3px 15px; background: #ececec; text-align: center;">Thông tin Bill con</label>
+                                                                            </div>                                                         -->
+                                                        <div class="table-responsive">
+                                                            <!-- <p-table [value]="item.shipments" [responsive]="true" [paginator]="true" rows="5" [rowsPerPageOptions]="[5,10,20,50]">
+                                                                                    <ng-template pTemplate="header">
+                                                                                        <tr>
+                                                                                            <th>
+                                                                                                Mã vận đơn
+                                                                                            </th>
+                                                                                        </tr>
+                                                                                    </ng-template>
+                                                                                    <ng-template pTemplate="body" let-rowData>
+                                                                                        <tr>
+                                                                                            <td class="text-center">{{rowData?.shipmentNumber}}</td>
+                                                                                        </tr>
+                                                                                    </ng-template>
+                                                                                </p-table>                                              -->
+
+                                                            <p-table [value]="item.shipments ? item.shipments : []"
+                                                                [responsive]="true" [paginator]="true" [rows]="5"
+                                                                [rowsPerPageOptions]="[5,10,20,50]" scrollable="true">
+                                                                <ng-template pTemplate="header">
+                                                                    <tr>
+                                                                        <th pSortableColumn="shipmentNumber"
+                                                                            class="p-col-normal">
+                                                                            Mã vận đơn
+                                                                            <p-sortIcon field="shipmentNumber">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="orderDate"
+                                                                            class="p-col-orderdate">Ngày
+                                                                            gửi
+                                                                            <p-sortIcon field="orderDate"></p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="fromHub.name"
+                                                                            class="p-col-normal">Yêu
+                                                                            cầu từ
+                                                                            <p-sortIcon field="fromHub.name">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="shipmentStatus.name"
+                                                                            class="p-col-orderdate">Trạng
+                                                                            thái
+                                                                            <p-sortIcon field="shipmentStatus.name">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="pickUser.fullName"
+                                                                            class="p-col-orderdate">Nhân
+                                                                            viên LH
+                                                                            <p-sortIcon field="pickUser.fullName">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="senderName"
+                                                                            class="p-col-orderdate">Tên
+                                                                            người gửi
+                                                                            <p-sortIcon field="senderName"></p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="senderPhone"
+                                                                            class="p-col-normal">Đt
+                                                                            gửi
+                                                                            <p-sortIcon field="senderPhone">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="companyFrom"
+                                                                            class="p-col-normal">CTY
+                                                                            gửi
+                                                                            <p-sortIcon field="companyFrom">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="pickingAddress"
+                                                                            class="p-col-max">Địa
+                                                                            chỉ gửi
+                                                                            <p-sortIcon field="pickingAddress">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="fromWard.district.province.name"
+                                                                            class="p-col-normal">Tỉnh
+                                                                            đi
+                                                                            <p-sortIcon
+                                                                                field="fromWard.district.province.name">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="fromHub.name"
+                                                                            class="p-col-normal">
+                                                                            {{hubName.stationHubLongName}}
+                                                                            lấy
+                                                                            <p-sortIcon field="fromHub.name">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="fromHubRouting.name"
+                                                                            class="p-col-normal">Tuyến
+                                                                            lấy
+                                                                            <p-sortIcon field="fromHubRouting.name">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="toWard.district.province.name"
+                                                                            class="p-col-normal">Tỉnh
+                                                                            đến
+                                                                            <p-sortIcon
+                                                                                field="toWard.district.province.name">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="toHub.name"
+                                                                            class="p-col-normal">
+                                                                            {{hubName.stationHubLongName}}
+                                                                            giao
+                                                                            <p-sortIcon field="toHub.name"></p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="toHubRouting.name"
+                                                                            class="p-col-normal">Tuyến
+                                                                            giao
+                                                                            <p-sortIcon field="toHubRouting.name">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                    </tr>
+                                                                </ng-template>
+                                                                <ng-template pTemplate="body" let-data
+                                                                    let-columns="columns">
+                                                                    <tr>
+                                                                        <td class="p-col-normal">
+                                                                            {{data.shipmentNumber}}
+                                                                        </td>
+                                                                        <td class="p-col-orderdate"
+                                                                            style="height: 2.5em">
+                                                                            {{data.orderDate | date:'dd/M/y
+                                                                            H:mm:ss'}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.fromHub ?
+                                                                            data.fromHub.name
+                                                                            : ""}}
+                                                                        </td>
+                                                                        <td class="p-col-orderdate"
+                                                                            style="height: 2.5em">
+                                                                            {{data.shipmentStatus ?
+                                                                            data.shipmentStatus.name: ""}}
+                                                                        </td>
+                                                                        <td class="p-col-orderdate"
+                                                                            style="height: 2.5em">
+                                                                            {{ data.pickUser ?
+                                                                            data.pickUser.fullName :
+                                                                            ""}}
+                                                                        </td>
+                                                                        <td class="p-col-orderdate"
+                                                                            style="height: 2.5em">
+                                                                            {{data.senderName}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.senderPhone}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.companyFrom}}
+                                                                        </td>
+                                                                        <td class="p-col-max" style="height: 2.5em">
+                                                                            {{data.pickingAddress}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.fromWard?
+                                                                            data.fromWard?.district?.province?.name
+                                                                            :
+                                                                            ""}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.fromHub ?
+                                                                            data.fromHub.name
+                                                                            : ""}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.fromHubRouting ?
+                                                                            data.fromHubRouting.name : ""}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.toWard ?
+                                                                            data.toWard?.district?.province?.name
+                                                                            :
+                                                                            ""}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.toHub ? data.toHub.name
+                                                                            :
+                                                                            ""}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.toHubRouting ?
+                                                                            data.toHubRouting.name : ""}}
+                                                                        </td>
+                                                                    </tr>
+                                                                </ng-template>
+                                                                <ng-template pTemplate="summary">
+                                                                    <span class="ui-column-title"
+                                                                        style="font-weight: bold;">Tổng:
+                                                                        {{item.shipments ?
+                                                                        item.shipments.length : 0}}
+                                                                        vận
+                                                                        đơn
+                                                                    </span>
+                                                                </ng-template>
+                                                            </p-table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p-panel>
+                                        </div>
+                                    </p-tabPanel>
+                                </div>
+                            </p-accordionTab>
+                            <p-accordionTab header="Thông tin vận đơn tra cứu {{cloneShipmentNumber}}" [selected]="true"
+                                style="position: relative;">
+                                <span *ngIf="tabIndex == 1"
+                                    style="position: absolute; top: 11px; right: -898px; font-size: 14px; color: white">{{shipmentData.shipmentTypeName
+                                    || 'Vận đơn thường'}}</span>
+                                <div class="ibox float-e-margins">
+                                    <div class="row" *ngIf="shipmentData">
+                                        <div *ngIf="shipmentData.isPrioritize" class="col-md-12">
+                                            <div style="padding: 10px; border: 2px solid #F9B007">
+                                                <div *ngIf="shipmentData.deliveryDate">Ngày giao hàng:
+                                                    {{shipmentData.deliveryDate | date:'dd/MM/yyyy'}}</div>
+                                                <div>Ghi chú: {{shipmentData.note}}</div>
+                                            </div>
+                                        </div>
+
+                                        <div *ngIf="!shipmentData.isReturn" class="col-sm-12">
+                                            <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông
+                                                tin chung</h4>
+                                        </div>
+                                        <!-- isReturn -->
+                                        <div *ngIf="shipmentData.isReturn" class="col-sm-10" style="padding-right: 0">
+                                            <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông
+                                                tin chung</h4>
+                                        </div>
+                                        <div *ngIf="shipmentData.isReturn" class="col-sm-2" style="padding-left: 0">
+                                            <h4
+                                                style="padding:5px; background: yellow; color: black; text-align: center">
+                                                Chuyển
+                                                hoàn</h4>
+                                        </div>
+                                        <!-- End -->
+                                        <div *ngIf="selectedShipmentType; else tplRequest">
+                                            <div class="row" style="margin-left: 0px;">
+                                                <div class="col-sm-3">
+                                                    <!-- <div class="div-flex">
+                                                                                    <label>Mã vận đơn:</label>
+                                                                                    <div class="form-group">
+                                                                                        <span>{{shipmentData.shipmentNumber}}</span>
+                                                                                    </div>
+                                                                                </div> -->
+                                                    <b>Mã vận đơn: </b>
+                                                    <span>{{shipmentData.shipmentNumber}}</span>
+                                                </div>
+                                                <div class="col-sm-3"
+                                                    *ngIf="shipmentData.requestShipmentId; else templateRequest">
+                                                    <b>Mã yêu cầu: </b>
+                                                    <span>{{(shipmentData.requestShipmentId) ?
+                                                        shipmentData.requestShipmentNumber
+                                                        : ""}}
+                                                    </span>
+                                                </div>
+                                                <ng-template #templateRequest>
+                                                    <div class="col-sm-3">&nbsp;</div>
+                                                </ng-template>
+                                                <div class="col-sm-3">
+                                                    <b>Tên đối tác: </b>
+                                                    <span>{{(shipmentData.tplId) != null?
+                                                        shipmentData.tplName
+                                                        : ""}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>Mã đối tác: </b>
+                                                    <span>{{(shipmentData.tplNumber) ?
+                                                        shipmentData.tplNumber :
+                                                        ""}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-left: 0px;">
+                                                <div class="col-sm-3">
+                                                    <b>Tình trạng: </b>
+                                                    <span>{{shipmentData.shipmentStatusName}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>TG đặt hàng: </b>
+                                                    <span>{{shipmentData.orderDate | date:'dd/M/y H:mm'}}</span>
+                                                </div>
+                                                <div class="col-sm-3" *ngIf="!shipmentData.isReturn">
+                                                    <b>TG giao hàng: </b>
+                                                    <span>{{shipmentData.endDeliveryTime | date:'dd/M/y H:mm'}}</span>
+                                                </div>
+                                                <div class="col-sm-3" *ngIf="shipmentData.isReturn">
+                                                    <b>TG trả hàng: </b>
+                                                    <span>{{shipmentData.endReturnTime | date:'dd/M/y H:mm'}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>Người ký nhận: </b>
+                                                    <span>{{shipmentData.realRecipientName}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-left: 0px;">
+                                                <div class="col-sm-3">
+                                                    <b>NV giữ cước: </b>
+                                                    <span>{{priceEmName}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>Dự kiến giao: </b>
+                                                    <span>{{shipmentData.deliveryDate |  date:'dd/M/y H:mm'}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>Hub giữ cước: </b>
+                                                    <span>{{priceHubName}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>Hub giữ COD: </b>
+                                                    <span>{{codHubName}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-left: 0px;">
+                                                <div class="col-sm-3">
+                                                    <b>BK NB: </b>
+                                                    <span>{{shipmentData.listGoodsName}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>NV giữ COD: </b>
+                                                    <span>{{codEmName}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>BK thu cước: </b>
+                                                    <span>{{receiptPriceCode}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>BK thu COD: </b>
+                                                    <span>{{receiptCODCode}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-left: 0px;">
+                                                <div class="col-sm-3">
+                                                    <b>KH ghi chú: </b>
+                                                    <span>{{shipmentData.cusNote}}</span>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <b>Ghi chú: </b>
+                                                    <span>{{shipmentData.note}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>BK trả COD: </b>
+                                                    <span>{{shipmentData.paymentCODCode}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ng-template #tplRequest>
+                                            <div class="col-sm-2">
+                                                <label>Mã yêu cầu:</label>
+                                                <div class="form-group">
+                                                    <b>{{shipmentData.shipmentNumber}}</b>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3"
+                                                *ngIf="shipmentData.requestShipmentId; else templateRequest">
+                                                <label>Mã yêu cầu:</label>
+                                                <div class="form-group">
+                                                    <b>{{(shipmentData.requestShipmentId) ?
+                                                        shipmentData.requestShipmentNumber
+                                                        : ""}}
+                                                    </b>
+                                                </div>
+                                            </div>
+                                            <ng-template #templateRequest>
+                                                <div class="col-sm-3">&nbsp;</div>
+                                            </ng-template>
+                                            <div class="col-sm-3">
+                                                <label>Tình trạng:</label>
+                                                <br />
+                                                <b>{{shipmentData.shipmentStatusName}}</b>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <label>TG đặt hàng:</label>
+                                                <div class="form-group">
+                                                    <b>{{shipmentData.orderDate | date:'dd/M/y
+                                                        H:mm:ss'}}</b>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2" *ngIf="!shipmentData.isReturn">
+                                                <label>TG giao hàng:</label>
+                                                <div class="form-group">
+                                                    <b>{{shipmentData.endDeliveryTime | date:'dd/M/y
+                                                        H:mm:ss'}}</b>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2" *ngIf="shipmentData.isReturn">
+                                                <label>TG trả hàng:</label>
+                                                <div class="form-group">
+                                                    <b>{{shipmentData.endReturnTime | date:'dd/M/y
+                                                        H:mm:ss'}}</b>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                    <div class="col-sm-12">&nbsp;</div>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông
+                                                tin hàng</h4>
+                                            <div>
+                                                <b>Loại hàng hóa: </b>
+                                                <span>{{shipmentData.structureName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Nội dung: </b>
+                                                <span>{{shipmentData.content}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Trọng lượng: </b>
+                                                <span>{{shipmentData.weight}} {{unit}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Số kiện: </b>
+                                                <span>{{shipmentData.totalBox}}</span>
+                                                <a class="btn btn-primary"
+                                                    (click)="openModelXemKien(templateXemKien, shipmentData.id)">
+                                                    <i class="fa fa-eye"></i> Xem kiện
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <b>Trọng lượng quy đổi: </b>
+                                                <span>{{shipmentData.calWeight}} {{unit}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Trọng lượng tính cước: </b>
+                                                <span
+                                                    *ngIf="!shipmentData.calWeight; else existCalWeight">{{shipmentData.weight}}
+                                                    {{unit}}
+                                                </span>
+                                                <ng-template #existCalWeight>
+                                                    <span>{{shipmentData.weight >=
+                                                        shipmentData.calWeight ?
+                                                        shipmentData.weight
+                                                        : shipmentData.calWeight}} {{unit}}
+                                                    </span>
+                                                </ng-template>
+                                            </div>
+                                            <div>
+                                                <b>Giá trị HH: </b>
+                                                <span>{{shipmentData.insured ? shipmentData.insured.toLocaleString('vi-VN') :
+                                                    0}}</span>
+                                            </div>
+                                            <div>
+                                                <b>HTTT: </b>
+                                                <span>{{shipmentData.paymentTypeName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Dịch vụ: </b>
+                                                <span>{{shipmentData.serviceName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>DVGT: </b>
+                                                <span
+                                                    *ngIf="shipmentData.serviceDVGTCodes">{{shipmentData.serviceDVGTCodes}}</span>
+                                            </div>
+                                            <div>
+                                                <b>COD: </b>
+                                                <span>{{(shipmentData.cod) ?
+                                                    shipmentData.cod.toLocaleString('vi-VN')
+                                                    : 0}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Cước COD: </b>
+                                                <span>{{(shipmentData.priceCOD) ?
+                                                    shipmentData.priceCOD.toLocaleString('vi-VN')
+                                                    : 0}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tổng cước vận chuyển: </b>
+                                                <span>{{(shipmentData.totalPrice) ?
+                                                    shipmentData.totalPrice.toLocaleString('vi-VN')
+                                                    : 0}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông
+                                                tin gửi</h4>
+                                            <div>
+                                                <b>Mã khách gửi: </b>
+                                                <span>{{shipmentData.senderCode}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tên: </b>
+                                                <span>{{shipmentData.senderName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Số ĐT: </b>
+                                                <span>{{shipmentData.senderPhone}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tỉnh thành: </b>
+                                                <span>{{shipmentData.fromProvinceName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Quận huyện: </b>
+                                                <span>{{shipmentData.fromDistrictName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Phường xã: </b>
+                                                <span>{{shipmentData.fromWardName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Địa chỉ: </b>
+                                                <span
+                                                    *ngIf="shipmentData.addressNoteFrom; else noAddressNoteFrom">{{shipmentData.addressNoteFrom}},
+                                                    {{shipmentData.pickingAddress}}
+                                                </span>
+                                                <ng-template #noAddressNoteFrom>
+                                                    <span>{{shipmentData.pickingAddress}}</span>
+                                                </ng-template>
+                                            </div>
+                                            <div>
+                                                <b>TT/CN/T: </b>
+                                                <span>{{shipmentData.fromHubName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tuyến: </b>
+                                                <span>{{shipmentData.fromHubRoutingName}}</span>
+                                            </div>
+                                            <div *ngIf="imagesPickup.length > 0">
+                                                <b>Hình lấy hàng: </b>
+                                                <a *ngIf="!selectedShipmentType" class="btn btn-primary"
+                                                    (click)="openModel(template, shipmentData.pickupImagePath)">
+                                                    <i class="fa fa-eye"></i> Xem
+                                                </a>
+                                                <a *ngIf="selectedShipmentType" class="btn btn-primary"
+                                                    (click)="openModelImages(templateImages, imagesPickup)">
+                                                    <i class="fa fa-eye"></i> Xem
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông
+                                                tin nhận</h4>
+                                            <div>
+                                                <b>Tên: </b>
+                                                <span>{{shipmentData.receiverName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Số ĐT: </b>
+                                                <span>{{shipmentData.receiverPhone}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tỉnh thành: </b>
+                                                <span>{{shipmentData.toProvinceName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Quận huyện: </b>
+                                                <span>{{shipmentData.toDistrictName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Phường xã: </b>
+                                                <span>{{shipmentData.toWardName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Địa chỉ: </b>
+                                                <span
+                                                    *ngIf="shipmentData.addressNoteTo; else noAddressNoteTo">{{shipmentData.addressNoteTo}},
+                                                    {{shipmentData.shippingAddress}}
+                                                </span>
+                                                <ng-template #noAddressNoteTo>
+                                                    <span>{{shipmentData.shippingAddress}}</span>
+                                                </ng-template>
+                                            </div>
+                                            <div>
+                                                <b>TT/CN/T: </b>
+                                                <span>{{shipmentData.toHubName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tuyến: </b>
+                                                <span>{{shipmentData.toHubRoutingName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>NV giao: </b>
+                                                <span>{{shipmentData.toHubRoutingEmp}}</span>
+                                            </div>
+                                            <div *ngIf="imagesDelivery.length > 0">
+                                                <b>Hình giao hàng: </b>
+                                                <a *ngIf="!selectedShipmentType" class="btn btn-primary"
+                                                    (click)="openModel(template, shipmentData.deliveryImagePath)">
+                                                    <i class="fa fa-eye"></i> Xem
+                                                </a>
+                                                <a *ngIf="selectedShipmentType" class="btn btn-primary"
+                                                    (click)="openModelImages(templateImages, imagesDelivery)">
+                                                    <i class="fa fa-eye"></i> Xem
+                                                </a>
+                                            </div>
+                                            <ng-template #requestIMG>
+                                                <b></b>
+                                                <span></span>
+                                            </ng-template>
+                                        </div>
+                                        <div class="col-sm-12">&nbsp;</div>
+                                        <div class="col-sm-12">
+                                            <div class="table-responsive">
+                                                <p-table [value]="shipmentLadingSchedule" rows="20" [responsive]="true"
+                                                    scrollable="true" scrollable="true" scrollHeight="300px"
+                                                    sortField="id" [sortOrder]="-1">
+                                                    <ng-template pTemplate="header" let-columns>
+                                                        <tr>
+                                                            <th style="width: 80px">#</th>
+                                                            <th Class="p-col-dateNoTime">NGÀY</th>
+                                                            <th Class="p-col-time">GIỜ</th>
+                                                            <th Class="p-col-normal">TỪ KHO/BC</th>
+                                                            <th Class="p-col-normal">ĐẾN KHO/BC/NV</th>
+                                                            <th Class="p-col-normal">NV XỬ LÝ</th>
+                                                            <th Class="p-col-normal">TÌNH TRẠNG</th>
+                                                            <th Class="p-col-normal">VỊ TRÍ</th>
+                                                            <th Class="p-col-normal">LÝ DO</th>
+                                                            <th Class="p-col-normal">GHI CHÚ</th>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="body" let-data let-columns="columns">
+                                                        <tr [pSelectableRow]="data">
+                                                            <td style="width: 80px">
+                                                                <img *ngIf="data.isDelay" width="30"
+                                                                    src="../../../assets/images/icons/delay.png"
+                                                                    [escape]="false"
+                                                                    pTooltip="<span *ngIf='data.delayTime'>Giờ delay: <b>{{data.delayTime}}</b></span> </br /> <span *ngIf='data.delayReason'>Lý do: <b>{{data.delayReason }}</b></span> <br /> <span *ngIf='data.delayNote'>Ghi chú: <b>{{data.delayNote }}</b></span>"
+                                                                    tooltipPosition="left" tooltipZIndex="9999" />
+                                                                <img *ngIf="data.incidentsId" width="30"
+                                                                    src="../../../assets/images/icons/incident.png"
+                                                                    (dblclick)="openModalIncident(templateIncident, data)" />
+                                                            </td>
+                                                            <td class="p-col-dateNoTime">
+                                                                {{data.dateCreated}}
+                                                            </td>
+                                                            <td class="p-col-time">
+                                                                {{data.timeCreated}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.hubName}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.toHubName?data.toHubName:(data.toUserCode?(data.toUserCode + ' - ' + data.toUserFullname):'')}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.userCode}} -
+                                                                {{data.userFullName}} -
+                                                                {{data.userPhone}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.shipmentStatusName}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.location}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.reasonName}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.note}}
+                                                            </td>
+                                                        </tr>
+                                                    </ng-template>
+                                                </p-table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p-tabPanel *ngIf="!selectedShipmentType"
+                                        header="Danh sách bill con ({{totalChildShipments}})">
+                                        <div *ngFor="let item of listChildRequestShipmentAndShipment">
+                                            <p-panel [toggleable]="true" [style]="{'margin-bottom':'20px'}">
+                                                <p-header>
+                                                    <div class="col-sm-11" style="padding-right: 0px;">
+                                                        <label>Phòng ban: {{item.cusDepartmentName}}</label>
+                                                    </div>
+                                                </p-header>
+                                                <div class="row">
+                                                    <div class="col-sm-4"
+                                                        *ngIf="item.shipmentNumber && item.shipmentNumber != ''">
+                                                        <!-- <div>
+                                                                            <label style="display:block;padding:3px 15px; background: #ececec; text-align: center;">
+                                                                                Mã vận đơn tổng: <b>{{item.shipmentNumber}}</b>
+                                                                            </label>
+                                                                        </div>  -->
+                                                        <div class="row">
+                                                            <label style="display:block;padding:3px 15px;">
+                                                                Mã vận đơn tổng: <b>{{item.shipmentNumber}}</b>
+                                                            </label>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                <div class="form-group">
+                                                                    <b>Số lượng vđ: </b>
+                                                                    <span>{{item.totalChildShipment ?
+                                                                        item.totalChildShipment:
+                                                                        0}}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <div class="form-group">
+                                                                    <b>Số kiện: </b>
+                                                                    <span>{{item.totalBox ? item.totalBox :
+                                                                        0}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                <div class="form-group">
+                                                                    <b>Trọng lượng: </b>
+                                                                    <span>{{item.weight ? item.weight : 0}}
+                                                                        {{unit}}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <div class="form-group">
+                                                                    <b>TLQĐ: </b>
+                                                                    <span>{{item.calWeight ? item.calWeight
+                                                                        :
+                                                                        0}}
+                                                                        {{unit}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group">
+                                                                    <b>Ghi chú: </b>
+                                                                    <span>{{item.note}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div [class]="item.classChildShipment">
+                                                        <!-- <div>
+                                                                            <label style="display:block;padding:3px 15px; background: #ececec; text-align: center;">Thông tin Bill con</label>
+                                                                        </div>                                                         -->
+                                                        <div class="table-responsive">
+                                                            <!-- <p-table [value]="item.shipments" [responsive]="true" [paginator]="true" rows="5" [rowsPerPageOptions]="[5,10,20,50]">
+                                                                                <ng-template pTemplate="header">
+                                                                                    <tr>
+                                                                                        <th>
+                                                                                            Mã vận đơn
+                                                                                        </th>
+                                                                                    </tr>
+                                                                                </ng-template>
+                                                                                <ng-template pTemplate="body" let-rowData>
+                                                                                    <tr>
+                                                                                        <td class="text-center">{{rowData?.shipmentNumber}}</td>
+                                                                                    </tr>
+                                                                                </ng-template>
+                                                                            </p-table>                                              -->
+
+                                                            <p-table [value]="item.shipments ? item.shipments : []"
+                                                                [responsive]="true" [paginator]="true" [rows]="5"
+                                                                [rowsPerPageOptions]="[5,10,20,50]" scrollable="true">
+                                                                <ng-template pTemplate="header">
+                                                                    <tr>
+                                                                        <th pSortableColumn="shipmentNumber"
+                                                                            class="p-col-normal">
+                                                                            Mã vận đơn
+                                                                            <p-sortIcon field="shipmentNumber">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="orderDate"
+                                                                            class="p-col-orderdate">Ngày
+                                                                            gửi
+                                                                            <p-sortIcon field="orderDate"></p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="fromHub.name"
+                                                                            class="p-col-normal">Yêu
+                                                                            cầu từ
+                                                                            <p-sortIcon field="fromHub.name">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="shipmentStatus.name"
+                                                                            class="p-col-orderdate">Trạng
+                                                                            thái
+                                                                            <p-sortIcon field="shipmentStatus.name">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="pickUser.fullName"
+                                                                            class="p-col-orderdate">Nhân
+                                                                            viên nhận hàng
+                                                                            <p-sortIcon field="pickUser.fullName">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="senderName"
+                                                                            class="p-col-orderdate">Tên
+                                                                            người gửi
+                                                                            <p-sortIcon field="senderName"></p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="senderPhone"
+                                                                            class="p-col-normal">Đt
+                                                                            gửi
+                                                                            <p-sortIcon field="senderPhone">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="companyFrom"
+                                                                            class="p-col-normal">CTY
+                                                                            gửi
+                                                                            <p-sortIcon field="companyFrom">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="pickingAddress"
+                                                                            class="p-col-max">Địa
+                                                                            chỉ gửi
+                                                                            <p-sortIcon field="pickingAddress">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="fromWard.district.province.name"
+                                                                            class="p-col-normal">Tỉnh
+                                                                            đi
+                                                                            <p-sortIcon
+                                                                                field="fromWard.district.province.name">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="fromHub.name"
+                                                                            class="p-col-normal">
+                                                                            {{hubName.stationHubLongName}}
+                                                                            lấy
+                                                                            <p-sortIcon field="fromHub.name">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="fromHubRouting.name"
+                                                                            class="p-col-normal">Tuyến
+                                                                            lấy
+                                                                            <p-sortIcon field="fromHubRouting.name">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="toWard.district.province.name"
+                                                                            class="p-col-normal">Tỉnh
+                                                                            đến
+                                                                            <p-sortIcon
+                                                                                field="toWard.district.province.name">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="toHub.name"
+                                                                            class="p-col-normal">
+                                                                            {{hubName.stationHubLongName}}
+                                                                            giao
+                                                                            <p-sortIcon field="toHub.name"></p-sortIcon>
+                                                                        </th>
+                                                                        <th pSortableColumn="toHubRouting.name"
+                                                                            class="p-col-normal">Tuyến
+                                                                            giao
+                                                                            <p-sortIcon field="toHubRouting.name">
+                                                                            </p-sortIcon>
+                                                                        </th>
+                                                                    </tr>
+                                                                </ng-template>
+                                                                <ng-template pTemplate="body" let-data
+                                                                    let-columns="columns">
+                                                                    <tr>
+                                                                        <td class="p-col-normal">
+                                                                            {{data.shipmentNumber}}
+                                                                        </td>
+                                                                        <td class="p-col-orderdate"
+                                                                            style="height: 2.5em">
+                                                                            {{data.orderDate | date:'dd/M/y
+                                                                            H:mm:ss'}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.fromHub ?
+                                                                            data.fromHub.name
+                                                                            : ""}}
+                                                                        </td>
+                                                                        <td class="p-col-orderdate"
+                                                                            style="height: 2.5em">
+                                                                            {{data.shipmentStatus ?
+                                                                            data.shipmentStatus.name: ""}}
+                                                                        </td>
+                                                                        <td class="p-col-orderdate"
+                                                                            style="height: 2.5em">
+                                                                            {{ data.pickUser ?
+                                                                            data.pickUser.fullName :
+                                                                            ""}}
+                                                                        </td>
+                                                                        <td class="p-col-orderdate"
+                                                                            style="height: 2.5em">
+                                                                            {{data.senderName}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.senderPhone}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.companyFrom}}
+                                                                        </td>
+                                                                        <td class="p-col-max" style="height: 2.5em">
+                                                                            {{data.pickingAddress}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.fromProvince?
+                                                                            data.fromProvince?.name
+                                                                            :
+                                                                            ""}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.fromHub ?
+                                                                            data.fromHub.name
+                                                                            : ""}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.fromHubRouting ?
+                                                                            data.fromHubRouting.name : ""}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.toProvince ?
+                                                                            data.toProvince?.name
+                                                                            :
+                                                                            "--"}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.toHub ? data.toHub.name
+                                                                            :
+                                                                            "--"}}
+                                                                        </td>
+                                                                        <td class="p-col-normal" style="height: 2.5em">
+                                                                            {{data.toHubRouting ?
+                                                                            data.toHubRouting.name : "--"}}
+                                                                        </td>
+                                                                    </tr>
+                                                                </ng-template>
+                                                                <ng-template pTemplate="summary">
+                                                                    <span class="ui-column-title"
+                                                                        style="font-weight: bold;">Tổng:
+                                                                        {{item.shipments ?
+                                                                        item.shipments.length : 0}}
+                                                                        vận
+                                                                        đơn
+                                                                    </span>
+                                                                </ng-template>
+                                                            </p-table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p-panel>
+                                        </div>
+                                    </p-tabPanel>
+                                </div>
+                            </p-accordionTab>
+                            <p-accordionTab header="Thông tin vận đơn liên quan/kiện {{item}}"
+                                *ngFor="let item of cloneChildShipmentNumbers; index as i" style="position: relative;">
+                                <span *ngIf="tabIndex == i + 2"
+                                    style="position: absolute; top: 11px; right: -898px; font-size: 14px; color: white">{{shipmentData.shipmentTypeName
+                                    || 'Vận đơn thường'}}</span>
+                                <div class="ibox float-e-margins">
+                                    <div class="row" *ngIf="shipmentData">
+                                        <div *ngIf="!shipmentData.isReturn" class="col-sm-12">
+                                            <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông
+                                                tin chung</h4>
+                                        </div>
+                                        <!-- isReturn -->
+                                        <div *ngIf="shipmentData.isReturn" class="col-sm-10" style="padding-right: 0">
+                                            <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông
+                                                tin chung</h4>
+                                        </div>
+                                        <div *ngIf="shipmentData.isReturn" class="col-sm-2" style="padding-left: 0">
+                                            <h4
+                                                style="padding:5px; background: yellow; color: black; text-align: center">
+                                                Chuyển
+                                                hoàn</h4>
+                                        </div>
+                                        <!-- End -->
+                                        <div *ngIf="selectedShipmentType; else tplRequest">
+                                            <div class="row" style="margin-left: 0px;">
+                                                <div class="col-sm-3">
+                                                    <!-- <div class="div-flex">
+                                                                                            <label>Mã vận đơn:</label>
+                                                                                            <div class="form-group">
+                                                                                                <span>{{shipmentData.shipmentNumber}}</span>
+                                                                                            </div>
+                                                                                        </div> -->
+                                                    <b>Mã vận đơn: </b>
+                                                    <span>{{shipmentData.shipmentNumber}}</span>
+                                                </div>
+                                                <div class="col-sm-3"
+                                                    *ngIf="shipmentData.requestShipmentId; else templateRequest">
+                                                    <b>Mã yêu cầu: </b>
+                                                    <span>{{(shipmentData.requestShipmentId) ?
+                                                        shipmentData.requestShipmentNumber
+                                                        : ""}}
+                                                    </span>
+                                                </div>
+                                                <ng-template #templateRequest>
+                                                    <div class="col-sm-3">&nbsp;</div>
+                                                </ng-template>
+                                                <div class="col-sm-3">
+                                                    <b>Tên đối tác: </b>
+                                                    <span>{{(shipmentData.tplId) != null?
+                                                        shipmentData.tplName
+                                                        : ""}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>Mã đối tác: </b>
+                                                    <span>{{(shipmentData.tplNumber) ?
+                                                        shipmentData.tplNumber :
+                                                        ""}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-left: 0px;">
+                                                <div class="col-sm-3">
+                                                    <b>Tình trạng: </b>
+                                                    <span>{{shipmentData.shipmentStatusName}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>TG đặt hàng: </b>
+                                                    <span>{{shipmentData.orderDate | date:'dd/M/y
+                                                        H:mm:ss'}}</span>
+                                                </div>
+                                                <div class="col-sm-3" *ngIf="!shipmentData.isReturn">
+                                                    <b>TG giao hàng: </b>
+                                                    <span>{{shipmentData.endDeliveryTime | date:'dd/M/y H:mm'}}</span>
+                                                </div>
+                                                <div class="col-sm-3" *ngIf="shipmentData.isReturn">
+                                                    <b>TG trả hàng: </b>
+                                                    <span>{{shipmentData.endReturnTime | date:'dd/M/y H:mm'}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>Người ký nhận: </b>
+                                                    <span>{{shipmentData.realRecipientName}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-left: 0px;">
+                                                <div class="col-sm-3">
+                                                    <b>NV giữ cước: </b>
+                                                    <span>{{priceEmName}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>Dự kiến giao: </b>
+                                                    <span>{{shipmentData.deliveryDate |  date:'dd/M/y H:mm'}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>Hub giữ cước: </b>
+                                                    <span>{{priceHubName}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>Hub giữ COD: </b>
+                                                    <span>{{codHubName}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-left: 0px;">
+                                                <div class="col-sm-3">
+                                                    <b>BK NB: </b>
+                                                    <span>{{shipmentData.listGoodsName}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>NV giữ COD: </b>
+                                                    <span>{{codEmName}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>BK thu cước: </b>
+                                                    <span>{{receiptPriceCode}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>BK thu COD: </b>
+                                                    <span>{{receiptCODCode}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-left: 0px;">
+                                                <div class="col-sm-3">
+                                                    <b>KH ghi chú: </b>
+                                                    <span>{{shipmentData.cusNote}}</span>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <b>Ghi chú: </b>
+                                                    <span>{{shipmentData.note}}</span>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <b>BK trả COD: </b>
+                                                    <span>{{shipmentData.paymentCODCode}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ng-template #tplRequest>
+                                            <div class="col-sm-2">
+                                                <label>Mã yêu cầu:</label>
+                                                <div class="form-group">
+                                                    <b>{{shipmentData.shipmentNumber}}</b>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3"
+                                                *ngIf="shipmentData.requestShipmentId; else templateRequest">
+                                                <label>Mã yêu cầu:</label>
+                                                <div class="form-group">
+                                                    <b>{{(shipmentData.requestShipmentId) ?
+                                                        shipmentData.requestShipmentNumber
+                                                        : ""}}
+                                                    </b>
+                                                </div>
+                                            </div>
+                                            <ng-template #templateRequest>
+                                                <div class="col-sm-3">&nbsp;</div>
+                                            </ng-template>
+                                            <div class="col-sm-3">
+                                                <label>Tình trạng:</label>
+                                                <br />
+                                                <b>{{shipmentData.shipmentStatusName}}</b>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <label>TG đặt hàng:</label>
+                                                <div class="form-group">
+                                                    <b>{{shipmentData.orderDate | date:'dd/M/y
+                                                        H:mm:ss'}}</b>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2" *ngIf="!shipmentData.isReturn">
+                                                <label>TG giao hàng:</label>
+                                                <div class="form-group">
+                                                    <b>{{shipmentData.endDeliveryTime | date:'dd/M/y H:mm'}}</b>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2" *ngIf="shipmentData.isReturn">
+                                                <label>TG giao hàng:</label>
+                                                <div class="form-group">
+                                                    <b>{{shipmentData.endReturnTime | date:'dd/M/y H:mm'}}</b>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                    <div class="col-sm-12">&nbsp;</div>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông
+                                                tin hàng</h4>
+                                            <div>
+                                                <b>Loại hàng hóa: </b>
+                                                <span>{{shipmentData.structureName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Nội dung: </b>
+                                                <span>{{shipmentData.content}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Trọng lượng: </b>
+                                                <span>{{shipmentData.weight}} {{unit}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Số kiện: </b>
+                                                <span>{{shipmentData.totalBox}}</span>
+                                                <a class="btn btn-primary"
+                                                    (click)="openModelXemKien(templateXemKien, shipmentData.id)">
+                                                    <i class="fa fa-eye"></i> Xem kiện
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <b>Trọng lượng quy đổi: </b>
+                                                <span>{{shipmentData.calWeight}} {{unit}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Trọng lượng tính cước: </b>
+                                                <span
+                                                    *ngIf="!shipmentData.calWeight; else existCalWeight">{{shipmentData.weight}}
+                                                    {{unit}}
+                                                </span>
+                                                <ng-template #existCalWeight>
+                                                    <span>{{shipmentData.weight >=
+                                                        shipmentData.calWeight ?
+                                                        shipmentData.weight
+                                                        : shipmentData.calWeight}} {{unit}}
+                                                    </span>
+                                                </ng-template>
+                                            </div>
+                                            <div>
+                                                <b>Giá trị HH: </b>
+                                                <span>{{shipmentData.insured ? shipmentData.insured.toLocaleString('vi-VN') :
+                                                    0}}</span>
+                                            </div>
+                                            <div>
+                                                <b>HTTT: </b>
+                                                <span>{{shipmentData.paymentTypeName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Dịch vụ: </b>
+                                                <span>{{shipmentData.serviceName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>DVGT: </b>
+                                                <span
+                                                    *ngIf="shipmentData.serviceDVGTCodes">{{shipmentData.serviceDVGTCodes}}</span>
+                                            </div>
+                                            <div>
+                                                <b>COD: </b>
+                                                <span>{{(shipmentData.cod) ?
+                                                    shipmentData.cod.toLocaleString('vi-VN')
+                                                    : 0}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Cước COD: </b>
+                                                <span>{{(shipmentData.priceCOD) ?
+                                                    shipmentData.priceCOD.toLocaleString('vi-VN')
+                                                    : 0}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tổng cước vận chuyển: </b>
+                                                <span>{{(shipmentData.totalPrice) ?
+                                                    shipmentData.totalPrice.toLocaleString('vi-VN')
+                                                    : 0}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông
+                                                tin gửi</h4>
+                                            <div>
+                                                <b>Mã khách gửi: </b>
+                                                <span>{{shipmentData.senderCode}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tên: </b>
+                                                <span>{{shipmentData.senderName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Số ĐT: </b>
+                                                <span>{{shipmentData.senderPhone}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tỉnh thành: </b>
+                                                <span>{{shipmentData.fromProvinceName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Quận huyện: </b>
+                                                <span>{{shipmentData.fromDistrictName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Phường xã: </b>
+                                                <span>{{shipmentData.fromWardName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Địa chỉ: </b>
+                                                <span
+                                                    *ngIf="shipmentData.addressNoteFrom; else noAddressNoteFrom">{{shipmentData.addressNoteFrom}},
+                                                    {{shipmentData.pickingAddress}}
+                                                </span>
+                                                <ng-template #noAddressNoteFrom>
+                                                    <span>{{shipmentData.pickingAddress}}</span>
+                                                </ng-template>
+                                            </div>
+                                            <div>
+                                                <b>TT/CN/T: </b>
+                                                <span>{{shipmentData.fromHubName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tuyến: </b>
+                                                <span>{{shipmentData.fromHubRoutingName}}</span>
+                                            </div>
+                                            <div *ngIf="imagesPickup.length > 0">
+                                                <b>Hình lấy hàng: </b>
+                                                <a *ngIf="!selectedShipmentType" class="btn btn-primary"
+                                                    (click)="openModel(template, shipmentData.pickupImagePath)">
+                                                    <i class="fa fa-eye"></i> Xem
+                                                </a>
+                                                <a *ngIf="selectedShipmentType" class="btn btn-primary"
+                                                    (click)="openModelImages(templateImages, imagesPickup)">
+                                                    <i class="fa fa-eye"></i> Xem
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <h4 class="navy-bg" style="padding:5px;text-transform: uppercase;">Thông
+                                                tin nhận</h4>
+                                            <div>
+                                                <b>Tên: </b>
+                                                <span>{{shipmentData.receiverName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Số ĐT: </b>
+                                                <span>{{shipmentData.receiverPhone}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tỉnh thành: </b>
+                                                <span>{{shipmentData.toProvinceName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Quận huyện: </b>
+                                                <span>{{shipmentData.toDistrictName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Phường xã: </b>
+                                                <span>{{shipmentData.toWardName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Địa chỉ: </b>
+                                                <span
+                                                    *ngIf="shipmentData.addressNoteTo; else noAddressNoteTo">{{shipmentData.addressNoteTo}},
+                                                    {{shipmentData.shippingAddress}}
+                                                </span>
+                                                <ng-template #noAddressNoteTo>
+                                                    <span>{{shipmentData.shippingAddress}}</span>
+                                                </ng-template>
+                                            </div>
+                                            <div>
+                                                <b>TT/CN/T: </b>
+                                                <span>{{shipmentData.toHubName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>Tuyến: </b>
+                                                <span>{{shipmentData.toHubRoutingName}}</span>
+                                            </div>
+                                            <div>
+                                                <b>NV giao: </b>
+                                                <span>{{shipmentData.toHubRoutingEmp}}</span>
+                                            </div>
+                                            <div *ngIf="imagesDelivery.length > 0">
+                                                <b>Hình giao hàng: </b>
+                                                <a *ngIf="!selectedShipmentType" class="btn btn-primary"
+                                                    (click)="openModel(template, shipmentData.deliveryImagePath)">
+                                                    <i class="fa fa-eye"></i> Xem
+                                                </a>
+                                                <a *ngIf="selectedShipmentType" class="btn btn-primary"
+                                                    (click)="openModelImages(templateImages, imagesDelivery)">
+                                                    <i class="fa fa-eye"></i> Xem
+                                                </a>
+                                            </div>
+                                            <ng-template #requestIMG>
+                                                <b></b>
+                                                <span></span>
+                                            </ng-template>
+                                        </div>
+                                        <div class="col-sm-12">&nbsp;</div>
+                                        <div class="col-sm-12">
+                                            <div class="table-responsive">
+                                                <p-table [value]="shipmentLadingSchedule" rows="20" [responsive]="true"
+                                                    scrollable="true" scrollable="true" scrollHeight="300px"
+                                                    sortField="id" [sortOrder]="-1">
+                                                    <ng-template pTemplate="header" let-columns>
+                                                        <tr>
+                                                            <th pSortableColumn="id" Class="p-col-numPick">ID
+                                                                <p-sortIcon field="id"></p-sortIcon>
+                                                            </th>
+                                                            <th Class="p-col-dateNoTime">NGÀY</th>
+                                                            <th Class="p-col-time">GIỜ</th>
+                                                            <th Class="p-col-normal">TT/CN/TRẠM</th>
+                                                            <th Class="p-col-normal">NHÂN VIÊN</th>
+                                                            <th Class="p-col-normal">TÌNH TRẠNG</th>
+                                                            <th Class="p-col-normal">VỊ TRÍ</th>
+                                                            <th Class="p-col-normal">Lý do</th>
+                                                            <th Class="p-col-normal">GHI CHÚ</th>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="body" let-data let-columns="columns">
+                                                        <tr [pSelectableRow]="data">
+                                                            <td class="p-col-numPick">
+                                                                {{data.id}}
+                                                            </td>
+                                                            <td class="p-col-dateNoTime">
+                                                                {{data.dateCreated}}
+                                                            </td>
+                                                            <td class="p-col-time">
+                                                                {{data.timeCreated}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.hubName}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.userCode}} -
+                                                                {{data.userFullName}} -
+                                                                {{data.userPhone}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.shipmentStatusName}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.location}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.reasonName}}
+                                                            </td>
+                                                            <td class="p-col-normal">
+                                                                {{data.note}}
+                                                            </td>
+                                                        </tr>
+                                                    </ng-template>
+                                                </p-table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p-accordionTab>
+                        </p-accordion>
+                        <p-accordion *ngIf="!selectedShipmentType">
+                            <p-accordionTab header="Danh sách bill con ({{totalChildShipments}})">
+                                <div *ngFor="let item of listChildRequestShipmentAndShipment">
+                                    <div class="row">
+                                        <div class="col-sm-4" *ngIf="item.shipmentNumber && item.shipmentNumber != ''">
+                                            <!-- <div>
+                                                                                        <label style="display:block;padding:3px 15px; background: #ececec; text-align: center;">
+                                                                                            Mã vận đơn tổng: <b>{{item.shipmentNumber}}</b>
+                                                                                        </label>
+                                                                                    </div>  -->
+                                            <div class="row">
+                                                <label style="display:block;padding:3px 15px;">
+                                                    Mã vận đơn tổng: <b>{{item.shipmentNumber}}</b>
+                                                </label>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <b>Số lượng vđ: </b>
+                                                        <span>{{item.totalChildShipment ?
+                                                            item.totalChildShipment:
+                                                            0}}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <b>Số kiện: </b>
+                                                        <span>{{item.totalBox ? item.totalBox :
+                                                            0}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <b>Trọng lượng: </b>
+                                                        <span>{{item.weight ? item.weight : 0}}
+                                                            {{unit}}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <b>TLQĐ: </b>
+                                                        <span>{{item.calWeight ? item.calWeight
+                                                            :
+                                                            0}}
+                                                            {{unit}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="form-group">
+                                                        <b>Ghi chú: </b>
+                                                        <span>{{item.note}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div [class]="item.classChildShipment">
+                                            <div class="table-responsive">
+                                                <p-table [value]="item.shipments ? item.shipments : []"
+                                                    [responsive]="true" [paginator]="true" [rows]="5"
+                                                    [rowsPerPageOptions]="[5,10,20,50]" scrollable="true">
+                                                    <ng-template pTemplate="header">
+                                                        <tr>
+                                                            <th pSortableColumn="shipmentNumber" class="p-col-normal">
+                                                                Mã vận đơn
+                                                                <p-sortIcon field="shipmentNumber"></p-sortIcon>
+                                                            </th>
+                                                            <th pSortableColumn="orderDate" class="p-col-orderdate">Ngày
+                                                                gửi
+                                                                <p-sortIcon field="orderDate"></p-sortIcon>
+                                                            </th>
+                                                            <th pSortableColumn="fromHub.name" class="p-col-normal">Yêu
+                                                                cầu từ
+                                                                <p-sortIcon field="fromHub.name"></p-sortIcon>
+                                                            </th>
+                                                            <th pSortableColumn="shipmentStatus.name"
+                                                                class="p-col-orderdate">Trạng
+                                                                thái
+                                                                <p-sortIcon field="shipmentStatus.name"></p-sortIcon>
+                                                            </th>
+                                                            <th pSortableColumn="pickUser.fullName"
+                                                                class="p-col-orderdate">Nhân
+                                                                viên LH
+                                                                <p-sortIcon field="pickUser.fullName"></p-sortIcon>
+                                                            </th>
+                                                            <th pSortableColumn="senderName" class="p-col-orderdate">Tên
+                                                                người gửi
+                                                                <p-sortIcon field="senderName"></p-sortIcon>
+                                                            </th>
+                                                            <th pSortableColumn="senderPhone" class="p-col-normal">Đt
+                                                                gửi
+                                                                <p-sortIcon field="senderPhone"></p-sortIcon>
+                                                            </th>
+                                                            <th pSortableColumn="companyFrom" class="p-col-normal">CTY
+                                                                gửi
+                                                                <p-sortIcon field="companyFrom"></p-sortIcon>
+                                                            </th>
+                                                            <th pSortableColumn="pickingAddress" class="p-col-max">Địa
+                                                                chỉ gửi
+                                                                <p-sortIcon field="pickingAddress"></p-sortIcon>
+                                                            </th>
+                                                            <th pSortableColumn="fromProvince.name"
+                                                                class="p-col-normal">Tỉnh
+                                                                đi
+                                                                <p-sortIcon field="fromProvince.name">
+                                                                </p-sortIcon>
+                                                            </th>
+                                                            <th pSortableColumn="fromHub.name" class="p-col-normal">
+                                                                {{hubName.stationHubLongName}}
+                                                                lấy
+                                                                <p-sortIcon field="fromHub.name"></p-sortIcon>
+                                                            </th>
+                                                            <th pSortableColumn="fromHubRouting.name"
+                                                                class="p-col-normal">Tuyến
+                                                                lấy
+                                                                <p-sortIcon field="fromHubRouting.name"></p-sortIcon>
+                                                            </th>
+                                                            <th pSortableColumn="toProvince.name" class="p-col-normal">
+                                                                Tỉnh
+                                                                đến
+                                                                <p-sortIcon field="toProvince.name">
+                                                                </p-sortIcon>
+                                                            </th>
+                                                            <th pSortableColumn="toHub.name" class="p-col-normal">
+                                                                {{hubName.stationHubLongName}}
+                                                                giao
+                                                                <p-sortIcon field="toHub.name"></p-sortIcon>
+                                                            </th>
+                                                            <th pSortableColumn="toHubRouting.name"
+                                                                class="p-col-normal">Tuyến
+                                                                giao
+                                                                <p-sortIcon field="toHubRouting.name"></p-sortIcon>
+                                                            </th>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="body" let-data let-columns="columns">
+                                                        <tr>
+                                                            <td class="p-col-normal">
+                                                                {{data.shipmentNumber}}
+                                                            </td>
+                                                            <td class="p-col-orderdate" style="height: 2.5em">
+                                                                {{data.orderDate | date:'dd/M/y
+                                                                H:mm:ss'}}
+                                                            </td>
+                                                            <td class="p-col-normal" style="height: 2.5em">
+                                                                {{data.fromHub ?
+                                                                data.fromHub.name
+                                                                : ""}}
+                                                            </td>
+                                                            <td class="p-col-orderdate" style="height: 2.5em">
+                                                                {{data.shipmentStatus ?
+                                                                data.shipmentStatus.name: ""}}
+                                                            </td>
+                                                            <td class="p-col-orderdate" style="height: 2.5em">
+                                                                {{ data.pickUser ?
+                                                                data.pickUser.fullName :
+                                                                ""}}
+                                                            </td>
+                                                            <td class="p-col-orderdate" style="height: 2.5em">
+                                                                {{data.senderName}}
+                                                            </td>
+                                                            <td class="p-col-normal" style="height: 2.5em">
+                                                                {{data.senderPhone}}
+                                                            </td>
+                                                            <td class="p-col-normal" style="height: 2.5em">
+                                                                {{data.companyFrom}}
+                                                            </td>
+                                                            <td class="p-col-max" style="height: 2.5em">
+                                                                {{data.pickingAddress}}
+                                                            </td>
+                                                            <td class="p-col-normal" style="height: 2.5em">
+                                                                {{data.fromProvince?
+                                                                data.fromProvince?.name
+                                                                :
+                                                                ""}}
+                                                            </td>
+                                                            <td class="p-col-normal" style="height: 2.5em">
+                                                                {{data.fromHub ?
+                                                                data.fromHub.name
+                                                                : ""}}
+                                                            </td>
+                                                            <td class="p-col-normal" style="height: 2.5em">
+                                                                {{data.fromHubRouting ?
+                                                                data.fromHubRouting.name : ""}}
+                                                            </td>
+                                                            <td class="p-col-normal" style="height: 2.5em">
+                                                                {{data.toProvince ?
+                                                                data.toProvince.name
+                                                                :
+                                                                ""}}
+                                                            </td>
+                                                            <td class="p-col-normal" style="height: 2.5em">
+                                                                {{data.toHub ? data.toHub.name
+                                                                :
+                                                                ""}}
+                                                            </td>
+                                                            <td class="p-col-normal" style="height: 2.5em">
+                                                                {{data.toHubRouting ?
+                                                                data.toHubRouting.name : ""}}
+                                                            </td>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="summary">
+                                                        <span class="ui-column-title" style="font-weight: bold;">Tổng:
+                                                            {{item.shipments ?
+                                                            item.shipments.length : 0}}
+                                                            vận
+                                                            đơn
+                                                        </span>
+                                                    </ng-template>
+                                                </p-table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p-accordionTab>
+                        </p-accordion>
+                    </div>
+                    <!-- End Left Table -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #template>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+            (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">{{modalTitle}}</h5>
+    </div>
+    <div class="modal-body" *ngIf="shipmentData" style="position: absolute;width: 100%">
+        <div class="col-md-12 no-padding" style="text-align: center">
+            <img src="data:image/png;base64,{{updateImagePath.data.fileBase64String}}" class="imgBase64String"
+                height="450" width="300" alt="">
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #templateImages>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <ngx-image-viewer [src]="dataModalImages" [config]="configImageViewer"></ngx-image-viewer>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #templateXemKien>
+    <div class="modal-header" style="padding: 5px; text-align:left">
+        <button type="button" class="close" style="margin:3px 10px 0 0;" (click)="bsModalRefXemKien.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">Xem kiện</h5>
+    </div>
+    <div class="modal-body">
+        <div class="table-responsive">
+            <p-table [value]="boxesLS" [responsive]="true" scrollable="true" scrollable="true" scrollHeight="300px">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="p-col-shipmentNumber">Code</th>
+                        <th class="p-col-box">TL {{unit}}</th>
+                        <th class="p-col-box">ND</th>
+                        <th class="p-col-box">Chiều dài (cm)</th>
+                        <th class="p-col-box">Chiều rộng (cm)</th>
+                        <th class="p-col-box">Chiều cao (cm)</th>
+                        <th class="p-col-normal">TL QĐ {{unit}}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData>
+                    <tr>
+                        <td class="p-col-shipmentNumber">{{rowData.code}}</td>
+                        <td class="p-col-box">{{rowData.weight}}</td>
+                        <td class="p-col-box">{{rowData.content}}</td>
+                        <td class="p-col-box">{{rowData.length}}</td>
+                        <td class="p-col-box">{{rowData.width}}</td>
+                        <td class="p-col-box">{{rowData.height}}</td>
+                        <td class="p-col-normal">{{rowData.calWeight}}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="'8'">
+                            Không tìm thấy dữ liệu
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-white" (click)="bsModalRefXemKien.hide()" type="button">Đóng</button>
+    </div>
+</ng-template>
+
+<ng-template #templateIncident>
+    <div class="modal-header" style="padding: 5px; text-align:left;">
+        <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+            (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h5 class="modal-title" style="font-size:20px">Sự cố
+        </h5>
+    </div>
+    <div class="modal-body" style="overflow: hidden;">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Mã:</label>
+                    <label class="form-control">{{dataModal.code}}</label>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Thời gian báo: </label>
+                    <label class="form-control">{{dataModal.createdWhen | date:'dd/MM/yyyy'}}</label>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>Sự cố: </label>
+                    <label class="form-control">{{dataModal.incidentsReason?.name}}</label>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>Nội dung dung sự cố: </label>
+                    <label class="form-control">{{dataModal.incidentsContent}}</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>NV báo cáo sự cố:</label>
+                    <label class="form-control">{{dataModal.createdByEmp?.fullName}}</label>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>NV xử lý:</label>
+                    <label class="form-control">{{dataModal.handleByEmp?.fullName}}</label>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>Hình ảnh: </label>
+                    <button *ngIf="imagesIncidents.length > 0" class="btn btn-primary"
+                        (click)="openModelImages(templateImages, imagesIncidents)">
+                        <i class="fa fa-eye"></i> Xem
+                    </button>
+                    <span *ngIf="imagesIncidents.length == 0">Không có</span>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>NV chịu trách nhiệm:</label>
+                    <label class="form-control">{{dataModal.incidentsByEmp?.fullName}}</label>
+                </div>
+
+                <div class="form-group">
+                    <label>Báo đền bù:</label>
+                    <label class="form-control">{{dataModal.isCompensation? 'Có đền bù' : 'Không đền bù'}}</label>
+                </div>
+
+                <div class="form-group">
+                    <label>Nội dung xử lý:</label>
+                    <label class="form-control">{{dataModal.handleContent}}</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+    </div>
+</ng-template>

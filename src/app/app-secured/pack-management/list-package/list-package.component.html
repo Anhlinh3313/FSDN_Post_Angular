@@ -1,0 +1,172 @@
+<app-card>
+  <a class="parentPage">{{parentPage}}</a>
+  <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-title">
+        <div class="ibox-tools">
+          <p-header>
+            <div>
+              <button type="button" class="btn btn-success" (click)="refresh()">
+                <i class="fa fa-refresh"></i>&nbsp;refresh</button>
+            </div>
+          </p-header>
+        </div>      
+      </div>
+
+      <div class="ibox-content">
+        <div class="row" style="margin-bottom: 15px;">
+          <div class="col-sm-2">
+            <label>Từ ngày</label>
+            <p-calendar [(ngModel)]="dateFromCreate" [showIcon]="false" hourFormat="24"
+              dateFormat="yy/mm/dd" (onSelect)="selectedDate()" [showTime]="false"
+              [inputStyleClass]="'input-group form-control input-sm'" [style]="{'width': '100%'}"></p-calendar>
+          </div>
+          <div class="col-sm-2">
+            <label>Đến ngày</label>
+            <p-calendar [(ngModel)]="dateToCreate" [showIcon]="false" hourFormat="24" dateFormat="yy/mm/dd"
+              (onSelect)="selectedDate()" [showTime]="false" [inputStyleClass]="'form-control input-sm'"
+              [style]="{'width': '100%'}"></p-calendar>
+          </div>
+          <div class="col-sm-2">
+            <label>Trạng thái</label>
+            <p-dropdown styleClass="select-input form-control" [options]="statusPKs" [(ngModel)]="selectedStatusPK" [style]="{'width':'100%'}"
+              filter="filter" (onChange)="changStatusPK()" autofocus tabindex="1">
+            </p-dropdown>            
+          </div>
+
+          <div class="col-sm-2">
+            <label>TT/CN/T tạo</label>
+            <p-autoComplete [(ngModel)]="hubCreated" [suggestions]="filteredCreatedHubs" [minLength]="1"
+              (completeMethod)="filterHubCreateds($event)" (onSelect)="onSelectedHubCreated()"
+              styleClass="select-input form-control none-padding" [dropdown]="false">
+            </p-autoComplete>           
+          </div>
+
+          <div class="col-sm-2"></div>
+          <div class="col-sm-2">
+            <label>Tìm kiếm</label>
+            <div class="">
+              <input type="text" placeholder="..." [(ngModel)]="searchText"
+                class="input-sm form-control" id="filter" (change)="onSearchText()" />
+            </div>
+          </div>                 
+        </div>
+      </div>
+
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="table-responsive">
+              <p-table #dt [value]="listData" [responsive]="true" [paginator]="true"
+                [rows]="rowPerPage" [rowsPerPageOptions]="[10,20,50,100]"
+                (onPage)="onPageChange($event)" [lazy]="true" [totalRecords]="totalRecords"
+                (onLazyLoad)="loadLazy($event)" [columns]="columns" scrollHeight="200px"
+                sortField="createdWhen" sortOrder="-1">
+                <ng-template pTemplate="caption">
+                  <span class="ui-column-title" style="font-weight: bold;">Tổng:
+                    {{totalRecords}} {{envir.pack}} </span>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                  <tr>
+                      <th pSortableColumn="stt" Class="p-col-numPick">STT
+                        <p-sortIcon field="stt"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="code" style="width: 150px" Class="p-col-normal">Mã {{envir.pack}}
+                        <p-sortIcon field="code"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="statusName" Class="p-col-normal">Trạng thái
+                        <p-sortIcon field="statusName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="totalShipment" Class="p-col-normal">Tổng vđ
+                        <p-sortIcon field="totalShipment"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="createdWhen" Class="p-col-date">Ngày tạo {{envir.pack}}
+                        <p-sortIcon field="createdWhen"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="createdHubName" Class="p-col-normal">TT/CN/T Tạo
+                        <p-sortIcon field="createdHubName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="createdUserName" Class="p-col-normal">NV Tạo
+                        <p-sortIcon field="createdUserName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="toHubName" Class="p-col-normal">Đến TT/CN/T
+                        <p-sortIcon field="toHubName"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="content" Class="p-col-address">Nội dung
+                        <p-sortIcon field="content"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="weight" Class="p-col-normal">TL ({{envir.unit}})
+                        <p-sortIcon field="weight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="calWeight" Class="p-col-normal">TL QĐ ({{envir.unit}})
+                        <p-sortIcon field="calWeight"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="length" Class="p-col-normal">Dài (cm)
+                        <p-sortIcon field="length"></p-sortIcon>
+                      </th>                                        
+                      <th pSortableColumn="width" Class="p-col-normal">Rộng (cm)
+                        <p-sortIcon field="width"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="height" Class="p-col-normal">Cao (cm)
+                        <p-sortIcon field="height"></p-sortIcon>
+                      </th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-data let-columns="columns" let-i="rowIndex">
+                  <tr [pSelectableRow]="data">
+                      <td class="p-col-numPick">
+                        {{i + 1}}
+                      </td>
+                      <td class="p-col-normal" style="width: 150px">
+                        {{data.code}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.statusName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.totalShipment | number}}
+                      </td>
+                      <td class="p-col-date">
+                        {{data.createdWhen | dateFormat}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.createdHubName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.createdUserName}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.toHubName}}
+                      </td>
+                      <td class="p-col-address one-row">
+                        {{data.content}}
+                      </td>
+                      <td class="p-col-address one-row">
+                        {{data.weight | number}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.calWeight | number}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.length | number}}
+                      </td>                                        
+                      <td class="p-col-normal">
+                        {{data.width | number}}
+                      </td>
+                      <td class="p-col-normal">
+                        {{data.height | number}}
+                      </td>
+                  </tr>
+                </ng-template>
+              </p-table>                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+import { GeneralModel } from "./general.model";
+import { Hub } from "./hub.model";
+import { ListGoodsType } from "./listGoodsType.model";
+import { TransportType } from "./transportType.model";
+import { User } from ".";
+
+
+export class ListGoods extends GeneralModel {
+    listGoodsTypeId: number;
+    listGoodsType: ListGoodsType;
+    numPrint: number;
+    createdByHub: number;
+    createdHub: Hub;
+    createdWhen: any;
+    listGoodsStatus: string;
+    listGoodsStatusId: number;
+    statusName?: string;
+    tpl: any;
+    tplId: number;
+    tplCode?: string;
+    transportTypeName?: string;
+    toHub: Hub;
+    toHubId: number;
+    fromHubId: number;
+    fromHub: Hub;
+    fromHubName?: string;
+    toHubName?: string;
+    cancelTime: any;
+    cancelNote: string;
+    isBlock: boolean;
+    sealNumber: string;
+    note: string;
+    transferUserId: number;
+    transportTypeId: number;
+    transportType: TransportType;
+    transportTypeFullName: string;
+    realWeight: number;
+    truckNumber: string;
+    mawb: string;
+    totalShipment: number;
+    startExpectedTime: any;
+    startTime: any;
+    endExpectedTime: any;
+    endTime: any;
+    emp: User;
+    createdByUser: User;
+    empId: number;
+    fullName?: string;
+    shipmentIds: number[];
+    totalCount: number = 0;
+    ListGoodsId: number;
+    TotalReceived: number;
+    TotalReceivedOther: number;
+    TotalReceivedError: number;
+    TotalNotReceive: number;
+    totalDeliveryComplete: number;
+    waitingAcceptTransfer: number;
+    typeName: string;
+    // receivedShipmentErrors
+    truckId: number;
+    receivedShipmentErrors?: string;
+    truckScheduleId: number;
+    feeRent: number;
+    totalBox: number;
+    createByFullName?: string;
+    totalCalWeight: number;
+}

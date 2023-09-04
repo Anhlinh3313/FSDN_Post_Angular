@@ -1,0 +1,316 @@
+<div [id]="formId">
+    <div class="bk-delivery-page" style="padding: 16px;">
+        <div class="page-header">
+          <div class="content-wrapper">
+            <div class="row">
+              <div class="col-xs-4">
+                <div class="logo-wrapper">
+                    <div class="logo">
+                        <img class="logo-img" src="/assets/images/logo/{{selectData.logoUrl}}">
+                    </div>
+                    <div class="text-center">Ngày in: {{selectData.dateCreate | date:'dd/MM/yyyy HH:mm'}}</div>
+                </div>
+              </div>
+              <div class="col-xs-8 text-center">
+                <div class="company-name">{{selectData.companyName}}</div>
+                <strong class="text-uppercase">{{selectData.centerHubAddress}}</strong>
+                <strong>{{selectData.hotLine}}</strong>
+                <div class="title">
+                  <b>BẢNG KÊ CÔNG NỢ</b>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top: 10px;">
+            <div class="content-wrapper">
+                <div class="row">
+                    <div class="col-xs-5">
+                        <strong style="font-size: 14px;">THÔNG TIN KHÁCH HÀNG</strong>
+                        <div class="row">
+                          <div class="col-xs-5">
+                            Mã khách hàng
+                          </div>
+                          <div class="col-xs-7">
+                            <b>{{selectData.customer?.code}}</b>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-xs-5">
+                            Tên khách hàng
+                          </div>
+                          <div class="col-xs-7">
+                            <b>{{selectData.customer?.name}}</b>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-xs-5">
+                            Địa chỉ
+                          </div>
+                          <div class="col-xs-7">
+                            <b>{{selectData.customer?.address}}</b>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-xs-5">
+                            Mã số thuế
+                          </div>
+                          <div class="col-xs-7">
+                            <b *ngIf="selectData.customer">{{selectData.customer.taxCode ?  selectData.customer.taxCode : 0}}</b>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-xs-5">
+                            Điện thoại
+                          </div>
+                          <div class="col-xs-7">
+                            <b *ngIf="selectData.customer">{{selectData.customer.phoneNumber ?  selectData.customer.phoneNumber : 0}}</b>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-xs-5">
+                            Tuyến giao dịch
+                          </div>
+                          <div class="col-xs-7">
+                            <b></b>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-1">
+                    </div>
+                    <div class="col-xs-6">
+                        <strong style="font-size: 14px;">THÔNG TIN THANH TOÁN</strong>
+                        <div class="row">
+                          <div class="col-xs-4">
+                            Chi nhánh
+                          </div>
+                          <div class="col-xs-8">
+                            <b>{{selectData.paymentInfo?.name}}</b>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-xs-4">
+                            Tên chi nhánh
+                          </div>
+                          <div class="col-xs-8">
+                            <b>{{selectData.companyName}}</b>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-xs-4">
+                            Địa chỉ
+                          </div>
+                          <div class="col-xs-8">
+                            <b>{{selectData.paymentInfo?.address}}</b>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-xs-4">
+                            Điện thoại
+                          </div>
+                          <div class="col-xs-8">
+                            <b>{{selectData.paymentInfo?.address}}</b>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-xs-4">
+                            Số TK
+                          </div>
+                          <div class="col-xs-8">
+                            <b></b>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-xs-4">
+                            Ngân hàng
+                          </div>
+                          <div class="col-xs-8">
+                            <b></b>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-xs-4">
+                            Tuyến C.Nợ
+                          </div>
+                          <div class="col-xs-8">
+                            <b></b>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-xs-4">
+                            Tuyến CSKH
+                          </div>
+                          <div class="col-xs-8">
+                            <b></b>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-wrapper" style="padding-top: 10px;">
+                    <table class="table table-content">
+                        <thead>
+                            <tr>
+                                <th style="width:40px">STT</th>
+                                <th style="width:140px">Mã Bill</th>
+                                <th style="width:60px">Ngày gửi</th>
+                                <th style="width:120px">Tỉnh đến</th>
+                                <th style="width:70px">Dịch vụ</th>
+                                <th style="width:70px">Trọng lượng (g)</th>
+                                <th style="width:70px">Cước phí</th>
+                                <th style="width:70px">PXD</th>
+                                <th style="width:70px">COD</th>
+                                <th style="width:70px">Khai Giá</th>
+                                <th style="width:70px">VSVX</th>
+                                <th style="width:90px">Tổng phí DVGT</th>
+                                <th style="width:90px">Phụ phí khác</th>
+                                <th style="width:70px">VAT</th>
+                                <th style="width:130px">Tổng cước phí</th>
+                                <th style="width:100px">Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let x of selectData">
+                                <td class="text-right">{{x.stt}}</td>
+                                <td class="text-right">{{x.shipmentNumber}}</td>
+                                <td class="text-right">{{x.orderDate | date:'dd/MM'}}</td>
+                                <td class="text-right">{{x.toProvince?.name}}</td>
+                                <td class="text-uppercase text-center" *ngIf="x.service; else templateNone">{{x.service.code}}</td>
+                                <ng-template #templateNone>
+                                    <td></td>
+                                </ng-template>
+                                <td class="text-right">{{(x.weight) ? x.weight : "-"}}</td>
+                                <td class="text-right"> {{ (x.defaultPrice) ?  x.defaultPrice.toLocaleString('vi-VN') : 0}}</td>
+                                <td class="text-right"> {{ (x.fuelPrice) ?  x.fuelPrice.toLocaleString('vi-VN') : 0}}</td>
+                                <td class="text-right"> {{ (x.cod) ?  x.cod.toLocaleString('vi-VN') : 0}}</td>
+                                <td class="text-right"> {{ (x.insured) ?  x.insured.toLocaleString('vi-VN') : 0}}</td>
+                                <td class="text-right"> {{ (x.remoteAreasPrice) ?  x.remoteAreasPrice.toLocaleString('vi-VN') : 0}}</td>
+                                <td class="text-right"> {{ (x.totalDVGT) ?  x.totalDVGT.toLocaleString('vi-VN') : 0}}</td>
+                                <td class="text-right"> {{ (x.otherPrice) ?  x.otherPrice.toLocaleString('vi-VN') : 0}}</td>
+                                <td class="text-right"> {{ (x.vatPrice) ?  x.vatPrice.toLocaleString('vi-VN') : 0}}</td>
+                                <td class="text-right"> {{ (x.totalPrice) ?  x.totalPrice.toLocaleString('vi-VN') : 0}}</td>
+                                <td class="text-center">{{ x.cusNote }}</td>
+                              </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="page-footer">
+            <div>
+                <div class="row">
+                  <div class="col-xs-6" style="font-weight: bold;">
+                    <div class="row">
+                      <div class="col-xs-10">
+                        - Tổng(Cước phí):
+                      </div>
+                      <div class="col-xs-2" style="padding-left: 0px;">
+                        <b>{{selectData.sumDefaultPrice.toLocaleString('vi-VN')}}</b>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-10">
+                        - Cộng phụ phí xăng dầu:
+                      </div>
+                      <div class="col-xs-2" style="padding-left: 0px;">
+                        <b>{{selectData.sumFuelPrice.toLocaleString('vi-VN')}}</b>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-10">
+                        - Cộng phụ phí xăng dầu quốc tế Economy(0%):
+                      </div>
+                      <div class="col-xs-2" style="padding-left: 0px;">
+                        <b>0</b>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-10">
+                        - Cộng phụ phí xăng dầu quốc tế Epress(0%):
+                      </div>
+                      <div class="col-xs-2" style="padding-left: 0px;">
+                        <b>0</b>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-10">
+                        - Tổng COD:
+                      </div>
+                      <div class="col-xs-2" style="padding-left: 0px;">
+                        <b>{{selectData.sumCOD.toLocaleString('vi-VN')}}</b>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-10">
+                        - Tổng khai giá:
+                      </div>
+                      <div class="col-xs-2" style="padding-left: 0px;">
+                        <b>{{selectData.sumInsured.toLocaleString('vi-VN')}}</b>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-10">
+                        - Tổng phí VSVX:
+                      </div>
+                      <div class="col-xs-2" style="padding-left: 0px;">
+                        <b>{{selectData.sumRemoteAreasPrice.toLocaleString('vi-VN')}}</b>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-10">
+                        - Tổng phí DVGT:
+                      </div>
+                      <div class="col-xs-2" style="padding-left: 0px;">
+                        <b>{{selectData.sumTotalDVGT.toLocaleString('vi-VN')}}</b>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-10">
+                        - Tổng phí khác:
+                      </div>
+                      <div class="col-xs-2" style="padding-left: 0px;">
+                        <b>{{selectData.sumOtherPrice.toLocaleString('vi-VN')}}</b>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-10">
+                        - Tổng Thuế GTGT (VAT) (10%):
+                      </div>
+                      <div class="col-xs-2" style="padding-left: 0px;">
+                        <b>{{selectData.sumVatPrice.toLocaleString('vi-VN')}}</b>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-10">
+                        - Tổng tiền thanh toán:
+                      </div>
+                      <div class="col-xs-2" style="padding-left: 0px;">
+                        <b>{{selectData.grandTotal.toLocaleString('vi-VN')}}</b>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-xs-6" style="padding-left: 30px;">
+                    <strong>Ghi chú</strong>
+                    <div>- Phụ phí xăng dầu sẽ thay đổi theo từng tháng</div>
+                    <div>- Đề nghị quý khách hàng kiểm tra và thanh toán trong vòng 07 ngày kể từ ngày nhận được bảng kê thông báo</div>
+                    <div>- Mọi thắc mắc xin liên hệ với nhân viên kế toán công nợ hoặc</div>
+                    <div>- Mọi ý kiến đóng góp để nâng cao chất lượng dịch vụ. Quý khách hàng gửi Email về địa chỉ:</div>
+                  </div>
+                </div>
+                <div class="row" style="margin-top: 16px;">
+                    <div class="col-xs-4">
+                        <span>&nbsp;</span>
+                        <div>
+                            <strong class="text-uppercase">Đại diện</strong>
+                        </div>
+                    </div>
+                    <div class="col-xs-offset-4 col-xs-4 text-center">
+                        <span>Ngày {{selectData.dateCreate | date:'dd/MM/yyyy'}}</span>
+                        <div>
+                            <strong class="text-uppercase">Đại diện khách hàng</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

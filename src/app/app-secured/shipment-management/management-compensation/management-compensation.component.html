@@ -1,0 +1,386 @@
+<app-card>
+    <a class="parentPage">{{parentPage}}</a>
+    <strong class="currentPage">{{currentPage}}</strong>
+</app-card>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <label>
+                                Mã vận đơn
+                            </label>
+                            <div class="form-group">
+                                <input id="idShipmentNumber" [(ngModel)]="sCanShipmentNumber"
+                                    (keydown.Enter)="eventEnterShipmentNumber()" name="input"
+                                    class="input-sm form-control" placeholder="Mã vận đơn" type="text" autofocus>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label>
+                                Từ ngày
+                            </label>
+                            <div class="form-group">
+                                <p-calendar [(ngModel)]="formDate" dateFormat="yy/mm/dd"
+                                    [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}">
+                                </p-calendar>
+
+                                <!-- <div class="input-group" daterangepicker [options]="optionSingleDateFrom" (selected)="selectedSingleDateFrom($event)">
+                                    <span class="form-control uneditable-input" name="daterange" style="height: 25px;">
+                                        <p style="margin-top: -3px">{{ formDate | dateFormatNoTime }}
+                                        </p>
+                                    </span>
+                                    <span class="input-group-btn">
+                                        <a type="button" class="btn btn-default">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </a>
+                                    </span>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label>
+                                Đến ngày
+                            </label>
+                            <div class="form-group">
+                                <p-calendar [(ngModel)]="toDate" dateFormat="yy/mm/dd"
+                                    [inputStyleClass]="'form-control input-sm'" [style]="{'width': '100%'}">
+                                </p-calendar>
+
+                                <!-- <div class="input-group" daterangepicker [options]="optionSingleDateTo"
+                                    (selected)="selectedSingleDateTo($event)">
+                                    <span class="form-control uneditable-input" name="daterange" style="height: 25px;">
+                                        <p style="margin-top: -3px">{{ toDate | dateFormatNoTime }}
+                                        </p>
+                                    </span>
+                                    <span class="input-group-btn">
+                                        <a type="button" class="btn btn-default">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </a>
+                                    </span>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label>
+                                Tình trạng
+                            </label>
+                            <div class="form-group">
+                                <p-triStateCheckbox [(ngModel)]="isCompleted" [label]="textCompleted"
+                                    (onChange)="onChangeIsCompleted()"></p-triStateCheckbox>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <p-table #dt [value]="dataCompenstion" [responsive]="true" [paginator]="true"
+                            [rows]="rowPerPage" [rowsPerPageOptions]="[10,20,50,100]" (onPage)="onPageChange($event)"
+                            [lazy]="true" [totalRecords]="totalRecords" scrollable="true" sortField="id" sortOrder="-1"
+                            [columns]="columns">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th style="width:50px;">Thao tác</th>
+                                    <th [pSortableColumn]="'code'" Class="p-col-numPick">Mã
+                                        <p-sortIcon [field]="'code'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'compensationContent'" Class="p-col-numPick"> Nội dung
+                                        <p-sortIcon [field]="'compensationContent'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'createdByEmp.fullName'" Class="p-col-numPick"> Nhân viên
+                                        báo
+                                        <p-sortIcon [field]="'createdByEmp.fullName'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'isCompleted'" style="width:27px;"> Xử lý
+                                        <p-sortIcon [field]="'isCompleted'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'compensationtype.name'" Class="p-col-numPick"> Hình thức
+                                        đền bù
+                                        <p-sortIcon [field]="'compensationtype.name'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'compensationValue'" Class="p-col-numPick"> Giá trị đền bù
+                                        <p-sortIcon [field]="'compensationValue'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'feeType'" Class="p-col-numPick"> Loại chi phí
+                                        <p-sortIcon [field]="'feeType'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'compensationEmp.name'" Class="p-col-numPick"> Nhân viên đền
+                                        bù
+                                        <p-sortIcon [field]="'compensationEmp.name'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'compensationValueEmp'" Class="p-col-numPick"> Giá trị nhân
+                                        viên đền bù
+                                        <p-sortIcon [field]="'compensationValueEmp'"></p-sortIcon>
+                                    </th>
+                                    <th [pSortableColumn]="'handleEmp.name'" Class="p-col-numPick"> Nhân viên xử lý
+                                        <p-sortIcon [field]="'handleEmp.name'"></p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-data let-columns="columns">
+                                <tr>
+                                    <td style="width:50px;">
+                                        <a *ngIf="isEdit && !data.isCompleted" class="btn btn-danger"
+                                            (click)="openModel(template,data)">
+                                            <i class="fa fa-paste"></i> Xử lý</a>
+                                        <a *ngIf="data.isCompleted" class="btn btn-default"
+                                            (click)="openModelReview(templateReview, data)">
+                                            <i class="fa fa-paste"></i> Xem</a>
+                                    </td>
+                                    <td class="p-col-numPick">
+                                        {{data.code}}
+                                    </td>
+                                    <td class="p-col-numPick">
+                                        {{data.compensationContent}}
+                                    </td>
+                                    <td class="p-col-numPick">
+                                        {{data.createdByEmp ? data.createdByEmp.fullName : ""}}
+                                    </td>
+                                    <td style="width:27px;">
+                                        <p-checkbox [(ngModel)]="data.isCompleted" binary="true"
+                                            value="{{data.isCompleted}}" disabled></p-checkbox>
+                                    </td>
+                                    <td class="p-col-numPick">
+                                        {{data.compensationType ? data.compensationType.name : ""}}
+                                    </td>
+                                    <td class="p-col-numPick">
+                                        {{data.compensationValue}}
+                                    </td>
+                                    <td class="p-col-numPick">
+                                        {{data.feeType ? data.feeType.name : ""}}
+                                    </td>
+                                    <td class="p-col-numPick">
+                                        {{data.compensationEmp ? data.compensationEmp.fullName : ""}}
+                                    </td>
+                                    <td class="p-col-numPick">
+                                        {{data.compensationValueEmp}}
+                                    </td>
+                                    <td class="p-col-numPick">
+                                        {{data.handleEmp ? data.handleEmp.fullName : ""}}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Start Modal-->
+<ng-template #template>
+    <div>
+        <div class="modal-header" style="padding: 5px; text-align:left;">
+            <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+                (click)="bsModalRef.hide()">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span>
+            </button>
+            <h5 class="modal-title" style="font-size:20px">Xử lý</h5>
+        </div>
+        <div class="modal-body" style="overflow:initial;" *ngIf="dataModelRef">
+            <div class="col-md-12 no-padding">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Mã đền bù</label>
+                        <input type="text" [(ngModel)]="dataModelRef.code" placeholder="Nhập mã"
+                            class="input-sm form-control" readonly />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Nhân viên báo đền bù</label>
+                        <input type="text" [(ngModel)]="dataModelRef.createdByEmp.fullName" placeholder="Nhập tên"
+                            class="input-sm form-control" readonly />
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Nội dung xử lý</label>
+                        <textarea class="input-sm form-control" [(ngModel)]="compensationContent"
+                            placeholder="Nội dung..." type="text" rows="5" autoResize="false"></textarea>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Hình thức đền bù</label>
+                        <!-- <input type="text" placeholder="Nhập tên" class="input-sm form-control" autofocus/> -->
+                        <p-dropdown styleClass="select-input" [style]="{'width':'100%'}" [options]="compensationTypes"
+                            [(ngModel)]="compensationType" placeholder="Hình thức đền bù" filter="true"></p-dropdown>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Giá trị đền bù</label>
+                        <input type="number" (input)="onChangeValue()" [(ngModel)]="compensationValue"
+                            placeholder="Giá trị đền bù" class="input-sm form-control" [disabled]="isDisabledValue" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Loại chi phí</label>
+                        <!-- <input type="text" placeholder="Loại chi phí" class="input-sm form-control"/> -->
+                        <p-dropdown styleClass="select-input" [style]="{'width':'100%'}" [options]="feeTypes"
+                            [(ngModel)]="feeType" (onChange)="onChangeFeeType()" placeholder="Loại chi phí"
+                            filter="true"></p-dropdown>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Nhân viên xử lý</label>
+                        <input type="text" placeholder="Nhân viên xử lý" [(ngModel)]="handleEmpFullName"
+                            class="input-sm form-control" readonly />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Nhân viên đền bù</label>
+                        <!-- <input type="text" placeholder="Nhân viên đền bù" class="input-sm form-control"/> -->
+                        <p-autoComplete [inputStyle]="{'padding':'3px','font-weight':'normal','width':'100%'}"
+                            [suggestions]="userFilters" [(ngModel)]="userSelected"
+                            (completeMethod)="eventFilterUsers($event)" forceSelection="true" [dropdown]="false"
+                            [minLength]="1" placeholder="Chọn nhân viên">
+                            <ng-template let-data pTemplate="item">
+                                <div>{{data}}</div>
+                            </ng-template>
+                        </p-autoComplete>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Giá trị nhân viên đền bù</label>
+                        <input type="number" (input)="onChangeValueEmp()" [(ngModel)]="compensationValueEmp"
+                            placeholder="Giá trị nhân viên đền bù" class="input-sm form-control"
+                            [disabled]="isDisabledValueEmp" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Upload file</label>
+                        <p-fileUpload showUploadButton="false" showCancelButton="false" customUpload="true"
+                            (onSelect)="onSelect($event)" maxFileSize="3000000">
+                            <ng-template pTemplate="content">
+                                <ul *ngIf="uploadedFiles.length">
+                                    <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+                                </ul>
+                            </ng-template>
+                        </p-fileUpload>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+            <button *ngIf="isEdit" type="button" class="btn btn-primary" (click)="save()">Xác nhận</button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #templateReview>
+    <div>
+        <div class="modal-header" style="padding: 5px; text-align:left;">
+            <button type="button" class="close" data-dismiss="modal" style="margin:3px 10px 0 0;"
+                (click)="bsModalRef.hide()">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span>
+            </button>
+            <h5 class="modal-title" style="font-size:20px">Xử lý</h5>
+        </div>
+        <div class="modal-body" style="overflow:initial;" *ngIf="dataModelRef">
+            <div class="col-md-12 no-padding">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Mã đền bù</label>
+                        <input type="text" [(ngModel)]="dataModelRef.code" placeholder="Nhập mã"
+                            class="input-sm form-control" readonly />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Nhân viên đền bù</label>
+                        <label class="form-control" disabled>{{dataModelRef.createdByEmp?.code}} -
+                            {{dataModelRef.createdByEmp?.fullName}}</label>
+
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Nội dung xử lý</label>
+                        <textarea class="input-sm form-control" [(ngModel)]="dataModelRef.compensationContent"
+                            placeholder="Nội dung..." type="text" rows="5" autoResize="false" readonly></textarea>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Hình thức đền bù</label>
+                        <input type="text" placeholder="Nhân viên đền bù"
+                            [(ngModel)]="dataModelRef.compensationType.name" class="input-sm form-control" readonly />
+                        <!-- <input type="text" placeholder="Nhập tên" class="input-sm form-control" autofocus/> -->
+                        <!-- <p-dropdown styleClass="select-input" [style]="{'width':'100%'}" [options]="compensationTypes" [(ngModel)]="compensationType"
+                            placeholder="Hình thức đền bù" filter="true" readonly></p-dropdown> -->
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Giá trị đền bù</label>
+                        <input type="number" (input)="onChangeValue()" [(ngModel)]="dataModelRef.compensationValue"
+                            placeholder="Giá trị đền bù" class="input-sm form-control" [disabled]="isDisabledValue"
+                            readonly />
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Nhân viên đền bù</label>
+                        <label class="form-control" disabled>{{dataModelRef.compensationEmp?.code}} -
+                            {{dataModelRef.compensationEmp?.fullName}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Giá trị nhân viên đền bù</label>
+                        <input type="number" (input)="onChangeValueEmp()"
+                            [(ngModel)]="dataModelRef.compensationValueEmp" placeholder="Giá trị nhân viên đền bù"
+                            class="input-sm form-control" [disabled]="isDisabledValueEmp" readonly />
+                    </div>
+                </div>
+            </div>
+            <div class="row no-margin">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Loại chi phí</label>
+                        <input type="text" placeholder="Loại chi phí" [(ngModel)]="dataModelRef.feeType.name"
+                            class="input-sm form-control" readonly />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Nhân viên xử lý</label>
+                        <label class="form-control" disabled>{{dataModelRef.handleEmp?.code}} -
+                            {{dataModelRef.handleEmp?.fullName}}</label>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>file</label>
+                        <div class="form-group">
+                            <!-- <a pButton type="button" href="{{fileUploadHref}}" [label]="fileUploadName" class="ui-button-rounded" [download]="fileUploadHref"></a> -->
+                            <a href="{{fileUploadHref}}" class="btn btn-primary" style="position: absolute;"
+                                download="doc.pdf">Tải
+                                về</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal" (click)="bsModalRef.hide()">Đóng</button>
+        </div>
+    </div>
+</ng-template>

@@ -1,0 +1,264 @@
+<div class="row">
+  <div class="col-lg-12">
+    <ol class="ibox-title breadcrumb">
+      <li>
+        <a>{{parentPage}}</a>
+      </li>
+      <li class="active">
+        <strong>{{currentPage}}</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-md-12">
+            <div>
+              <tabset>
+                <!-- Tab -->
+                <tab heading="Cấp mã vận đơn hệ thống" style="padding: 10px;">
+                  <div class="row">
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label>Cấp cho {{shortName}}</label>
+                        <p-dropdown [options]="hubs" [(ngModel)]="data_tab1.selectedHub" [styleClass]="'form-control'" (onChange)="loadUserByHubID_tab1()"
+                          [style]="{'width':'100%'}" filter="true"></p-dropdown>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label>Cấp cho nhân viên</label>
+                        <p-dropdown [options]="users_tab1" [(ngModel)]="data_tab1.selectedUser" [styleClass]="'form-control'" [style]="{'width':'100%'}"
+                          filter="true"></p-dropdown>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label>Cấp cho khách hàng</label>
+                        <p-dropdown [options]="customers" [(ngModel)]="data_tab1.selectedCustomer" [styleClass]="'form-control'" [style]="{'width':'100%'}"
+                          filter="true"></p-dropdown>
+                      </div>
+                    </div>
+                    <div class="col-md-1">
+                      <div class="form-group">
+                        <label>Ký tự đầu</label>
+                        <input type="text" class="form-control" [(ngModel)]="data_tab1.preFix">
+                      </div>
+                    </div>
+                    <div class="col-md-1">
+                      <div class="form-group">
+                        <label>Chiều dài mã</label>
+                        <input type="number" class="form-control" [(ngModel)]="data_tab1.length" appOnlyNumber>
+                      </div>
+                    </div> 
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label>Số lượng vận đơn cấp</label>
+                        <input type="number" class="form-control" [(ngModel)]="data_tab1.count" min="0" appOnlyNumber>
+                      </div>
+                    </div>
+                    <div class="col-md-1">
+                      <div class="form-group">
+                        <label></label>
+                        <button type="button" class="btn btn-primary btn-form-control" (click)="confirm(data_tab1, 1)">Xác nhận</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-1 mt-1">
+                    <div class="col-md-12">
+                      <button type="button" class="btn btn-primary" (click)="print(lstData_tab1)">In mã</button>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <p-table #dtTab1 [value]="lstData_tab1" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50,100]">
+                        <ng-template pTemplate="header">
+                          <tr>
+                            <th pSortableColumn="stt" style="width: 80px">
+                              STT
+                              <p-sortIcon field="stt"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="code">
+                              Mã
+                              <p-sortIcon field="code"></p-sortIcon>
+                            </th>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                          <tr style="height: 50px">
+                            <td>{{rowIndex + 1}}</td>
+                            <td>{{rowData.code}}</td>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage" let-columns>
+                          <tr>
+                            <td colspan="2">
+                              Không tìm thấy dữ liệu
+                            </td>
+                          </tr>
+                        </ng-template>
+                      </p-table>
+                    </div>
+                  </div>
+                </tab>
+                <!-- End tab -->
+
+                <!-- Tab -->
+                <tab heading="Cấp mã vận đơn in sẵn" style="padding: 10px;">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label>Cấp cho {{shortName}}</label>
+                        <p-dropdown [options]="hubs" [(ngModel)]="data_tab2.selectedHub" [styleClass]="'form-control'" (onChange)="loadUserByHubID_tab2()"
+                          [style]="{'width':'100%'}" filter="true"></p-dropdown>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label>Cấp cho nhân viên</label>
+                        <p-dropdown [options]="users_tab2" [(ngModel)]="data_tab2.selectedUser" [styleClass]="'form-control'" [style]="{'width':'100%'}"
+                          filter="true"></p-dropdown>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label>Cấp cho khách hàng</label>
+                        <p-dropdown [options]="customers" [(ngModel)]="data_tab2.selectedCustomer" [styleClass]="'form-control'" [style]="{'width':'100%'}"
+                          filter="true"></p-dropdown>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label>Ký tự đầu</label>
+                        <input type="text" class="form-control" [(ngModel)]="data_tab2.preFix">
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label>Chiều dài mã</label>
+                        <input type="number" class="form-control" [(ngModel)]="data_tab2.length" appOnlyNumber>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label>Số bắt đầu</label>
+                        <input type="number" class="form-control" [(ngModel)]="data_tab2.numberStart" appOnlyNumber>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label>Đến số</label>
+                        <input type="number" class="form-control" [(ngModel)]="data_tab2.numberEnd" appOnlyNumber>
+                      </div>
+                    </div>
+                    <div class="col-md-1">
+                      <div class="form-group">
+                        <label></label>
+                        <button type="button" class="btn btn-primary btn-form-control" (click)="confirm(data_tab2, 2)">Xác nhận</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-1">
+                    <div class="col-sm-12">
+                      <p-table [value]="lstData_tab2" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50,100]">
+                        <ng-template pTemplate="header">
+                          <tr>
+                            <th pSortableColumn="stt" style="width: 80px">
+                              STT
+                              <p-sortIcon field="stt"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="code">
+                              Mã
+                              <p-sortIcon field="code"></p-sortIcon>
+                            </th>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                          <tr style="height: 50px">
+                            <td>{{rowIndex + 1}}</td>
+                            <td>{{rowData.code}}</td>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage" let-columns>
+                          <tr>
+                            <td colspan="2">
+                              Không tìm thấy dữ liệu
+                            </td>
+                          </tr>
+                        </ng-template>
+                      </p-table>
+                    </div>
+                  </div>
+                </tab>
+                <!-- End -->
+
+                <!-- Tab -->
+                <tab heading="Cấp từng mã vận đơn in sẵn" style="padding: 10px;">
+                  <div class="row">
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label>Số lượng vận đơn cấp</label>
+                        <input type="number" class="form-control" [(ngModel)]="data_tab3.count" (keyup.enter)="confirm(data_tab3, 3)" appOnlyNumber>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-1 mt-1">
+                    <div class="col-md-12">
+                      <button type="button" class="btn btn-warning" (click)="reset()">Reset</button>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <p-table [value]="lstData_tab3" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50,100]">
+                        <ng-template pTemplate="header">
+                          <tr>
+                            <th pSortableColumn="stt" style="width: 80px">
+                              STT
+                              <p-sortIcon field="stt"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="code">
+                              Mã
+                              <p-sortIcon field="code"></p-sortIcon>
+                            </th>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                          <tr style="height: 50px">
+                            <td>{{rowIndex + 1}}</td>
+                            <td>{{rowData.code}}</td>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage" let-columns>
+                          <tr>
+                            <td colspan="2">
+                              Không tìm thấy dữ liệu
+                            </td>
+                          </tr>
+                        </ng-template>
+                      </p-table>
+                    </div>
+                  </div>
+                </tab>
+                <!-- End -->
+              </tabset>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="form-print" [hidden]="true">
+  <div *ngIf="idPrint === 'print-code-sticker-detail-shipment'">
+    <form-print-code-stricker-province-code></form-print-code-stricker-province-code>
+  </div>
+</div>
+
+<iframe class="hidden-iframe" name="print-code-sticker-detail-shipment"></iframe>
